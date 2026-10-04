@@ -1,6 +1,6 @@
 // ====== EDITÁ SOLO ESTE ARCHIVO ======
 export const CONFIG = {
-  whatsapp: '5491100000000', // tu número con código de país, sin + ni espacios
+  whatsapp: '5491135035050', // tu número con código de país, sin + ni espacios
   instagram: 'tu_vidrieradigital',
 }
 
@@ -17,19 +17,19 @@ export const PROYECTOS = [
 
 export const PLANES = [
   {
-    id: 'basica', nombre: 'Web básica', para: 'Para empezar a mostrar tu negocio',
+    id: 'basica', nombre: 'Plan base', para: 'Para empezar a mostrar tu negocio',
     lanzamiento: 0, mensual: 25000,
     items: ['Catálogo de productos', 'Botón a WhatsApp y redes', 'Con tu logo y tus colores', 'Se ve bien en el celular'],
   },
   {
-    id: 'premium', nombre: 'Web premium', para: 'Para vender y gestionar online', destacado: true,
+    id: 'premium', nombre: 'Plan Premium', para: 'Para vender y gestionar online', destacado: true,
     lanzamiento: 50000, mensual: 35000,
-    items: ['Todo lo de la básica', 'Carrito y pedidos', 'Panel de administración', 'Cuentas de cliente y stock', 'Facturas y reportes en PDF'],
+    items: ['Todo lo de base', 'Carrito y pedidos', 'Panel de administración', 'Cuentas de cliente y stock', 'Facturas y reportes en PDF'],
   },
   {
     id: 'empresas', nombre: 'Pack empresas', para: 'Full premium para fábricas y empresas',
     lanzamiento: 125000, mensual: 60000,
-    items: ['Todo lo de la premium', 'Sistema de Gestión Interna (SIG)', 'Producción, calidad y pañol', 'Accesos por operario', 'Prioridad en soporte'],
+    items: ['Todo lo de la premium', 'Sistema de Gestión Interna', 'Producción, calidad y pañol', 'Accesos por operario', 'Datos y estadisticas es Realtime'],
   },
 ]
 
