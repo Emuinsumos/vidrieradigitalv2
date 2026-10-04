@@ -3,11 +3,13 @@
   "services": {
     "app": {
       "root": ".",
-      "framework": "vite"
+      "framework": "vite",
+      "outputDirectory": "dist"
     },
     "delmana": {
       "root": "demos-src/delmana",
-      "framework": "vite"
+      "framework": "vite",
+      "outputDirectory": "../../dist/demos/delmana"
     }
   },
   "rewrites": [
