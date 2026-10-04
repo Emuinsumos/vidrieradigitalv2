@@ -29,7 +29,7 @@ export const PLANES = [
   {
     id: 'empresas', nombre: 'Pack empresas', para: 'Full premium para fábricas y empresas',
     lanzamiento: 125000, mensual: 60000,
-    items: ['Todo lo de la premium', 'Sistema de Gestión Interna', 'Producción, calidad y pañol', 'Accesos por operario', 'Datos y estadisticas es Realtime'],
+    items: ['Todo lo de la premium', 'Sistema de Gestión Interna', 'Producción, calidad y pañol', 'Accesos por operario', 'Datos y estadisticas en Realtime'],
   },
 ]
 
