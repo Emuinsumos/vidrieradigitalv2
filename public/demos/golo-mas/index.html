@@ -1,0 +1,1750 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Demo · GOLO-MAS | Mayorista y Minorista</title>
+<meta name="description" content="GOLO-MAS - Venta mayorista y minorista de artículos de almacén" />
+<meta name="theme-color" content="#0A0806">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.85em' font-size='80'%3E%F0%9F%9B%92%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;0,800;1,600&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Barlow','sans-serif'],
+          heading: ['Archivo Black','sans-serif'],
+        },
+        colors: {
+          carbon: { 50:'#F8F6F1',100:'#EFE9D9',200:'#DDD3B4',300:'#B9AB78',400:'#7d7458',500:'#4a4536',600:'#332f24',700:'#241f16',750:'#1c1811',800:'#14110c',850:'#100D08',900:'#0A0806' },
+          marca:  { 50:'#FDECEC',100:'#FAD3D4',200:'#F3A6A8',300:'#E36366',400:'#EA4548',500:'#E22127',600:'#C11419',700:'#8f1c1f',800:'#6b1517' },
+          ambar:  { 100:'#FFF4D9',200:'#FFE9B8',300:'#FFD166',400:'#F5B21C',500:'#E29A0D',600:'#B4750D' },
+        },
+        boxShadow: {
+          'glow-marca': '0 8px 30px -6px rgba(226,33,39,.45)',
+          'glow-ambar': '0 8px 24px -6px rgba(245,178,28,.35)',
+        },
+        animation: {
+          'fade-in':'fadeIn .35s ease forwards',
+          'slide-up':'slideUp .4s cubic-bezier(.16,1,.3,1) forwards',
+          'pulse-slow':'pulse 3s cubic-bezier(.4,0,.6,1) infinite',
+        },
+        keyframes: {
+          fadeIn:{'0%':{opacity:'0'},'100%':{opacity:'1'}},
+          slideUp:{'0%':{opacity:'0',transform:'translateY(18px)'},'100%':{opacity:'1',transform:'translateY(0)'}},
+        }
+      }
+    }
+  }
+</script>
+
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+
+<style>
+  body{ font-family:'Barlow',sans-serif; background:#0A0806; }
+  h1,h2,h3,.font-heading{ font-family:'Archivo Black',sans-serif; letter-spacing:.01em; }
+  .font-price{ font-family:'Fraunces',serif; font-optical-sizing:auto; letter-spacing:-0.01em; }
+  ::-webkit-scrollbar{ width:8px; }
+  ::-webkit-scrollbar-track{ background:#100D08; }
+  ::-webkit-scrollbar-thumb{ background:#332f24; border-radius:4px; }
+  .no-scrollbar::-webkit-scrollbar{ display:none; }
+  .no-scrollbar{ -ms-overflow-style:none; scrollbar-width:none; }
+
+  .bg-fondo{
+    background-color:#0A0806;
+    background-image:
+      radial-gradient(ellipse 900px 500px at 15% -5%, rgba(226,33,39,.16) 0%, transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 15%, rgba(245,178,28,.10) 0%, transparent 55%),
+      radial-gradient(ellipse 800px 600px at 50% 100%, rgba(226,33,39,.08) 0%, transparent 60%);
+  }
+  .cristal{ background:rgba(20,17,12,.72); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); }
+  .cristal-header{ background:rgba(10,8,6,.75); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
+
+  .tarjeta-prod{
+    background:linear-gradient(180deg, rgba(28,24,17,.9), rgba(20,17,12,.9));
+    border:1px solid rgba(185,171,120,.14);
+    transition:transform .28s cubic-bezier(.16,1,.3,1), border-color .28s ease, box-shadow .28s ease;
+  }
+  .tarjeta-prod:hover{ transform:translateY(-4px); border-color:rgba(245,178,28,.45); box-shadow:0 20px 40px -12px rgba(0,0,0,.6), 0 0 0 1px rgba(245,178,28,.08); }
+
+  .input-oscuro{
+    background:rgba(255,255,255,.04); border:1px solid rgba(185,171,120,.18); color:#F8F6F1;
+  }
+  .input-oscuro::placeholder{ color:#7d7458; }
+  .input-oscuro:focus{ outline:none; border-color:#F5B21C; box-shadow:0 0 0 4px rgba(245,178,28,.12); }
+
+  #reader{ width:100%; border-radius:16px; overflow:hidden; }
+  #reader video{ border-radius:16px; }
+</style>
+</head>
+<body class="bg-fondo min-h-screen text-carbon-50 antialiased selection:bg-ambar-400 selection:text-carbon-900">
+<div id="root"></div>
+
+<script src="seed.js"></script>
+<script src="../demo-db.js"></script>
+<script type="text/babel">
+const {useState,useEffect,useMemo,useRef} = React;
+
+
+const DIAS_ENTREGA = "Entregas de lunes a sábado, coordinando horario por WhatsApp.";
+const STOCK_BAJO_UMBRAL = 5;
+
+const CONFIG_DEFAULT = {
+  adminUser: "demo",
+  adminPass: "demo",
+  whatsapp: "5490000000000",
+  instagram: "",
+  mapsQuery: "GOLO-MAS almacén mayorista",
+  horarios: [
+    {dia:"Lunes a Viernes", horario:"8:00 a 13:00 / 16:00 a 20:00"},
+    {dia:"Sábados", horario:"8:00 a 13:00"},
+    {dia:"Domingos", horario:"Cerrado"},
+  ],
+  pagos: {
+    efectivo: true,
+    transferencia: {activo:true, cbu:"", alias:""},
+    mercadopago: {activo:true, qrUrl:""},
+  }
+};
+
+const fmt = (n) => "$" + Number(n||0).toLocaleString("es-AR");
+
+const IMG_FALLBACK = "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><rect width="200" height="200" fill="#1c1811"/><text x="100" y="105" font-size="14" fill="#7d7458" text-anchor="middle" font-family="sans-serif">Sin imagen</text></svg>');
+
+function normalizarUrlImagen(url){
+  if(!url) return url;
+  url = url.trim();
+  if(url.includes("drive.google.com")){
+    const m = url.match(/\/file\/d\/([^/?]+)/) || url.match(/[?&]id=([^&]+)/);
+    if(m && m[1]) return `https://lh3.googleusercontent.com/d/${m[1]}=w1000`;
+  }
+  return url;
+}
+
+function parseCSV(texto){
+  const lineas = texto.split(/\r?\n/).filter(l=>l.trim()!=="");
+  if(lineas.length<2) return [];
+  const headers = lineas[0].split(",").map(h=>h.trim().replace(/^"|"$/g,'').toLowerCase());
+  return lineas.slice(1).map(linea=>{
+    const valores = []; let cur=""; let enComillas=false;
+    for(let i=0;i<linea.length;i++){
+      const ch = linea[i];
+      if(ch==='"'){ enComillas=!enComillas; }
+      else if(ch===',' && !enComillas){ valores.push(cur); cur=""; }
+      else cur+=ch;
+    }
+    valores.push(cur);
+    const obj = {};
+    headers.forEach((h,i)=>obj[h]=(valores[i]||"").trim());
+    return obj;
+  });
+}
+
+const beep = () => {
+  try{
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const o = ctx.createOscillator(); const g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.frequency.value = 880; g.gain.value = 0.15;
+    o.start(); o.stop(ctx.currentTime+0.18);
+  }catch(e){}
+};
+
+const FAQ = [
+  {q:"¿Cómo hago un pedido?", a:"Agregá los productos que quieras al carrito y después abrí el carrito para enviar tu pedido por WhatsApp o descargar el presupuesto en PDF."},
+  {q:"¿Hacen envíos?", a:"Sí, hacemos envíos a comercios. Escribinos por WhatsApp con tu dirección para confirmar zona y costo de envío."},
+  {q:"¿Diferencia entre precio mayorista y minorista?", a:"El precio mayorista aplica desde la cantidad mínima indicada en cada producto, o activando el modo 'Por mayor' arriba del catálogo."},
+  {q:"¿Cómo pago?", a:"Coordinamos la forma de pago por WhatsApp una vez confirmado el pedido."},
+  {q:"Quiero hablar con una persona", a:"__WHATSAPP__"},
+];
+
+function App(){
+  const [productos,setProductos] = useState([]);
+  const [categorias,setCategorias] = useState([]);
+  const [catActiva,setCatActiva] = useState("todas");
+  const [busqueda,setBusqueda] = useState("");
+  const [modoPrecio,setModoPrecio] = useState("minorista");
+  const [carrito,setCarrito] = useState([]);
+  const [drawerOpen,setDrawerOpen] = useState(false);
+  const [chatOpen,setChatOpen] = useState(false);
+  const [preguntaActiva,setPreguntaActiva] = useState(null);
+  const [presupuestoOpen,setPresupuestoOpen] = useState(false);
+  const [datosCliente,setDatosCliente] = useState({nombre:"",telefono:""});
+
+  const [clientes,setClientes] = useState([]);
+  const [pedidos,setPedidos] = useState([]);
+  const [clienteActual,setClienteActual] = useState(null);
+  const [loginOpen,setLoginOpen] = useState(false);
+  const [loginNumero,setLoginNumero] = useState("");
+  const [loginPass,setLoginPass] = useState("");
+  const [loginError,setLoginError] = useState("");
+  const [historialOpen,setHistorialOpen] = useState(false);
+
+  const [adminModalOpen,setAdminModalOpen] = useState(false);
+  const [adminLogged,setAdminLogged] = useState(false);
+  const [userInput,setUserInput] = useState("");
+  const [passInput,setPassInput] = useState("");
+  const [loginAdminError,setLoginAdminError] = useState("");
+  const [adminTab,setAdminTab] = useState("productos");
+  const [editando,setEditando] = useState(null);
+  const [editandoCliente,setEditandoCliente] = useState(null);
+  const [seleccionados,setSeleccionados] = useState([]);
+  const [pctAumento,setPctAumento] = useState("");
+  const [escanerAbierto,setEscanerAbierto] = useState(false);
+  const [productoEscaneado,setProductoEscaneado] = useState(null);
+  const [manualBarcode,setManualBarcode] = useState("");
+  const [adminHistorialCliente,setAdminHistorialCliente] = useState(null);
+  const [combos,setCombos] = useState([]);
+  const [categoriasLista,setCategoriasLista] = useState([]);
+  const [nuevaCategoria,setNuevaCategoria] = useState("");
+  const [statsCategoria,setStatsCategoria] = useState("todas");
+  const [editandoCombo,setEditandoCombo] = useState(null);
+  const [toastPedido,setToastPedido] = useState(null);
+  const prevRecibidosRef = useRef(0);
+  const primerCargaRef = useRef(true);
+  const [config,setConfig] = useState(CONFIG_DEFAULT);
+  const [qrModalOpen,setQrModalOpen] = useState(false);
+
+  useEffect(()=>{
+    const ref = db.ref("productos");
+    ref.on("value", snap=>{
+      const val = snap.val() || {};
+      const list = Object.entries(val).map(([id,p])=>({id,...p}));
+      setProductos(list);
+      setCategorias(Array.from(new Set(list.map(p=>p.categoria||"General"))));
+    });
+    const refC = db.ref("clientes");
+    refC.on("value", snap=>{
+      const val = snap.val() || {};
+      setClientes(Object.entries(val).map(([id,c])=>({id,...c})));
+    });
+    const refP = db.ref("pedidos");
+    refP.on("value", snap=>{
+      const val = snap.val() || {};
+      setPedidos(Object.entries(val).map(([id,p])=>({id,...p})));
+    });
+    const refCombos = db.ref("combos");
+    refCombos.on("value", snap=>{
+      const val = snap.val() || {};
+      setCombos(Object.entries(val).map(([id,c])=>({id,...c})));
+    });
+    const refCategorias = db.ref("categorias");
+    refCategorias.on("value", snap=>{
+      const val = snap.val() || {};
+      setCategoriasLista(Object.entries(val).map(([id,c])=>({id,nombre:c.nombre||c})));
+    });
+    const refConfig = db.ref("config");
+    refConfig.on("value", snap=>{
+      const val = snap.val();
+      if(val){
+        setConfig({
+          ...CONFIG_DEFAULT, ...val,
+          horarios: val.horarios || CONFIG_DEFAULT.horarios,
+          pagos: {
+            efectivo: val.pagos?.efectivo ?? CONFIG_DEFAULT.pagos.efectivo,
+            transferencia: {...CONFIG_DEFAULT.pagos.transferencia, ...(val.pagos?.transferencia||{})},
+            mercadopago: {...CONFIG_DEFAULT.pagos.mercadopago, ...(val.pagos?.mercadopago||{})},
+          }
+        });
+      }
+    });
+    return ()=>{ref.off();refC.off();refP.off();refCombos.off();refCategorias.off();refConfig.off();};
+  },[]);
+
+  useEffect(()=>{
+    const recibidos = pedidos.filter(p=>p.estado==="recibido");
+    if(primerCargaRef.current){ primerCargaRef.current=false; prevRecibidosRef.current = recibidos.length; return; }
+    if(recibidos.length > prevRecibidosRef.current){
+      const nuevo = recibidos.sort((a,b)=>new Date(b.fecha)-new Date(a.fecha))[0];
+      beep();
+      setToastPedido(nuevo);
+      setTimeout(()=>setToastPedido(t=> t && t.id===nuevo.id ? null : t), 6000);
+    }
+    prevRecibidosRef.current = recibidos.length;
+  },[pedidos]);
+
+  const clienteInfo = clienteActual ? (clientes.find(c=>c.id===clienteActual.id) || clienteActual) : null;
+
+  const productosFiltrados = useMemo(()=>{
+    return productos.filter(p=>{
+      if(catActiva==="favoritos"){
+        if(!clienteInfo || !(clienteInfo.favoritos||[]).includes(p.id)) return false;
+      } else {
+        const okCat = catActiva==="todas" || (p.categoria||"General")===catActiva;
+        if(!okCat) return false;
+      }
+      const okBusq = !busqueda || (p.nombre||"").toLowerCase().includes(busqueda.toLowerCase());
+      return okBusq;
+    });
+  },[productos,catActiva,busqueda,clienteInfo]);
+
+  const precioProducto = (p, cantidad, modo) => {
+    const usarMayorista = modo==="mayorista" || (p.cantMinMayorista && cantidad >= Number(p.cantMinMayorista));
+    let base = (usarMayorista && p.precioMayorista) ? Number(p.precioMayorista) : Number(p.precioMinorista||0);
+    if(clienteInfo && Number(clienteInfo.descuento)>0){
+      base = Math.round(base * (1 - Number(clienteInfo.descuento)/100));
+    }
+    return base;
+  };
+
+  const agregarAlCarrito = (p, cantidad) => {
+    if(cantidad<=0) return;
+    setCarrito(prev=>{
+      const existe = prev.find(i=>i.id===p.id);
+      if(existe) return prev.map(i=>i.id===p.id?{...i,cantidad:i.cantidad+cantidad}:i);
+      return [...prev,{id:p.id,nombre:p.nombre,imagen:p.imagen,categoria:p.categoria,cantidad}];
+    });
+    setDrawerOpen(true);
+  };
+  const cambiarCantidadCarrito = (id, delta) => {
+    setCarrito(prev=>prev.map(i=>i.id===id?{...i,cantidad:Math.max(1,i.cantidad+delta)}:i).filter(i=>i.cantidad>0));
+  };
+  const quitarDelCarrito = (id) => setCarrito(prev=>prev.filter(i=>i.id!==id));
+
+  const carritoConPrecios = useMemo(()=>{
+    return carrito.map(item=>{
+      if(item.esCombo){
+        return {...item, precioUnit:item.precioCombo, subtotal:item.precioCombo*item.cantidad};
+      }
+      const p = productos.find(x=>x.id===item.id) || {};
+      const precioUnit = precioProducto(p,item.cantidad,modoPrecio);
+      return {...item, precioUnit, subtotal: precioUnit*item.cantidad};
+    });
+  },[carrito,productos,modoPrecio,clienteActual,clientes]);
+
+  const totalCarrito = carritoConPrecios.reduce((s,i)=>s+i.subtotal,0);
+  const cantidadCarrito = carrito.reduce((s,i)=>s+i.cantidad,0);
+  const cantidadEnCarritoDe = (id) => (carrito.find(i=>i.id===id)||{}).cantidad || 0;
+
+  const hacerLogin = () => {
+    setLoginError("");
+    const c = clientes.find(x=> String(x.numero)===String(loginNumero).trim() && String(x.password)===String(loginPass));
+    if(!c){ setLoginError("Número de cliente o contraseña incorrectos."); return; }
+    setClienteActual(c); setLoginOpen(false); setLoginNumero(""); setLoginPass("");
+  };
+
+  const generarPDF = () => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    doc.setFont("helvetica","bold"); doc.setFontSize(18);
+    doc.text("GOLO-MAS", 14, 18);
+    doc.setFontSize(11); doc.setFont("helvetica","normal");
+    doc.text("Presupuesto - " + new Date().toLocaleDateString("es-AR"), 14, 26);
+    if(datosCliente.nombre) doc.text("Cliente: " + datosCliente.nombre, 14, 33);
+    if(datosCliente.telefono) doc.text("Teléfono: " + datosCliente.telefono, 14, 39);
+    let y = 50;
+    doc.setFont("helvetica","bold");
+    doc.text("Producto",14,y); doc.text("Cant.",120,y); doc.text("P. unit.",145,y); doc.text("Subtotal",175,y);
+    doc.setFont("helvetica","normal"); y+=6;
+    carritoConPrecios.forEach(i=>{
+      doc.text(String(i.nombre).slice(0,40),14,y);
+      doc.text(String(i.cantidad),120,y);
+      doc.text(fmt(i.precioUnit),145,y);
+      doc.text(fmt(i.subtotal),175,y);
+      y+=7; if(y>270){doc.addPage();y=20;}
+    });
+    y+=4; doc.setFont("helvetica","bold");
+    doc.text("TOTAL: " + fmt(totalCarrito), 14, y); y+=10;
+    doc.setFontSize(9); doc.setFont("helvetica","italic");
+    doc.text("No incluye costo de envío. Precios sujetos a variación sin previo aviso.",14,y);
+    doc.save("presupuesto-golo-mas.pdf");
+  };
+
+  const confirmarPedido = () => {
+    if(!clienteActual || carrito.length===0) return;
+    const ref = db.ref("pedidos").push();
+    db.ref("pedidos/"+ref.key).set({
+      id: ref.key, clienteId: clienteActual.id,
+      clienteNombre: clienteActual.nombre || clienteActual.numero,
+      items: carritoConPrecios.map(i=>({id:i.id,nombre:i.nombre,cantidad:i.cantidad,precioUnit:i.precioUnit,subtotal:i.subtotal,esCombo:!!i.esCombo,componentes:i.componentes||null})),
+      total: totalCarrito, estado: "recibido", fecha: new Date().toISOString()
+    });
+    setCarrito([]); setDrawerOpen(false);
+    alert("¡Pedido enviado! Podés ver su estado en 'Mis pedidos'.");
+  };
+
+  const guardarProducto = (data) => {
+    const limpio = {...data, imagen: normalizarUrlImagen(data.imagen)};
+    if(limpio.id){ db.ref("productos/"+limpio.id).update(limpio); }
+    else{ const newRef = db.ref("productos").push(); db.ref("productos/"+newRef.key).set({...limpio, id:newRef.key}); }
+    setEditando(null);
+  };
+  const borrarProducto = (id) => { if(confirm("¿Borrar este producto?")) db.ref("productos/"+id).remove(); };
+  const toggleSeleccion = (id) => setSeleccionados(prev=> prev.includes(id) ? prev.filter(x=>x!==id) : [...prev,id]);
+  const aplicarAumento = () => {
+    const pct = Number(pctAumento); if(!pct) return;
+    seleccionados.forEach(id=>{
+      const p = productos.find(x=>x.id===id); if(!p) return;
+      const nuevoMin = Math.round(Number(p.precioMinorista||0)*(1+pct/100));
+      const nuevoMay = p.precioMayorista ? Math.round(Number(p.precioMayorista)*(1+pct/100)) : p.precioMayorista;
+      db.ref("productos/"+id).update({precioMinorista:nuevoMin, precioMayorista:nuevoMay});
+    });
+    setSeleccionados([]); setPctAumento("");
+  };
+
+  const guardarCliente = (data) => {
+    if(data.id){ db.ref("clientes/"+data.id).update(data); }
+    else{ const newRef = db.ref("clientes").push(); db.ref("clientes/"+newRef.key).set({...data, id:newRef.key}); }
+    setEditandoCliente(null);
+  };
+  const borrarCliente = (id) => { if(confirm("¿Borrar este cliente?")) db.ref("clientes/"+id).remove(); };
+  const ESTADOS_PEDIDO = ["recibido","en proceso","en proceso de entrega","entregado"];
+  const cambiarEstadoPedido = (id, estado) => {
+    db.ref("pedidos/"+id).update({estado});
+    if(estado==="entregado"){
+      const p = pedidos.find(x=>x.id===id);
+      (p?.items||[]).forEach(it=>{
+        if(it.esCombo && it.componentes){
+          it.componentes.forEach(comp=>{
+            const prod = productos.find(x=>x.id===comp.productId || x.nombre===comp.nombre);
+            if(prod && prod.stock!==undefined && prod.stock!==""){
+              db.ref("productos/"+prod.id).update({stock: Math.max(0, Number(prod.stock)-Number(comp.cantidad)*Number(it.cantidad))});
+            }
+          });
+          return;
+        }
+        const prod = productos.find(x=>x.nombre===it.nombre);
+        if(prod && prod.stock!==undefined && prod.stock!==""){
+          db.ref("productos/"+prod.id).update({stock: Math.max(0, Number(prod.stock)-Number(it.cantidad))});
+        }
+      });
+    }
+  };
+
+  const ajustarStock = (id, delta) => {
+    const p = productos.find(x=>x.id===id); if(!p) return;
+    const nuevo = Math.max(0, Number(p.stock||0)+delta);
+    db.ref("productos/"+id).update({stock:nuevo});
+  };
+  const fijarStock = (id, valor) => {
+    db.ref("productos/"+id).update({stock: Math.max(0, Number(valor)||0)});
+  };
+  const onCodigoEscaneado = (codigo) => {
+    setEscanerAbierto(false);
+    const p = productos.find(x=>String(x.codigoBarras||"")===String(codigo));
+    if(p) setProductoEscaneado(p);
+    else setProductoEscaneado({nuevo:true, codigoBarras:codigo});
+  };
+
+  const intentarLoginAdmin = () => {
+    if(userInput===config.adminUser && passInput===config.adminPass){
+      setAdminLogged(true); setLoginAdminError(""); setUserInput(""); setPassInput("");
+    } else setLoginAdminError("Usuario o contraseña incorrectos");
+  };
+
+  const guardarConfig = (nuevaConfig) => {
+    db.ref("config").set(nuevaConfig).then(()=>alert("Configuración guardada."));
+  };
+
+  const categoriasConProductos = categorias.filter(c=>productos.some(p=>(p.categoria||"General")===c));
+  const productosDestacados = productos.filter(p=>p.destacado);
+
+  const toggleFavorito = (productId) => {
+    if(!clienteInfo) return;
+    const favoritos = clienteInfo.favoritos || [];
+    const nuevos = favoritos.includes(productId) ? favoritos.filter(id=>id!==productId) : [...favoritos, productId];
+    db.ref("clientes/"+clienteInfo.id).update({favoritos:nuevos});
+  };
+
+  const repetirUltimoPedido = () => {
+    if(!clienteInfo) return;
+    const propios = pedidos.filter(p=>p.clienteId===clienteInfo.id).sort((a,b)=>new Date(b.fecha)-new Date(a.fecha));
+    if(propios.length===0){ alert("Todavía no tenés pedidos anteriores."); return; }
+    const ultimo = propios[0];
+    let agregados = 0;
+    (ultimo.items||[]).forEach(it=>{
+      const prod = productos.find(p=>p.id===it.id) || productos.find(p=>p.nombre===it.nombre);
+      if(prod){ agregarAlCarrito(prod, it.cantidad); agregados++; }
+    });
+    if(agregados===0) alert("Los productos de ese pedido ya no están disponibles.");
+  };
+
+  const guardarCombo = (data) => {
+    const limpio = {...data, imagen: normalizarUrlImagen(data.imagen)};
+    if(limpio.id){ db.ref("combos/"+limpio.id).update(limpio); }
+    else{ const newRef = db.ref("combos").push(); db.ref("combos/"+newRef.key).set({...limpio, id:newRef.key}); }
+    setEditandoCombo(null);
+  };
+
+  const agregarCategoria = () => {
+    const nombre = nuevaCategoria.trim(); if(!nombre) return;
+    if(categoriasLista.some(c=>c.nombre.toLowerCase()===nombre.toLowerCase())){ setNuevaCategoria(""); return; }
+    const newRef = db.ref("categorias").push();
+    db.ref("categorias/"+newRef.key).set({nombre});
+    setNuevaCategoria("");
+  };
+  const borrarCategoria = (id) => { if(confirm("¿Borrar esta categoría? Los productos que ya la tienen cargada no se modifican.")) db.ref("categorias/"+id).remove(); };
+  const borrarCombo = (id) => { if(confirm("¿Borrar este combo?")) db.ref("combos/"+id).remove(); };
+  const agregarComboAlCarrito = (combo) => {
+    setCarrito(prev=>{
+      const existe = prev.find(i=>i.id==="combo:"+combo.id);
+      if(existe) return prev.map(i=>i.id===existe.id?{...i,cantidad:i.cantidad+1}:i);
+      return [...prev, {id:"combo:"+combo.id, nombre:"🎁 "+combo.nombre, imagen:combo.imagen, cantidad:1, esCombo:true, precioCombo:Number(combo.precioCombo), componentes:combo.componentes||[]}];
+    });
+    setDrawerOpen(true);
+  };
+
+  const exportarCSV = (filas, nombreArchivo) => {
+    const csv = filas.map(fila=>fila.map(c=>`"${String(c??"").replace(/"/g,'""')}"`).join(",")).join("\n");
+    const blob = new Blob(["\uFEFF"+csv], {type:"text/csv;charset=utf-8;"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url; a.download = nombreArchivo; a.click();
+    URL.revokeObjectURL(url);
+  };
+  const descargarPlantillaCSV = () => {
+    exportarCSV([
+      ["nombre","categoria","precioMinorista","precioMayorista","cantMinMayorista","codigoBarras","stock","imagen"],
+      ["Arroz 1kg","Almacén","1200","1000","6","7791234567890","50","https://..."],
+    ], "plantilla-productos-golo-mas.csv");
+  };
+
+  const importarProductosCSV = (file) => {
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try{
+        const filas = parseCSV(e.target.result);
+        const updates = {};
+        let cargados = 0;
+        filas.forEach(f=>{
+          if(!f.nombre) return;
+          const newRef = db.ref("productos").push();
+          updates["productos/"+newRef.key] = {
+            id: newRef.key,
+            nombre: f.nombre,
+            categoria: f.categoria || "General",
+            precioMinorista: Number(f.preciominorista)||0,
+            precioMayorista: Number(f.preciomayorista)||0,
+            cantMinMayorista: f.cantminmayorista || "",
+            codigoBarras: f.codigobarras || "",
+            stock: f.stock || "",
+            imagen: f.imagen || "",
+            agotado: false, destacado: false
+          };
+          cargados++;
+        });
+        if(cargados===0){ alert("No se encontraron filas válidas (revisá que la columna 'nombre' esté completa)."); return; }
+        db.ref().update(updates).then(()=>alert(`Se importaron ${cargados} productos correctamente.`));
+      }catch(err){
+        alert("No se pudo leer el archivo. Revisá que sea un CSV con el formato de la plantilla.");
+      }
+    };
+    reader.readAsText(file, "UTF-8");
+  };
+
+  const exportarPedidosCSV = () => {
+    const filas = [["Fecha","Cliente","Total","Estado","Items"]];
+    pedidos.forEach(p=>filas.push([new Date(p.fecha).toLocaleString("es-AR"), p.clienteNombre, p.total, p.estado, (p.items||[]).map(i=>`${i.cantidad}x ${i.nombre}`).join(" | ")]));
+    exportarCSV(filas, "pedidos-golo-mas.csv");
+  };
+  const exportarClientesCSV = () => {
+    const filas = [["Número","Nombre","Teléfono","Dirección","CUIL","Descuento %"]];
+    clientes.forEach(c=>filas.push([c.numero,c.nombre,c.telefono,c.direccion,c.cuil,c.descuento||0]));
+    exportarCSV(filas, "clientes-golo-mas.csv");
+  };
+
+  const imprimirTicket = () => {
+    const win = window.open("","_blank","width=380,height=600");
+    const filas = carritoConPrecios.map(i=>`<tr><td>${i.cantidad}x ${i.nombre}</td><td style="text-align:right">${fmt(i.subtotal)}</td></tr>`).join("");
+    win.document.write(`
+      <html><head><title>Ticket GOLO-MAS</title><style>
+        body{font-family:monospace;padding:16px;width:280px;}
+        h2{text-align:center;margin:0 0 4px;} p{text-align:center;margin:0 0 10px;font-size:12px;}
+        table{width:100%;border-collapse:collapse;font-size:12px;} td{padding:3px 0;border-bottom:1px dashed #999;}
+        .total{font-weight:bold;font-size:14px;border-top:2px solid #000;margin-top:8px;padding-top:8px;display:flex;justify-content:space-between;}
+      </style></head><body>
+        <h2>GOLO-MAS</h2><p>${new Date().toLocaleString("es-AR")}</p>
+        <table>${filas}</table>
+        <div class="total"><span>TOTAL</span><span>${fmt(totalCarrito)}</span></div>
+        <p style="margin-top:14px">¡Gracias por su compra!</p>
+      </body></html>
+    `);
+    win.document.close(); win.focus(); win.print();
+  };
+
+  return (
+    <div>
+      {/* ===== TOAST NUEVO PEDIDO ===== */}
+      {toastPedido && (
+        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-[60] bg-gradient-to-br from-ambar-300 to-ambar-500 text-carbon-900 px-4 py-3 rounded-2xl shadow-glow-ambar flex items-center gap-2.5 animate-slide-up cursor-pointer" onClick={()=>{setAdminModalOpen(true);setAdminTab("pedidos");setToastPedido(null);}}>
+          <i className="fa-solid fa-bell text-lg"></i>
+          <div className="text-xs font-bold leading-tight"><p>¡Nuevo pedido!</p><p className="font-normal">{toastPedido.clienteNombre} — {fmt(toastPedido.total)}</p></div>
+        </div>
+      )}
+
+      {/* ===== HEADER ===== */}
+      <header className="sticky top-0 z-40 cristal-header border-b border-carbon-700/60 px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-11 h-11 rounded-full border-2 border-marca-500 flex items-center justify-center bg-carbon-850 shadow-glow-marca">
+            <span className="font-heading text-ambar-400 text-lg">G</span>
+          </div>
+          <div>
+            <p className="font-heading text-lg leading-none tracking-tight">GOLO<span className="text-marca-500">-</span>MAS</p>
+            <p className="text-[9.5px] text-ambar-300/90 font-bold tracking-[0.15em] mt-1">MAYORISTA · MINORISTA</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {clienteActual ? (
+            <button onClick={()=>setHistorialOpen(true)} className="flex items-center gap-1.5 bg-white/5 border border-carbon-700 text-ambar-200 text-xs font-bold px-3.5 py-2 rounded-full hover:bg-white/10 transition">
+              <i className="fa-solid fa-circle-user"></i>{clienteActual.nombre || clienteActual.numero}
+            </button>
+          ) : (
+            <button onClick={()=>setLoginOpen(true)} className="w-10 h-10 rounded-full bg-white/5 border border-carbon-700 flex items-center justify-center hover:bg-white/10 transition" title="Ingresar como cliente">
+              <i className="fa-solid fa-user text-sm"></i>
+            </button>
+          )}
+          <button onClick={()=>setDrawerOpen(true)} className="relative flex items-center gap-2 bg-gradient-to-br from-marca-400 to-marca-600 shadow-glow-marca hover:brightness-110 active:scale-95 transition px-4 py-2.5 rounded-full font-bold text-sm">
+            <i className="fa-solid fa-basket-shopping"></i>
+            <span className="bg-ambar-400 text-carbon-900 w-5 h-5 rounded-full text-[11px] font-extrabold flex items-center justify-center">{cantidadCarrito}</span>
+          </button>
+        </div>
+      </header>
+      <div className="bg-carbon-850 border-b border-carbon-700/60 px-4 py-1.5 flex items-center justify-center gap-2 text-[10.5px] text-carbon-400">
+        <i className="fa-regular fa-clock text-ambar-500"></i>
+        <span>{config.horarios[0].dia}: {config.horarios[0].horario}</span>
+        <span className="text-carbon-600">·</span>
+        <span>{config.horarios[1].dia}: {config.horarios[1].horario}</span>
+      </div>
+
+      {/* ===== HERO ===== */}
+      <div className="relative overflow-hidden px-5 pt-12 pb-10 sm:pt-16 sm:pb-14">
+        <div className="relative max-w-2xl">
+          <span className="inline-block bg-white/5 border border-ambar-400/30 text-ambar-300 text-[10.5px] font-bold tracking-[0.12em] uppercase px-3.5 py-1.5 rounded-full mb-5">
+            <i className="fa-solid fa-store mr-1.5"></i>Mayorista &amp; Minorista de almacén
+          </span>
+          <h1 className="font-heading text-4xl sm:text-5xl leading-[1.05] mb-4">
+            Todo para tu<br/><span className="font-price italic text-transparent bg-clip-text bg-gradient-to-r from-ambar-300 to-ambar-500">almacén</span>, al mejor precio.
+          </h1>
+          <p className="text-carbon-300 text-[15px] max-w-md mb-6 leading-relaxed">Comprá por mayor o por menor. Armá tu pedido y generá tu presupuesto al instante, sin vueltas.</p>
+          <div className="flex gap-2.5 flex-wrap">
+            {[["fa-tags","Precio mayor y menor"],["fa-bolt","Presupuesto al instante"],["fa-truck","Envíos a comercios"]].map(([icon,t])=>(
+              <span key={t} className="flex items-center gap-1.5 bg-white/[.04] border border-carbon-700 text-carbon-200 text-[11.5px] font-semibold px-3.5 py-1.5 rounded-full">
+                <i className={`fa-solid ${icon} text-ambar-400 text-[11px]`}></i>{t}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <main className="max-w-6xl mx-auto px-4">
+        {/* ===== DESTACADOS ===== */}
+        {productosDestacados.length>0 && (
+          <div className="mb-6">
+            <h2 className="font-heading text-sm mb-3 flex items-center gap-2"><i className="fa-solid fa-star text-ambar-400"></i>Destacados de la semana</h2>
+            <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1">
+              {productosDestacados.map(p=>(
+                <div key={p.id} className="w-36 flex-shrink-0">
+                  <ProductCard p={p} modoPrecio={modoPrecio} precioProducto={precioProducto} agregarAlCarrito={agregarAlCarrito} clienteInfo={clienteInfo} toggleFavorito={toggleFavorito} cantidadEnCarrito={cantidadEnCarritoDe(p.id)} />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ===== COMBOS ===== */}
+        {combos.length>0 && (
+          <div className="mb-6">
+            <h2 className="font-heading text-sm mb-3 flex items-center gap-2"><i className="fa-solid fa-gift text-marca-500"></i>Combos especiales</h2>
+            <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1">
+              {combos.map(c=>(
+                <div key={c.id} className="w-56 flex-shrink-0 tarjeta-prod rounded-2xl p-3 flex gap-3 items-center">
+                  {c.imagen ? <img src={c.imagen} onError={e=>{e.target.onerror=null;e.target.src=IMG_FALLBACK;}} className="w-16 h-16 rounded-xl object-cover flex-shrink-0" /> : <div className="w-16 h-16 rounded-xl bg-white/5 flex items-center justify-center text-carbon-600 flex-shrink-0"><i className="fa-solid fa-gift"></i></div>}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[13px] font-bold truncate">{c.nombre}</p>
+                    <p className="font-price text-ambar-400 text-base">{fmt(c.precioCombo)}</p>
+                    <button onClick={()=>agregarComboAlCarrito(c)} className="mt-1 w-full bg-gradient-to-br from-marca-400 to-marca-600 text-white text-[11px] font-bold py-1.5 rounded-lg active:scale-95 transition">Agregar combo</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ===== BUSCADOR + FILTROS (barra flotante) ===== */}
+        <div className="cristal border border-carbon-700/60 rounded-2xl shadow-2xl p-3 mb-6 animate-fade-in">
+          <div className="flex gap-2 mb-3">
+            <div className="relative flex-1">
+              <input value={busqueda} onChange={e=>setBusqueda(e.target.value)} placeholder="Buscar producto..."
+                className="input-oscuro w-full rounded-xl py-3 pl-11 pr-4 text-sm font-medium transition" />
+              <i className="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-carbon-400 text-sm"></i>
+            </div>
+            <div className="flex bg-white/[.04] border border-carbon-700 rounded-xl p-1 flex-shrink-0">
+              {[["minorista","Por menor"],["mayorista","Por mayor"]].map(([id,label])=>(
+                <button key={id} onClick={()=>setModoPrecio(id)}
+                  className={`px-3.5 py-2 rounded-lg text-xs font-bold transition-all ${modoPrecio===id?'bg-gradient-to-br from-marca-400 to-marca-600 text-white shadow-glow-marca':'text-carbon-300'}`}>{label}</button>
+              ))}
+            </div>
+          </div>
+          <div className="flex gap-2 overflow-x-auto no-scrollbar">
+            <button onClick={()=>setCatActiva("todas")}
+              className={`whitespace-nowrap px-4 py-1.5 rounded-full font-bold text-[12px] transition-all ${catActiva==="todas"?'bg-gradient-to-br from-ambar-300 to-ambar-500 text-carbon-900':'bg-white/[.04] text-carbon-300 border border-carbon-700'}`}>Todas</button>
+            {clienteInfo && (
+              <button onClick={()=>setCatActiva("favoritos")}
+                className={`whitespace-nowrap px-4 py-1.5 rounded-full font-bold text-[12px] transition-all flex items-center gap-1.5 ${catActiva==="favoritos"?'bg-gradient-to-br from-ambar-300 to-ambar-500 text-carbon-900':'bg-white/[.04] text-carbon-300 border border-carbon-700'}`}><i className="fa-solid fa-heart text-[11px]"></i>Favoritos</button>
+            )}
+            {categoriasConProductos.map(c=>(
+              <button key={c} onClick={()=>setCatActiva(c)}
+                className={`whitespace-nowrap px-4 py-1.5 rounded-full font-bold text-[12px] tracking-wide transition-all ${catActiva===c?'bg-gradient-to-br from-ambar-300 to-ambar-500 text-carbon-900':'bg-white/[.04] text-carbon-300 border border-carbon-700'}`}>{c}</button>
+            ))}
+          </div>
+        </div>
+
+        {/* ===== GRILLA ===== */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5 mb-10">
+          {productosFiltrados.length===0 && (
+            <div className="col-span-full text-center py-16 text-carbon-500">
+              <i className="fa-solid fa-box-open text-4xl mb-3 opacity-50"></i>
+              <p className="font-bold">No hay productos cargados todavía.</p>
+            </div>
+          )}
+          {productosFiltrados.map(p=>(
+            <ProductCard key={p.id} p={p} modoPrecio={modoPrecio} precioProducto={precioProducto} agregarAlCarrito={agregarAlCarrito} clienteInfo={clienteInfo} toggleFavorito={toggleFavorito} cantidadEnCarrito={cantidadEnCarritoDe(p.id)} />
+          ))}
+        </div>
+
+        {/* ===== MAPS + HORARIOS ===== */}
+        <div className="grid sm:grid-cols-2 gap-4 mb-8">
+          <div className="cristal border border-carbon-700/60 rounded-2xl p-4">
+            <h3 className="font-heading text-base mb-3"><i className="fa-solid fa-location-dot text-marca-500 mr-1.5"></i>Dónde estamos</h3>
+            <iframe className="w-full h-56 rounded-xl border-0 grayscale-[.2]" loading="lazy" src={"https://www.google.com/maps?q="+encodeURIComponent(config.mapsQuery)+"&output=embed"}></iframe>
+          </div>
+          <div className="cristal border border-carbon-700/60 rounded-2xl p-5">
+            <h3 className="font-heading text-base mb-3"><i className="fa-regular fa-clock text-ambar-400 mr-1.5"></i>Horarios de atención</h3>
+            <div className="space-y-2.5 mb-4">
+              {config.horarios.map(h=>(
+                <div key={h.dia} className="flex justify-between text-sm border-b border-carbon-700/60 pb-2">
+                  <span className="text-carbon-300 font-semibold">{h.dia}</span>
+                  <span className={h.horario==="Cerrado"?"text-marca-400 font-bold":"text-carbon-100"}>{h.horario}</span>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-carbon-400 mb-4"><i className="fa-solid fa-truck text-ambar-500 mr-1.5"></i>{DIAS_ENTREGA}</p>
+            <p className="text-[11px] font-bold text-carbon-400 tracking-wide mb-2">MEDIOS DE PAGO</p>
+            <div className="flex gap-2 flex-wrap mb-3">
+              {config.pagos.efectivo && (
+                <span className="flex items-center gap-1.5 bg-white/5 border border-carbon-700 text-carbon-200 text-[11px] font-semibold px-3 py-1.5 rounded-full">
+                  <i className="fa-solid fa-money-bill-wave text-ambar-400 text-[11px]"></i>Efectivo
+                </span>
+              )}
+              {config.pagos.transferencia.activo && (
+                <span className="flex items-center gap-1.5 bg-white/5 border border-carbon-700 text-carbon-200 text-[11px] font-semibold px-3 py-1.5 rounded-full">
+                  <i className="fa-solid fa-building-columns text-ambar-400 text-[11px]"></i>Transferencia
+                </span>
+              )}
+              {config.pagos.mercadopago.activo && (
+                <button onClick={()=>setQrModalOpen(true)} className="flex items-center gap-1.5 bg-white/5 border border-carbon-700 text-carbon-200 text-[11px] font-semibold px-3 py-1.5 rounded-full hover:border-ambar-400/50 transition">
+                  <i className="fa-solid fa-mobile-screen-button text-ambar-400 text-[11px]"></i>Mercado Pago
+                </button>
+              )}
+            </div>
+            {config.pagos.transferencia.activo && (config.pagos.transferencia.cbu || config.pagos.transferencia.alias) && (
+              <div className="bg-white/[.03] border border-carbon-700 rounded-xl p-3 text-xs space-y-1">
+                {config.pagos.transferencia.alias && <p><span className="text-carbon-500">Alias:</span> <b className="text-carbon-100">{config.pagos.transferencia.alias}</b></p>}
+                {config.pagos.transferencia.cbu && <p><span className="text-carbon-500">CBU:</span> <b className="text-carbon-100">{config.pagos.transferencia.cbu}</b></p>}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {qrModalOpen && (
+          <ModalCentrado onClose={()=>setQrModalOpen(false)} titulo="Pagar con Mercado Pago" icono="fa-mobile-screen-button">
+            <div className="p-6 text-center">
+              {config.pagos.mercadopago.qrUrl ? (
+                <img src={config.pagos.mercadopago.qrUrl} className="w-full max-w-[220px] mx-auto rounded-xl border border-carbon-700" />
+              ) : (
+                <p className="text-carbon-400 text-sm">Todavía no se cargó el QR de Mercado Pago.</p>
+              )}
+            </div>
+          </ModalCentrado>
+        )}
+        <footer className="text-center text-xs text-carbon-500 pb-6">
+          <p>© {new Date().getFullYear()} GOLO-MAS — Venta mayorista y minorista de artículos de almacén</p>
+        </footer>
+      </main>
+
+      {/* ===== BOTONES FLOTANTES ===== */}
+      <div className="fixed right-4 bottom-4 z-40 flex flex-col gap-2.5">
+        <a href={"https://wa.me/"+config.whatsapp} target="_blank" className="w-13 h-13 w-[52px] h-[52px] rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition"><i className="fa-brands fa-whatsapp text-2xl"></i></a>
+        <a href={"https://instagram.com/"+config.instagram} target="_blank" className="w-[52px] h-[52px] rounded-full text-white flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition" style={{background:"radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%)"}}><i className="fa-brands fa-instagram text-2xl"></i></a>
+        <button onClick={()=>setChatOpen(true)} className="w-[52px] h-[52px] rounded-full bg-gradient-to-br from-marca-400 to-marca-600 text-white flex items-center justify-center shadow-glow-marca hover:scale-110 active:scale-95 transition animate-pulse-slow"><i className="fa-solid fa-comment-dots text-2xl"></i></button>
+      </div>
+      <button onClick={()=>setAdminModalOpen(true)} className="fixed left-4 bottom-4 z-40 w-9 h-9 rounded-full bg-white/5 border border-carbon-700 text-carbon-400 flex items-center justify-center text-xs hover:text-ambar-400 hover:border-ambar-400/40 transition" title="Administración"><i className="fa-solid fa-gear"></i></button>
+
+      {/* ===== CHATBOT ===== */}
+      {chatOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center animate-fade-in">
+          <div className="cristal border border-carbon-700 w-full sm:max-w-sm sm:rounded-3xl rounded-t-3xl max-h-[80vh] overflow-y-auto animate-slide-up flex flex-col">
+            <div className="sticky top-0 cristal-header px-5 py-4 flex justify-between items-center border-b border-carbon-700">
+              <h3 className="font-heading text-sm text-ambar-300"><i className="fa-solid fa-comment-dots mr-2"></i>Asistente GOLO-MAS</h3>
+              <button onClick={()=>{setChatOpen(false);setPreguntaActiva(null);}} className="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center"><i className="fa-solid fa-xmark"></i></button>
+            </div>
+            <div className="p-4 space-y-2.5">
+              {!preguntaActiva ? (
+                <>
+                  <div className="bg-white/5 border border-carbon-700 rounded-2xl rounded-tl-sm p-3.5 text-sm text-carbon-200">¡Hola! ¿En qué te puedo ayudar?</div>
+                  {FAQ.map((f,i)=>(
+                    <button key={i} onClick={()=>{
+                      if(f.a==="__WHATSAPP__"){ window.open("https://wa.me/"+config.whatsapp,"_blank"); }
+                      else setPreguntaActiva(f);
+                    }} className="w-full text-left bg-white/[.03] border border-carbon-700 hover:border-ambar-400/50 hover:bg-white/[.06] rounded-xl px-4 py-3 text-sm font-semibold transition">{f.q}</button>
+                  ))}
+                </>
+              ) : (
+                <>
+                  <div className="bg-gradient-to-br from-marca-500 to-marca-600 text-white rounded-2xl rounded-tr-sm p-3.5 text-sm ml-8">{preguntaActiva.q}</div>
+                  <div className="bg-white/5 border border-carbon-700 rounded-2xl rounded-tl-sm p-3.5 text-sm text-carbon-200 mr-4">{preguntaActiva.a}</div>
+                  <button onClick={()=>setPreguntaActiva(null)} className="w-full bg-white/5 border border-carbon-700 rounded-xl py-2.5 text-sm font-bold"><i className="fa-solid fa-arrow-left mr-1.5"></i>Volver</button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ===== LOGIN CLIENTE ===== */}
+      {loginOpen && (
+        <ModalCentrado onClose={()=>setLoginOpen(false)} titulo="Ingresar como cliente" icono="fa-user">
+          <div className="p-6 space-y-3.5">
+            <input value={loginNumero} onChange={e=>setLoginNumero(e.target.value)} placeholder="Número de cliente" className="input-oscuro w-full rounded-xl p-3 text-sm" />
+            <input value={loginPass} onChange={e=>setLoginPass(e.target.value)} type="password" placeholder="Contraseña" onKeyDown={e=>e.key==="Enter"&&hacerLogin()} className="input-oscuro w-full rounded-xl p-3 text-sm" />
+            {loginError && <p className="text-marca-400 text-xs font-semibold">{loginError}</p>}
+            <button onClick={hacerLogin} className="w-full bg-gradient-to-br from-marca-400 to-marca-600 shadow-glow-marca hover:brightness-110 active:scale-[.98] text-white py-3 rounded-xl text-sm font-bold transition">Ingresar</button>
+            <p className="text-[11px] text-carbon-500">Tu número y contraseña te los da el administrador de GOLO-MAS.</p>
+          </div>
+        </ModalCentrado>
+      )}
+
+      {/* ===== HISTORIAL CLIENTE ===== */}
+      {historialOpen && clienteActual && (
+        <DrawerDerecha onClose={()=>setHistorialOpen(false)} titulo="Mi cuenta" icono="fa-circle-user">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            <div className="bg-white/[.03] border border-carbon-700 rounded-xl p-4">
+              <p className="font-heading text-base mb-2 text-ambar-300">{clienteInfo.nombre || "Cliente Nº "+clienteInfo.numero}</p>
+              <div className="text-xs text-carbon-300 space-y-1">
+                <p><i className="fa-solid fa-id-card w-4 text-carbon-500"></i> Nº de cliente: {clienteInfo.numero}</p>
+                {clienteInfo.telefono && <p><i className="fa-solid fa-phone w-4 text-carbon-500"></i> {clienteInfo.telefono}</p>}
+                {clienteInfo.direccion && <p><i className="fa-solid fa-location-dot w-4 text-carbon-500"></i> {clienteInfo.direccion}</p>}
+                {clienteInfo.cuil && <p><i className="fa-solid fa-file-invoice w-4 text-carbon-500"></i> CUIL: {clienteInfo.cuil}</p>}
+              </div>
+              {Number(clienteInfo.descuento)>0 && (
+                <span className="inline-block mt-3 text-[11px] font-bold bg-ambar-400/15 text-ambar-300 px-3 py-1 rounded-full">
+                  <i className="fa-solid fa-tag mr-1"></i>{clienteInfo.descuento}% de descuento especial
+                </span>
+              )}
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-[11px] font-bold text-carbon-400 tracking-wide">HISTORIAL DE PEDIDOS</p>
+                {pedidos.filter(p=>p.clienteId===clienteInfo.id).length>0 && (
+                  <button onClick={()=>{repetirUltimoPedido();setHistorialOpen(false);}} className="text-[11px] font-bold text-ambar-400 hover:text-ambar-300 transition"><i className="fa-solid fa-rotate-right mr-1"></i>Repetir último pedido</button>
+                )}
+              </div>
+              <div className="space-y-3">
+                {pedidos.filter(p=>p.clienteId===clienteInfo.id).length===0 && <p className="text-carbon-500 text-sm text-center py-8">Todavía no hiciste pedidos.</p>}
+                {pedidos.filter(p=>p.clienteId===clienteInfo.id).sort((a,b)=>new Date(b.fecha)-new Date(a.fecha)).map(p=>(
+                  <PedidoResumen key={p.id} p={p} />
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="p-4 border-t border-carbon-700">
+            <button onClick={()=>{setClienteActual(null);setHistorialOpen(false);}} className="w-full bg-white/5 border border-carbon-700 text-carbon-200 py-3 rounded-xl text-sm font-bold hover:bg-white/10 transition">Cerrar sesión</button>
+          </div>
+        </DrawerDerecha>
+      )}
+
+      {/* ===== CARRITO ===== */}
+      {drawerOpen && (
+        <DrawerDerecha onClose={()=>setDrawerOpen(false)} titulo="Tu pedido" icono="fa-basket-shopping">
+          <div className="flex-1 overflow-y-auto p-4">
+            {carritoConPrecios.length===0 ? (
+              <div className="text-center text-carbon-500 mt-14">
+                <i className="fa-solid fa-bag-shopping text-5xl mb-3 opacity-30"></i>
+                <p className="font-semibold">El carrito está vacío</p>
+              </div>
+            ) : (
+              <div className="space-y-2.5">
+                {carritoConPrecios.map(i=>{
+                  const prodRef = productos.find(x=>x.id===i.id);
+                  const esMayoristaEnCarrito = !i.esCombo && prodRef && prodRef.cantMinMayorista && prodRef.precioMayorista && (modoPrecio==="mayorista" || i.cantidad >= Number(prodRef.cantMinMayorista));
+                  return (
+                  <div key={i.id} className="flex gap-3 items-center bg-white/[.03] border border-carbon-700 p-3 rounded-xl">
+                    {i.imagen ? <img src={i.imagen} onError={e=>{e.target.onerror=null;e.target.src=IMG_FALLBACK;}} className="w-14 h-14 rounded-lg object-cover flex-shrink-0" /> : (
+                      <div className="w-14 h-14 rounded-lg bg-white/5 flex items-center justify-center text-carbon-500 flex-shrink-0"><i className="fa-solid fa-box"></i></div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-sm truncate text-carbon-100">{i.nombre}</p>
+                      <p className="text-[12px] text-carbon-400">{i.cantidad} x {fmt(i.precioUnit)} = <b className="text-ambar-400">{fmt(i.subtotal)}</b></p>
+                      {esMayoristaEnCarrito && <p className="text-[10px] text-emerald-400 font-bold"><i className="fa-solid fa-circle-check mr-1"></i>Precio mayorista</p>}
+                    </div>
+                    <div className="flex items-center gap-1.5 flex-shrink-0">
+                      <button onClick={()=>cambiarCantidadCarrito(i.id,-1)} className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 active:scale-90 flex items-center justify-center transition"><i className="fa-solid fa-minus text-[10px]"></i></button>
+                      <span className="w-4 text-center text-xs font-bold">{i.cantidad}</span>
+                      <button onClick={()=>cambiarCantidadCarrito(i.id,1)} className="w-7 h-7 rounded-full bg-gradient-to-br from-marca-400 to-marca-600 active:scale-90 flex items-center justify-center transition"><i className="fa-solid fa-plus text-[10px]"></i></button>
+                    </div>
+                    <button onClick={()=>quitarDelCarrito(i.id)} className="text-carbon-500 hover:text-marca-400 text-xs ml-1 transition"><i className="fa-solid fa-trash-can"></i></button>
+                  </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+          <div className="p-5 border-t border-carbon-700 cristal">
+            <div className="flex justify-between items-center mb-4">
+              <span className="text-carbon-300 font-semibold text-sm">Total</span>
+              <span className="font-price text-2xl text-ambar-400">{fmt(totalCarrito)}</span>
+            </div>
+            {clienteActual && (
+              <button onClick={confirmarPedido} disabled={carrito.length===0} className="w-full bg-gradient-to-br from-marca-400 to-marca-600 shadow-glow-marca hover:brightness-110 active:scale-[.98] disabled:opacity-30 disabled:shadow-none text-white py-3.5 rounded-xl font-bold text-sm mb-2.5 transition">Confirmar pedido</button>
+            )}
+            <button onClick={()=>setPresupuestoOpen(true)} disabled={carrito.length===0} className={`w-full py-3.5 rounded-xl font-bold text-sm mb-2.5 disabled:opacity-30 transition active:scale-[.98] ${clienteActual?'bg-white/5 border border-carbon-700 text-carbon-200 hover:bg-white/10':'bg-gradient-to-br from-marca-400 to-marca-600 shadow-glow-marca hover:brightness-110 text-white'}`}>Generar presupuesto</button>
+            <a href={"https://wa.me/"+config.whatsapp+"?text="+encodeURIComponent("Hola! Quiero hacer este pedido:\n"+carritoConPrecios.map(i=>`- ${i.nombre} x${i.cantidad}`).join("\n")+`\nTotal aprox: ${fmt(totalCarrito)}`)}
+              target="_blank" className="w-full flex items-center justify-center gap-2 bg-white/5 border border-carbon-700 text-ambar-300 py-3.5 rounded-xl font-bold text-sm hover:bg-white/10 active:scale-[.98] transition">
+              <i className="fa-brands fa-whatsapp"></i>Enviar pedido por WhatsApp
+            </a>
+            <button onClick={imprimirTicket} disabled={carrito.length===0} className="w-full flex items-center justify-center gap-2 bg-transparent text-carbon-400 hover:text-carbon-200 disabled:opacity-30 py-2.5 text-xs font-bold transition mt-1">
+              <i className="fa-solid fa-receipt"></i>Imprimir ticket
+            </button>
+            <p className="text-[10.5px] text-carbon-500 mt-2 leading-snug">No están incluidos los costos de envío. Los precios pueden no estar actualizados: enviá tu pedido y nos contactamos para confirmarlo.</p>
+          </div>
+        </DrawerDerecha>
+      )}
+
+      {presupuestoOpen && (
+        <ModalCentrado onClose={()=>setPresupuestoOpen(false)} titulo="Datos para el presupuesto" icono="fa-file-invoice">
+          <div className="p-6 space-y-3.5">
+            <input value={datosCliente.nombre} onChange={e=>setDatosCliente({...datosCliente,nombre:e.target.value})} placeholder="Nombre" className="input-oscuro w-full rounded-xl p-3 text-sm" />
+            <input value={datosCliente.telefono} onChange={e=>setDatosCliente({...datosCliente,telefono:e.target.value})} placeholder="Teléfono" className="input-oscuro w-full rounded-xl p-3 text-sm" />
+            <button onClick={()=>{generarPDF();setPresupuestoOpen(false);}} className="w-full bg-gradient-to-br from-marca-400 to-marca-600 shadow-glow-marca hover:brightness-110 active:scale-[.98] text-white py-3 rounded-xl text-sm font-bold transition">Descargar PDF</button>
+          </div>
+        </ModalCentrado>
+      )}
+
+      {/* ===== ADMIN ===== */}
+      {adminModalOpen && (
+        <ModalAdmin
+          adminLogged={adminLogged}
+          onClose={()=>{ if(!adminLogged) setAdminModalOpen(false); }}
+          onSalir={()=>{setAdminLogged(false);setAdminModalOpen(false);}}
+          userInput={userInput} setUserInput={setUserInput}
+          passInput={passInput} setPassInput={setPassInput}
+          loginAdminError={loginAdminError}
+          intentarLoginAdmin={intentarLoginAdmin}
+          adminTab={adminTab} setAdminTab={setAdminTab}
+          pedidosNuevos={pedidos.filter(p=>p.estado==="recibido").length}
+        >
+          {adminTab==="productos" && (
+            <div className="space-y-4">
+              <div className="flex gap-2">
+                <input value={busqueda} onChange={e=>setBusqueda(e.target.value)} placeholder="Buscar producto..." className="input-oscuro flex-1 rounded-xl p-3 text-sm" />
+                <button onClick={()=>setEditando("nuevo")} className="bg-gradient-to-br from-ambar-300 to-ambar-500 text-carbon-900 px-4 rounded-xl text-sm font-bold flex-shrink-0 shadow-glow-ambar active:scale-95 transition"><i className="fa-solid fa-plus mr-1"></i>Nuevo</button>
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                <label className="bg-white/5 border border-carbon-700 text-carbon-200 px-3.5 py-2 rounded-xl text-xs font-bold hover:bg-white/10 transition cursor-pointer flex items-center gap-1.5">
+                  <i className="fa-solid fa-file-arrow-up"></i>Importar CSV
+                  <input type="file" accept=".csv" className="hidden" onChange={e=>{importarProductosCSV(e.target.files[0]); e.target.value="";}} />
+                </label>
+                <button onClick={descargarPlantillaCSV} className="text-carbon-500 hover:text-carbon-300 text-xs font-bold underline transition">Descargar plantilla</button>
+              </div>
+              {seleccionados.length>0 && (
+                <div className="flex items-center gap-2 bg-ambar-400/10 border border-ambar-400/30 rounded-xl p-3">
+                  <span className="text-xs font-bold text-ambar-300">{seleccionados.length} seleccionados</span>
+                  <input type="number" value={pctAumento} onChange={e=>setPctAumento(e.target.value)} placeholder="%" className="input-oscuro w-16 p-2 rounded-lg text-sm text-center" />
+                  <button onClick={aplicarAumento} className="bg-gradient-to-br from-marca-400 to-marca-600 text-white text-xs font-bold px-3 py-2 rounded-lg active:scale-95 transition">Aplicar aumento</button>
+                  <button onClick={()=>setSeleccionados([])} className="text-xs text-carbon-400 underline ml-auto">Cancelar</button>
+                </div>
+              )}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {productosFiltrados.map(p=>(
+                  <ProductoAdminCard key={p.id} p={p} seleccionado={seleccionados.includes(p.id)} toggleSeleccion={toggleSeleccion} onEditar={()=>setEditando(p)} onBorrar={()=>borrarProducto(p.id)} />
+                ))}
+                {productosFiltrados.length===0 && <p className="text-carbon-500 text-sm col-span-full text-center py-6">No hay productos cargados.</p>}
+              </div>
+            </div>
+          )}
+
+          {adminTab==="categorias" && (
+            <div className="space-y-3">
+              <div className="flex gap-2">
+                <input value={nuevaCategoria} onChange={e=>setNuevaCategoria(e.target.value)}
+                  onKeyDown={e=>e.key==="Enter"&&agregarCategoria()}
+                  placeholder="Nombre de la categoría (ej: Almacén, Limpieza, Bebidas)" className="input-oscuro flex-1 rounded-xl p-3 text-sm" />
+                <button onClick={agregarCategoria} className="bg-gradient-to-br from-ambar-300 to-ambar-500 text-carbon-900 px-4 rounded-xl text-sm font-bold shadow-glow-ambar active:scale-95 transition"><i className="fa-solid fa-plus mr-1"></i>Agregar</button>
+              </div>
+              {categoriasLista.length===0 && <p className="text-carbon-500 text-sm text-center py-6">Todavía no cargaste categorías. Agregá la primera arriba.</p>}
+              <div className="space-y-1.5">
+                {categoriasLista.map(c=>(
+                  <div key={c.id} className="flex items-center justify-between bg-white/[.03] border border-carbon-700 rounded-xl p-3">
+                    <span className="text-sm font-semibold text-carbon-100">{c.nombre}</span>
+                    <span className="text-[11px] text-carbon-500 mr-auto ml-3">{productos.filter(p=>p.categoria===c.nombre).length} producto(s)</span>
+                    <button onClick={()=>borrarCategoria(c.id)} className="w-8 h-8 rounded-lg bg-marca-500/10 hover:bg-marca-500/20 text-marca-400 flex items-center justify-center transition"><i className="fa-solid fa-trash-can text-xs"></i></button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {adminTab==="combos" && (
+            <div className="space-y-3">
+              <button onClick={()=>setEditandoCombo("nuevo")} className="bg-gradient-to-br from-ambar-300 to-ambar-500 text-carbon-900 px-4 py-2.5 rounded-xl text-sm font-bold shadow-glow-ambar active:scale-95 transition"><i className="fa-solid fa-plus mr-1"></i>Nuevo combo</button>
+              {combos.length===0 && <p className="text-carbon-500 text-sm text-center py-6">No hay combos cargados todavía.</p>}
+              {combos.map(c=>(
+                <div key={c.id} className="bg-white/[.03] border border-carbon-700 rounded-xl p-3.5 flex items-center gap-3">
+                  {c.imagen ? <img src={c.imagen} onError={e=>{e.target.onerror=null;e.target.src=IMG_FALLBACK;}} className="w-12 h-12 rounded-lg object-cover flex-shrink-0" /> : <div className="w-12 h-12 rounded-lg bg-white/5 flex items-center justify-center text-carbon-600 flex-shrink-0"><i className="fa-solid fa-gift"></i></div>}
+                  <div className="flex-1 min-w-0">
+                    <p className="font-bold text-sm truncate text-carbon-100">{c.nombre}</p>
+                    <p className="text-xs text-ambar-400 font-heading">{fmt(c.precioCombo)}</p>
+                    <p className="text-[10.5px] text-carbon-500 truncate">{(c.componentes||[]).map(comp=>`${comp.cantidad}x ${comp.nombre}`).join(", ")}</p>
+                  </div>
+                  <button onClick={()=>setEditandoCombo(c)} className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-carbon-300 flex items-center justify-center transition"><i className="fa-solid fa-pen text-xs"></i></button>
+                  <button onClick={()=>borrarCombo(c.id)} className="w-8 h-8 rounded-lg bg-marca-500/10 hover:bg-marca-500/20 text-marca-400 flex items-center justify-center transition"><i className="fa-solid fa-trash-can text-xs"></i></button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {adminTab==="clientes" && (
+            <div className="space-y-3">
+              <div className="flex gap-2">
+                <button onClick={()=>setEditandoCliente("nuevo")} className="bg-gradient-to-br from-ambar-300 to-ambar-500 text-carbon-900 px-4 py-2.5 rounded-xl text-sm font-bold shadow-glow-ambar active:scale-95 transition"><i className="fa-solid fa-plus mr-1"></i>Nuevo cliente</button>
+                {clientes.length>0 && <button onClick={exportarClientesCSV} className="bg-white/5 border border-carbon-700 text-carbon-200 px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-white/10 transition"><i className="fa-solid fa-file-csv mr-1"></i>Exportar CSV</button>}
+              </div>
+              {clientes.length===0 && <p className="text-carbon-500 text-sm text-center py-6">No hay clientes cargados.</p>}
+              {clientes.map(c=>(
+                <div key={c.id} className="bg-white/[.03] border border-carbon-700 rounded-xl p-3.5 flex items-center gap-3">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-bold text-sm truncate text-carbon-100">{c.nombre} <span className="text-carbon-500 font-normal">· Nº {c.numero}</span></p>
+                    <p className="text-xs text-carbon-400 truncate">{c.telefono} · {c.direccion}</p>
+                    {Number(c.descuento)>0 && <span className="inline-block mt-1.5 text-[10px] font-bold bg-ambar-400/15 text-ambar-300 px-2 py-0.5 rounded-full">{c.descuento}% desc.</span>}
+                  </div>
+                  <button onClick={()=>setAdminHistorialCliente(c)} className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-carbon-300 flex items-center justify-center transition"><i className="fa-solid fa-clock-rotate-left text-xs"></i></button>
+                  <button onClick={()=>setEditandoCliente(c)} className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-carbon-300 flex items-center justify-center transition"><i className="fa-solid fa-pen text-xs"></i></button>
+                  <button onClick={()=>borrarCliente(c.id)} className="w-8 h-8 rounded-lg bg-marca-500/10 hover:bg-marca-500/20 text-marca-400 flex items-center justify-center transition"><i className="fa-solid fa-trash-can text-xs"></i></button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {adminTab==="pedidos" && (
+            <div className="space-y-3">
+              {pedidos.length>0 && <button onClick={exportarPedidosCSV} className="bg-white/5 border border-carbon-700 text-carbon-200 px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-white/10 transition"><i className="fa-solid fa-file-csv mr-1"></i>Exportar CSV</button>}
+              {pedidos.length===0 && <p className="text-carbon-500 text-sm text-center py-6">No hay pedidos todavía.</p>}
+              {pedidos.sort((a,b)=>new Date(b.fecha)-new Date(a.fecha)).map(p=>(
+                <div key={p.id} className="bg-white/[.03] border border-carbon-700 rounded-xl p-3.5">
+                  <div className="flex justify-between items-start mb-1.5">
+                    <div>
+                      <p className="font-heading text-sm">{p.clienteNombre}</p>
+                      <p className="text-[10px] text-carbon-500">{new Date(p.fecha).toLocaleString("es-AR")}</p>
+                    </div>
+                    <p className="font-heading text-ambar-400">{fmt(p.total)}</p>
+                  </div>
+                  <div className="text-xs text-carbon-400 space-y-0.5 mb-3">
+                    {(p.items||[]).map((it,i)=><p key={i}>{it.cantidad}x {it.nombre}</p>)}
+                  </div>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {ESTADOS_PEDIDO.map(est=>(
+                      <button key={est} onClick={()=>cambiarEstadoPedido(p.id,est)}
+                        className={`px-2 py-2 rounded-lg text-[10.5px] font-bold capitalize transition-all ${p.estado===est?'bg-gradient-to-br from-ambar-300 to-ambar-500 text-carbon-900 shadow-glow-ambar':'bg-white/5 border border-carbon-700 text-carbon-300'}`}>
+                        {est}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {adminTab==="stock" && (
+            <div className="space-y-3">
+              <button onClick={()=>setEscanerAbierto(true)} className="w-full flex items-center justify-center gap-2 bg-gradient-to-br from-marca-400 to-marca-600 shadow-glow-marca text-white py-3 rounded-xl text-sm font-bold active:scale-[.98] transition"><i className="fa-solid fa-barcode"></i>Escanear código</button>
+              <div className="flex gap-2">
+                <input value={manualBarcode} onChange={e=>setManualBarcode(e.target.value)}
+                  onKeyDown={e=>{if(e.key==="Enter" && manualBarcode.trim()){onCodigoEscaneado(manualBarcode.trim());setManualBarcode("");}}}
+                  placeholder="O ingresá el código manualmente..." className="input-oscuro flex-1 rounded-xl p-3 text-sm" />
+                <button onClick={()=>{if(manualBarcode.trim()){onCodigoEscaneado(manualBarcode.trim());setManualBarcode("");}}} className="bg-white/5 border border-carbon-700 px-4 rounded-xl text-sm font-bold">Buscar</button>
+              </div>
+              {productos.filter(p=>p.stock!==undefined && p.stock!=="" && Number(p.stock)<=STOCK_BAJO_UMBRAL).length>0 && (
+                <div className="bg-marca-500/10 border border-marca-500/30 rounded-xl p-3 text-xs text-marca-300 font-semibold">
+                  <i className="fa-solid fa-triangle-exclamation mr-1.5"></i>
+                  {productos.filter(p=>p.stock!==undefined && p.stock!=="" && Number(p.stock)<=STOCK_BAJO_UMBRAL).length} producto(s) con stock bajo (≤{STOCK_BAJO_UMBRAL} u.)
+                </div>
+              )}
+              <div className="space-y-1.5">
+                {productos.map(p=>{
+                  const bajo = p.stock!==undefined && p.stock!=="" && Number(p.stock)<=STOCK_BAJO_UMBRAL;
+                  return (
+                  <div key={p.id} className={`flex items-center gap-3 bg-white/[.03] border rounded-xl p-3 ${bajo?'border-marca-500/40':'border-carbon-700'}`}>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-sm truncate text-carbon-100">{p.nombre}{bajo && <span className="ml-2 text-[9px] bg-marca-500/20 text-marca-300 px-1.5 py-0.5 rounded-full">STOCK BAJO</span>}</p>
+                      <p className="text-[11px] text-carbon-500">{p.codigoBarras || "sin código"}</p>
+                    </div>
+                    <button onClick={()=>ajustarStock(p.id,-1)} className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 font-bold active:scale-90 transition">-</button>
+                    <span className="w-8 text-center font-heading text-sm text-ambar-400">{p.stock!==undefined && p.stock!=="" ? p.stock : "—"}</span>
+                    <button onClick={()=>ajustarStock(p.id,1)} className="w-8 h-8 rounded-full bg-gradient-to-br from-marca-400 to-marca-600 font-bold active:scale-90 transition">+</button>
+                  </div>
+                  );
+                })}
+                {productos.length===0 && <p className="text-carbon-500 text-sm text-center py-6">No hay productos cargados.</p>}
+              </div>
+            </div>
+          )}
+
+          {adminTab==="estadisticas" && (()=>{
+            const pedidosValidos = pedidos.filter(p=>p.estado!=="rechazado");
+            const catDeItem = (it) => {
+              if(it.esCombo) return "Combos";
+              const prod = productos.find(x=>x.id===it.id) || productos.find(x=>x.nombre===it.nombre);
+              return prod?.categoria || "Sin categoría";
+            };
+
+            const ventasPorCategoria = {};
+            pedidosValidos.forEach(p=>(p.items||[]).forEach(it=>{
+              const cat = catDeItem(it);
+              ventasPorCategoria[cat] = (ventasPorCategoria[cat]||0) + Number(it.subtotal||0);
+            }));
+            const topCategorias = Object.entries(ventasPorCategoria).sort((a,b)=>b[1]-a[1]);
+            const maxCat = topCategorias.length ? topCategorias[0][1] : 1;
+            const opcionesCategoria = ["todas", ...topCategorias.map(([cat])=>cat)];
+
+            const ventasPorProducto = {};
+            pedidosValidos.forEach(p=>(p.items||[]).forEach(it=>{
+              if(statsCategoria!=="todas" && catDeItem(it)!==statsCategoria) return;
+              ventasPorProducto[it.nombre] = (ventasPorProducto[it.nombre]||0) + Number(it.cantidad||0);
+            }));
+            const topProductos = Object.entries(ventasPorProducto).sort((a,b)=>b[1]-a[1]).slice(0,10);
+            const maxProd = topProductos.length ? topProductos[0][1] : 1;
+
+            const comprasPorCliente = {};
+            pedidosValidos.forEach(p=>{
+              const itemsRelevantes = statsCategoria==="todas" ? (p.items||[]) : (p.items||[]).filter(it=>catDeItem(it)===statsCategoria);
+              if(itemsRelevantes.length===0) return;
+              const totalRelevante = itemsRelevantes.reduce((s,it)=>s+Number(it.subtotal||0),0);
+              const key = p.clienteId || p.clienteNombre;
+              if(!comprasPorCliente[key]) comprasPorCliente[key] = {nombre:p.clienteNombre, total:0, pedidos:0};
+              comprasPorCliente[key].total += totalRelevante;
+              comprasPorCliente[key].pedidos += 1;
+            });
+            const topClientes = Object.values(comprasPorCliente).sort((a,b)=>b.total-a.total).slice(0,10);
+            const maxCli = topClientes.length ? topClientes[0].total : 1;
+
+            return (
+              <div className="space-y-7">
+                <div>
+                  <h3 className="font-heading text-sm mb-3.5"><i className="fa-solid fa-layer-group text-ambar-400 mr-1.5"></i>Ingresos por categoría</h3>
+                  {topCategorias.length===0 && <p className="text-carbon-500 text-sm">Todavía no hay pedidos confirmados.</p>}
+                  <div className="space-y-3">
+                    {topCategorias.map(([cat,total])=>(
+                      <div key={cat}>
+                        <div className="flex justify-between text-xs font-semibold mb-1.5 text-carbon-200"><span>{cat}</span><span className="text-ambar-400">{fmt(total)}</span></div>
+                        <div className="bg-white/5 rounded-full h-2"><div className="bg-gradient-to-r from-emerald-500 to-emerald-300 h-2 rounded-full" style={{width:(total/maxCat*100)+"%"}}></div></div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {opcionesCategoria.length>1 && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] font-bold text-carbon-400 tracking-wide">FILTRAR POR CATEGORÍA</span>
+                    <select value={statsCategoria} onChange={e=>setStatsCategoria(e.target.value)} className="input-oscuro rounded-lg p-2 text-xs">
+                      {opcionesCategoria.map(c=><option key={c} value={c} className="bg-carbon-850">{c==="todas"?"Todas":c}</option>)}
+                    </select>
+                  </div>
+                )}
+
+                <div>
+                  <h3 className="font-heading text-sm mb-3.5"><i className="fa-solid fa-fire text-marca-500 mr-1.5"></i>Productos más vendidos{statsCategoria!=="todas" && <span className="text-carbon-500 font-sans font-normal"> — {statsCategoria}</span>}</h3>
+                  {topProductos.length===0 && <p className="text-carbon-500 text-sm">Todavía no hay pedidos confirmados{statsCategoria!=="todas" ? " en esta categoría" : ""}.</p>}
+                  <div className="space-y-3">
+                    {topProductos.map(([nombre,cant])=>(
+                      <div key={nombre}>
+                        <div className="flex justify-between text-xs font-semibold mb-1.5 text-carbon-200"><span>{nombre}</span><span className="text-ambar-400">{cant} u.</span></div>
+                        <div className="bg-white/5 rounded-full h-2"><div className="bg-gradient-to-r from-marca-500 to-marca-400 h-2 rounded-full" style={{width:(cant/maxProd*100)+"%"}}></div></div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <h3 className="font-heading text-sm mb-3.5"><i className="fa-solid fa-crown text-ambar-400 mr-1.5"></i>Clientes que más compran{statsCategoria!=="todas" && <span className="text-carbon-500 font-sans font-normal"> — {statsCategoria}</span>}</h3>
+                  {topClientes.length===0 && <p className="text-carbon-500 text-sm">Todavía no hay pedidos confirmados.</p>}
+                  <div className="space-y-3">
+                    {topClientes.map((c,i)=>(
+                      <div key={i}>
+                        <div className="flex justify-between text-xs font-semibold mb-1.5 text-carbon-200"><span>{c.nombre} ({c.pedidos} pedidos)</span><span className="text-ambar-400">{fmt(c.total)}</span></div>
+                        <div className="bg-white/5 rounded-full h-2"><div className="bg-gradient-to-r from-ambar-500 to-ambar-300 h-2 rounded-full" style={{width:(c.total/maxCli*100)+"%"}}></div></div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+
+          {adminTab==="configuracion" && (
+            <ConfiguracionForm config={config} onGuardar={guardarConfig} />
+          )}
+        </ModalAdmin>
+      )}
+
+      {editando && (
+        <ModalCentrado onClose={()=>setEditando(null)} titulo={editando==="nuevo"||editando.nuevo ? "Nuevo producto":"Editar producto"} icono="fa-box">
+          <ProductForm producto={editando==="nuevo"?null:editando} categoriasLista={categoriasLista} onGuardar={guardarProducto} />
+        </ModalCentrado>
+      )}
+
+      {editandoCliente && (
+        <ModalCentrado onClose={()=>setEditandoCliente(null)} titulo={editandoCliente==="nuevo"?"Nuevo cliente":"Editar cliente"} icono="fa-user">
+          <ClienteForm cliente={editandoCliente==="nuevo"?null:editandoCliente} onGuardar={guardarCliente} />
+        </ModalCentrado>
+      )}
+
+      {editandoCombo && (
+        <ModalCentrado onClose={()=>setEditandoCombo(null)} titulo={editandoCombo==="nuevo"?"Nuevo combo":"Editar combo"} icono="fa-gift">
+          <ComboForm combo={editandoCombo==="nuevo"?null:editandoCombo} productos={productos} onGuardar={guardarCombo} />
+        </ModalCentrado>
+      )}
+
+      {escanerAbierto && (
+        <ModalCentrado onClose={()=>setEscanerAbierto(false)} titulo="Escanear código de barras" icono="fa-barcode">
+          <ScannerModal onScan={onCodigoEscaneado} />
+        </ModalCentrado>
+      )}
+
+      {productoEscaneado && (
+        <ModalCentrado onClose={()=>setProductoEscaneado(null)} titulo={productoEscaneado.nuevo?"Código no encontrado":"Producto encontrado"} icono="fa-barcode">
+          <div className="p-6">
+            {productoEscaneado.nuevo ? (
+              <>
+                <p className="text-sm mb-4 text-carbon-300">El código <b className="text-ambar-400">{productoEscaneado.codigoBarras}</b> no corresponde a ningún producto cargado.</p>
+                <button onClick={()=>{ setEditando({codigoBarras:productoEscaneado.codigoBarras, nombre:"", categoria:"General", imagen:"", precioMinorista:"", precioMayorista:"", cantMinMayorista:"", stock:""}); setProductoEscaneado(null); }}
+                  className="w-full bg-gradient-to-br from-marca-400 to-marca-600 shadow-glow-marca hover:brightness-110 text-white py-3 rounded-xl text-sm font-bold transition">Cargar como producto nuevo</button>
+              </>
+            ) : (()=>{
+              const prod = productos.find(p=>p.id===productoEscaneado.id) || productoEscaneado;
+              return (
+                <>
+                  {prod.imagen ? <img src={prod.imagen} className="w-full aspect-video object-cover rounded-xl mb-4" /> : null}
+                  <h4 className="font-heading text-base mb-1">{prod.nombre}</h4>
+                  <p className="text-xs text-carbon-500 mb-1">Código: {prod.codigoBarras}</p>
+                  <p className="text-sm text-ambar-400 font-heading mb-5">{fmt(prod.precioMinorista)} <span className="text-carbon-500 text-xs font-sans">minorista</span></p>
+
+                  <p className="text-[11px] font-bold text-carbon-400 tracking-wide mb-2 text-center">STOCK ACTUAL</p>
+                  <div className="flex items-center gap-4 justify-center mb-3">
+                    <button onClick={()=>ajustarStock(prod.id,-1)} className="w-12 h-12 rounded-xl bg-white/10 hover:bg-white/20 font-bold text-lg active:scale-90 transition">-</button>
+                    <input type="number" value={prod.stock ?? 0} onChange={e=>fijarStock(prod.id, e.target.value)}
+                      className="input-oscuro font-heading text-2xl w-20 text-center text-ambar-400 rounded-xl py-2" />
+                    <button onClick={()=>ajustarStock(prod.id,1)} className="w-12 h-12 rounded-xl bg-gradient-to-br from-marca-400 to-marca-600 font-bold text-lg active:scale-90 transition">+</button>
+                  </div>
+                  <p className="text-center text-xs text-carbon-500 mb-5">unidades — podés escribir el número exacto o usar +/-</p>
+
+                  <button onClick={()=>{ setEditando(prod); setProductoEscaneado(null); }}
+                    className="w-full bg-white/5 border border-carbon-700 text-carbon-200 py-3 rounded-xl text-sm font-bold hover:bg-white/10 transition"><i className="fa-solid fa-pen mr-1.5"></i>Editar producto completo</button>
+                </>
+              );
+            })()}
+          </div>
+        </ModalCentrado>
+      )}
+
+      {adminHistorialCliente && (
+        <DrawerDerecha onClose={()=>setAdminHistorialCliente(null)} titulo={"Historial — "+(adminHistorialCliente.nombre||adminHistorialCliente.numero)}>
+          <div className="flex-1 overflow-y-auto p-4 space-y-3">
+            {pedidos.filter(p=>p.clienteId===adminHistorialCliente.id).length===0 && <p className="text-carbon-500 text-sm text-center py-8">Este cliente todavía no hizo pedidos.</p>}
+            {pedidos.filter(p=>p.clienteId===adminHistorialCliente.id).sort((a,b)=>new Date(b.fecha)-new Date(a.fecha)).map(p=>(
+              <PedidoResumen key={p.id} p={p} />
+            ))}
+          </div>
+        </DrawerDerecha>
+      )}
+    </div>
+  );
+}
+
+/* ============ COMPONENTES ============ */
+
+function ModalCentrado({onClose,titulo,icono,children}){
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm animate-fade-in" onClick={onClose}></div>
+      <div className="relative cristal border border-carbon-700 w-full sm:max-w-md rounded-3xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto animate-slide-up">
+        <div className="sticky top-0 cristal-header px-5 py-4 flex justify-between items-center border-b border-carbon-700 z-10">
+          <h3 className="font-heading text-sm text-ambar-300">{icono && <i className={"fa-solid "+icono+" mr-2"}></i>}{titulo}</h3>
+          <button onClick={onClose} className="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center transition"><i className="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function DrawerDerecha({onClose,titulo,icono,children}){
+  return (
+    <div className="fixed inset-0 z-50 flex justify-end">
+      <div className="absolute inset-0 bg-black/65 backdrop-blur-sm animate-fade-in" onClick={onClose}></div>
+      <div className="relative w-full max-w-md cristal border-l border-carbon-700 h-full shadow-2xl flex flex-col animate-slide-up">
+        <div className="p-5 cristal-header flex justify-between items-center border-b border-carbon-700 flex-shrink-0">
+          <h2 className="font-heading text-base text-ambar-300">{icono && <i className={"fa-solid "+icono+" mr-2"}></i>}{titulo}</h2>
+          <button onClick={onClose} className="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center transition"><i className="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function ModalAdmin({adminLogged,onClose,onSalir,userInput,setUserInput,passInput,setPassInput,loginAdminError,intentarLoginAdmin,adminTab,setAdminTab,pedidosNuevos,children}){
+  const TABS = [["productos","Productos"],["categorias","Categorías"],["combos","Combos"],["clientes","Clientes"],["pedidos","Pedidos"],["stock","Actualizar Stock"],["estadisticas","Estadísticas"],["configuracion","Configuración"]];
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6">
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm animate-fade-in" onClick={onClose}></div>
+      <div className="relative cristal border border-carbon-700 w-full sm:max-w-3xl rounded-3xl shadow-2xl overflow-hidden max-h-[94vh] flex flex-col animate-slide-up">
+        <div className="sticky top-0 cristal-header px-5 py-4 flex justify-between items-center border-b border-carbon-700 flex-shrink-0">
+          <h3 className="font-heading text-sm text-ambar-300"><i className="fa-solid fa-lock mr-2"></i>{adminLogged?"Administración GOLO-MAS":"Ingresar"}</h3>
+          <button onClick={onClose} className="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center transition"><i className="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+        {!adminLogged ? (
+          <div className="p-6 space-y-3.5">
+            <input value={userInput} onChange={e=>setUserInput(e.target.value)} placeholder="Usuario" className="input-oscuro w-full rounded-xl p-3 text-sm" />
+            <input value={passInput} onChange={e=>setPassInput(e.target.value)} type="password" placeholder="Contraseña" onKeyDown={e=>e.key==="Enter"&&intentarLoginAdmin()} className="input-oscuro w-full rounded-xl p-3 text-sm" />
+            {loginAdminError && <p className="text-marca-400 text-xs font-semibold">{loginAdminError}</p>}
+            <button onClick={intentarLoginAdmin} className="w-full bg-gradient-to-br from-marca-400 to-marca-600 shadow-glow-marca hover:brightness-110 active:scale-[.98] text-white py-3 rounded-xl text-sm font-bold transition">Entrar</button>
+          </div>
+        ) : (
+          <>
+            <div className="flex gap-1.5 px-4 pt-3.5 pb-3 overflow-x-auto no-scrollbar flex-shrink-0 border-b border-carbon-700">
+              {TABS.map(([id,label])=>(
+                <button key={id} onClick={()=>setAdminTab(id)} className={`flex-shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all ${adminTab===id?'bg-gradient-to-br from-ambar-300 to-ambar-500 text-carbon-900 shadow-glow-ambar':'bg-white/5 text-carbon-300 border border-carbon-700'}`}>
+                  {label}{id==="pedidos" && pedidosNuevos>0 && ` (${pedidosNuevos})`}
+                </button>
+              ))}
+              <button onClick={onSalir} className="ml-auto flex-shrink-0 px-4 py-2 rounded-full text-xs font-bold bg-marca-600 text-white active:scale-95 transition">Salir</button>
+            </div>
+            <div className="p-4 overflow-y-auto flex-1">{children}</div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ProductCard({p,modoPrecio,precioProducto,agregarAlCarrito,clienteInfo,toggleFavorito,cantidadEnCarrito}){
+  const [cant,setCant] = useState(1);
+  const agotado = (p.stock!==undefined && p.stock!=="" && Number(p.stock)<=0) || p.agotado;
+  const cantidadTotalPrevista = cant + (cantidadEnCarrito||0);
+  const precio = precioProducto(p,cantidadTotalPrevista,modoPrecio);
+  const enMayorista = modoPrecio==="mayorista" || (p.cantMinMayorista && p.precioMayorista && cantidadTotalPrevista >= Number(p.cantMinMayorista));
+  const otroPrecio = modoPrecio==="minorista" ? p.precioMayorista : p.precioMinorista;
+  const esFavorito = clienteInfo && (clienteInfo.favoritos||[]).includes(p.id);
+  return (
+    <div className="tarjeta-prod group relative rounded-2xl overflow-hidden flex flex-col animate-fade-in">
+      {p.imagen ? <img src={p.imagen} onError={e=>{e.target.onerror=null;e.target.src=IMG_FALLBACK;}} className="w-full aspect-square object-cover transition-transform duration-500 ease-out group-hover:scale-105" /> : (
+        <div className="w-full aspect-square bg-white/5 flex items-center justify-center text-carbon-600"><i className="fa-solid fa-box text-2xl"></i></div>
+      )}
+      {p.destacado && <span className="absolute top-2 left-2 bg-gradient-to-br from-ambar-300 to-ambar-500 text-carbon-900 text-[9px] font-bold uppercase px-2 py-1 rounded-full shadow-glow-ambar"><i className="fa-solid fa-star mr-1"></i>Destacado</span>}
+      {clienteInfo && (
+        <button onClick={()=>toggleFavorito(p.id)} className="absolute top-2 right-2 w-8 h-8 rounded-full bg-carbon-900/60 backdrop-blur flex items-center justify-center transition active:scale-90">
+          <i className={`fa-${esFavorito?'solid':'regular'} fa-heart ${esFavorito?'text-marca-500':'text-white'}`}></i>
+        </button>
+      )}
+      {agotado && (
+        <div className="absolute inset-0 bg-carbon-900/85 backdrop-blur-[2px] flex items-center justify-center">
+          <span className="font-heading text-xs text-marca-400 uppercase border border-marca-500/40 px-3 py-1 rounded-full">Sin stock</span>
+        </div>
+      )}
+      <div className="p-3 flex flex-col gap-1.5 flex-1">
+        <span className="text-[9px] uppercase tracking-[0.1em] font-bold text-ambar-400/90 bg-ambar-400/10 self-start px-2 py-0.5 rounded-full">{p.categoria||"General"}</span>
+        <p className="text-[13px] font-bold leading-tight min-h-[32px] text-carbon-50">{p.nombre}</p>
+        <div className="mt-auto">
+          <p className="font-price text-ambar-400 text-xl leading-none">{fmt(precio)}</p>
+          {enMayorista && p.precioMayorista ? (
+            <p className="text-[10px] text-emerald-400 font-bold mt-1.5"><i className="fa-solid fa-circle-check mr-1"></i>Precio mayorista aplicado</p>
+          ) : (p.cantMinMayorista && p.precioMayorista && modoPrecio!=="mayorista") ? (
+            <p className="text-[10px] text-carbon-400 mt-1.5">Mayor: {fmt(p.precioMayorista)} desde {p.cantMinMayorista}u ({Number(p.cantMinMayorista)-cantidadTotalPrevista} más para llegar)</p>
+          ) : (otroPrecio ? <p className="text-[10px] text-carbon-400 mt-1.5">{modoPrecio==="minorista"?"Mayor":"Menor"}: {fmt(otroPrecio)}</p> : null)}
+        </div>
+        <div className="flex items-center gap-1.5 mt-2">
+          <div className="flex items-center bg-white/5 border border-carbon-700 rounded-lg overflow-hidden flex-shrink-0">
+            <button onClick={()=>setCant(c=>Math.max(1,c-1))} className="w-6 h-7 text-xs font-bold active:scale-90 transition">-</button>
+            <input value={cant} onChange={e=>setCant(Math.max(1,Number(e.target.value)||1))} className="w-7 text-center text-xs font-bold bg-transparent" />
+            <button onClick={()=>setCant(c=>c+1)} className="w-6 h-7 text-xs font-bold active:scale-90 transition">+</button>
+          </div>
+          <button disabled={agotado} onClick={()=>agregarAlCarrito(p,cant)} className="flex-1 bg-gradient-to-br from-marca-400 to-marca-600 disabled:opacity-30 disabled:shadow-none text-white rounded-lg text-[11px] font-bold py-2 shadow-glow-marca active:scale-95 transition">Agregar</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProductoAdminCard({p,seleccionado,toggleSeleccion,onEditar,onBorrar}){
+  return (
+    <div className={`relative rounded-xl border overflow-hidden bg-white/[.03] ${seleccionado?'border-ambar-400 ring-2 ring-ambar-400/40':'border-carbon-700'}`}>
+      <input type="checkbox" checked={seleccionado} onChange={()=>toggleSeleccion(p.id)} className="absolute top-1.5 left-1.5 w-4 h-4 z-10 accent-ambar-500" />
+      {p.imagen ? <img src={p.imagen} onError={e=>{e.target.onerror=null;e.target.src=IMG_FALLBACK;}} className="w-full aspect-square object-cover" /> : <div className="w-full aspect-square bg-white/5 flex items-center justify-center text-carbon-600 text-xs">Sin foto</div>}
+      <div className="p-2.5">
+        <p className="text-[12px] font-bold truncate text-carbon-100">{p.nombre}</p>
+        <p className="text-[11px] text-ambar-400 font-bold">{fmt(p.precioMinorista)}</p>
+        <div className="flex gap-1 mt-2">
+          <button onClick={onEditar} className="flex-1 bg-white/5 border border-carbon-700 rounded-lg text-[10px] font-bold py-1.5">Editar</button>
+          <button onClick={onBorrar} className="flex-1 bg-marca-600 text-white rounded-lg text-[10px] font-bold py-1.5">Borrar</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PedidoResumen({p}){
+  const ETAPAS = ["recibido","en proceso","en proceso de entrega","entregado"];
+  const idxActual = ETAPAS.indexOf(p.estado);
+  return (
+    <div className="bg-white/[.03] border border-carbon-700 rounded-xl p-3.5">
+      <div className="flex justify-between items-center mb-3">
+        <span className="text-xs font-bold text-carbon-400">{new Date(p.fecha).toLocaleDateString("es-AR")}</span>
+        <span className="font-heading text-sm text-ambar-400">{fmt(p.total)}</span>
+      </div>
+      <div className="flex items-center mb-3">
+        {ETAPAS.map((et,i)=>(
+          <React.Fragment key={et}>
+            <div className="flex flex-col items-center gap-1">
+              <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold ${i<=idxActual?'bg-gradient-to-br from-marca-400 to-marca-600 text-white':'bg-white/10 text-carbon-500'}`}>
+                {i<idxActual ? <i className="fa-solid fa-check text-[8px]"></i> : i+1}
+              </div>
+              <span className={`text-[8.5px] text-center leading-tight capitalize w-14 ${i<=idxActual?'text-carbon-200 font-semibold':'text-carbon-600'}`}>{et}</span>
+            </div>
+            {i<ETAPAS.length-1 && <div className={`flex-1 h-0.5 mb-4 ${i<idxActual?'bg-marca-500':'bg-white/10'}`}></div>}
+          </React.Fragment>
+        ))}
+      </div>
+      {(p.items||[]).map((it,i)=><p key={i} className="text-xs text-carbon-400">{it.cantidad}x {it.nombre} — {fmt(it.subtotal)}</p>)}
+    </div>
+  );
+}
+
+function ProductForm({producto,categoriasLista,onGuardar}){
+  const [form,setForm] = useState(producto || {nombre:"",categoria:categoriasLista[0]?.nombre||"",imagen:"",precioMinorista:"",precioMayorista:"",cantMinMayorista:"",codigoBarras:"",stock:"",agotado:false,destacado:false});
+  const [escaneando,setEscaneando] = useState(false);
+  const [imgError,setImgError] = useState(false);
+  const [buscandoOFF,setBuscandoOFF] = useState(false);
+  const [offMensaje,setOffMensaje] = useState("");
+  const set = (k,v)=>{ if(k==="imagen") setImgError(false); setForm(f=>({...f,[k]:v})); };
+
+  const buscarEnOpenFoodFacts = async (codigo) => {
+    if(!codigo) return;
+    setBuscandoOFF(true); setOffMensaje("");
+    try{
+      const res = await fetch(`https://world.openfoodfacts.org/api/v2/product/${codigo}.json`);
+      const data = await res.json();
+      if(data.status===1 && data.product){
+        const nombreOFF = data.product.product_name_es || data.product.product_name || "";
+        const imagenOFF = data.product.image_front_url || data.product.image_url || "";
+        if(!nombreOFF && !imagenOFF){
+          setOffMensaje("Se encontró el código, pero sin nombre ni foto cargados en la base. Completá a mano.");
+        }else{
+          setForm(f=>({...f, nombre: f.nombre || nombreOFF, imagen: imagenOFF || f.imagen}));
+          if(imagenOFF) setImgError(false);
+          setOffMensaje("✓ Encontrado en la base pública — se completaron nombre y/o foto.");
+        }
+      } else {
+        setOffMensaje("No se encontró este código en la base pública. Cargá los datos a mano.");
+      }
+    }catch(e){
+      setOffMensaje("No se pudo consultar la base pública (revisá tu conexión).");
+    }
+    setBuscandoOFF(false);
+  };
+  return (
+    <div className="p-6 space-y-3.5">
+      <Campo label="Nombre"><input value={form.nombre} onChange={e=>set("nombre",e.target.value)} className="input-oscuro w-full rounded-xl p-3 text-sm" /></Campo>
+      <Campo label="Categoría">
+        {categoriasLista.length===0 ? (
+          <p className="text-[11px] text-marca-400">Todavía no cargaste categorías. Andá a la pestaña "Categorías" y agregá al menos una.</p>
+        ) : (
+          <select value={form.categoria} onChange={e=>set("categoria",e.target.value)} className="input-oscuro w-full rounded-xl p-3 text-sm">
+            {categoriasLista.map(c=><option key={c.id} value={c.nombre} className="bg-carbon-850">{c.nombre}</option>)}
+          </select>
+        )}
+      </Campo>
+      {escaneando && (
+        <ModalCentrado onClose={()=>setEscaneando(false)} titulo="Escanear código de barras" icono="fa-barcode">
+          <ScannerModal onScan={(codigo)=>{ set("codigoBarras",codigo); setEscaneando(false); buscarEnOpenFoodFacts(codigo); }} />
+        </ModalCentrado>
+      )}
+      <Campo label="URL de imagen">
+        <input value={form.imagen} onChange={e=>set("imagen",e.target.value)} placeholder="https://... o link de Google Drive" className="input-oscuro w-full rounded-xl p-3 text-sm" />
+        {form.imagen && (
+          <div className="mt-2 flex items-center gap-3">
+            <div className="w-16 h-16 rounded-lg overflow-hidden bg-white/5 border border-carbon-700 flex-shrink-0 flex items-center justify-center">
+              {!imgError ? (
+                <img src={normalizarUrlImagen(form.imagen)} onError={()=>setImgError(true)} onLoad={()=>setImgError(false)} className="w-full h-full object-cover" />
+              ) : <i className="fa-solid fa-image-slash text-carbon-500"></i>}
+            </div>
+            {imgError ? (
+              <p className="text-[11px] text-marca-400">No se pudo cargar esta imagen. Probá con otro link (asegurate que sea un link directo a la imagen, no a una página).</p>
+            ) : (
+              <p className="text-[11px] text-emerald-400"><i className="fa-solid fa-check mr-1"></i>La imagen carga correctamente.</p>
+            )}
+          </div>
+        )}
+      </Campo>
+      <Campo label="Código de barras">
+        <div className="flex gap-2">
+          <input value={form.codigoBarras||""} onChange={e=>set("codigoBarras",e.target.value)} className="input-oscuro flex-1 rounded-xl p-3 text-sm" />
+          <button type="button" onClick={()=>setEscaneando(true)} className="bg-gradient-to-br from-marca-400 to-marca-600 text-white px-4 rounded-xl text-sm flex-shrink-0 active:scale-95 transition"><i className="fa-solid fa-barcode"></i></button>
+          <button type="button" disabled={buscandoOFF || !form.codigoBarras} onClick={()=>buscarEnOpenFoodFacts(form.codigoBarras)} className="bg-white/5 border border-carbon-700 text-carbon-200 px-4 rounded-xl text-sm flex-shrink-0 disabled:opacity-30 active:scale-95 transition" title="Buscar nombre y foto por código">
+            {buscandoOFF ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-solid fa-magnifying-glass"></i>}
+          </button>
+        </div>
+        {offMensaje && <p className={`text-[11px] mt-1.5 ${offMensaje.startsWith("✓")?'text-emerald-400':'text-carbon-400'}`}>{offMensaje}</p>}
+        <p className="text-[10.5px] text-carbon-500 mt-1">La lupa busca el nombre y la foto en una base pública (Open Food Facts) a partir del código de barras real.</p>
+      </Campo>
+      <div className="grid grid-cols-2 gap-3">
+        <Campo label="Precio minorista ($)"><input type="number" value={form.precioMinorista} onChange={e=>set("precioMinorista",e.target.value)} className="input-oscuro w-full rounded-xl p-3 text-sm" /></Campo>
+        <Campo label="Precio mayorista ($)"><input type="number" value={form.precioMayorista} onChange={e=>set("precioMayorista",e.target.value)} className="input-oscuro w-full rounded-xl p-3 text-sm" /></Campo>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <Campo label="Cant. mínima mayorista"><input type="number" value={form.cantMinMayorista} onChange={e=>set("cantMinMayorista",e.target.value)} placeholder="ej: 6" className="input-oscuro w-full rounded-xl p-3 text-sm" /></Campo>
+        <Campo label="Stock"><input type="number" value={form.stock} onChange={e=>set("stock",e.target.value)} className="input-oscuro w-full rounded-xl p-3 text-sm" /></Campo>
+      </div>
+      <div className="flex gap-5">
+        <label className="flex items-center gap-2 text-xs font-semibold text-carbon-300"><input type="checkbox" checked={!!form.agotado} onChange={e=>set("agotado",e.target.checked)} className="accent-ambar-500" />Marcar como sin stock</label>
+        <label className="flex items-center gap-2 text-xs font-semibold text-carbon-300"><input type="checkbox" checked={!!form.destacado} onChange={e=>set("destacado",e.target.checked)} className="accent-ambar-500" />Destacado de la semana</label>
+      </div>
+      <button onClick={()=>onGuardar(form)} className="w-full bg-gradient-to-br from-marca-400 to-marca-600 shadow-glow-marca hover:brightness-110 active:scale-[.98] text-white py-3 rounded-xl text-sm font-bold transition">Guardar</button>
+    </div>
+  );
+}
+
+function ClienteForm({cliente,onGuardar}){
+  const [form,setForm] = useState(cliente || {numero:"",password:"",nombre:"",telefono:"",direccion:"",cuil:"",descuento:""});
+  const set = (k,v)=>setForm(f=>({...f,[k]:v}));
+  return (
+    <div className="p-6 space-y-3.5">
+      <div className="grid grid-cols-2 gap-3">
+        <Campo label="Número de cliente"><input value={form.numero} onChange={e=>set("numero",e.target.value)} className="input-oscuro w-full rounded-xl p-3 text-sm" /></Campo>
+        <Campo label="Contraseña"><input value={form.password} onChange={e=>set("password",e.target.value)} className="input-oscuro w-full rounded-xl p-3 text-sm" /></Campo>
+      </div>
+      <Campo label="Nombre"><input value={form.nombre} onChange={e=>set("nombre",e.target.value)} className="input-oscuro w-full rounded-xl p-3 text-sm" /></Campo>
+      <Campo label="Teléfono"><input value={form.telefono} onChange={e=>set("telefono",e.target.value)} className="input-oscuro w-full rounded-xl p-3 text-sm" /></Campo>
+      <Campo label="Dirección"><input value={form.direccion} onChange={e=>set("direccion",e.target.value)} className="input-oscuro w-full rounded-xl p-3 text-sm" /></Campo>
+      <div className="grid grid-cols-2 gap-3">
+        <Campo label="CUIL"><input value={form.cuil} onChange={e=>set("cuil",e.target.value)} className="input-oscuro w-full rounded-xl p-3 text-sm" /></Campo>
+        <Campo label="Descuento especial (%)"><input type="number" value={form.descuento} onChange={e=>set("descuento",e.target.value)} placeholder="0" className="input-oscuro w-full rounded-xl p-3 text-sm" /></Campo>
+      </div>
+      <button onClick={()=>onGuardar(form)} className="w-full bg-gradient-to-br from-marca-400 to-marca-600 shadow-glow-marca hover:brightness-110 active:scale-[.98] text-white py-3 rounded-xl text-sm font-bold transition">Guardar</button>
+    </div>
+  );
+}
+
+function ComboForm({combo,productos,onGuardar}){
+  const [form,setForm] = useState(combo || {nombre:"",imagen:"",precioCombo:"",componentes:[]});
+  const [prodSel,setProdSel] = useState(productos[0]?.id || "");
+  const [cantSel,setCantSel] = useState(1);
+  const set = (k,v)=>setForm(f=>({...f,[k]:v}));
+
+  const agregarComponente = () => {
+    const prod = productos.find(p=>p.id===prodSel); if(!prod) return;
+    set("componentes", [...(form.componentes||[]), {productId:prod.id, nombre:prod.nombre, cantidad:Number(cantSel)||1}]);
+  };
+  const quitarComponente = (i) => set("componentes", form.componentes.filter((_,idx)=>idx!==i));
+
+  return (
+    <div className="p-6 space-y-3.5">
+      <Campo label="Nombre del combo"><input value={form.nombre} onChange={e=>set("nombre",e.target.value)} className="input-oscuro w-full rounded-xl p-3 text-sm" /></Campo>
+      <Campo label="URL de imagen"><input value={form.imagen} onChange={e=>set("imagen",e.target.value)} placeholder="https://..." className="input-oscuro w-full rounded-xl p-3 text-sm" /></Campo>
+      <Campo label="Precio del combo ($)"><input type="number" value={form.precioCombo} onChange={e=>set("precioCombo",e.target.value)} className="input-oscuro w-full rounded-xl p-3 text-sm" /></Campo>
+
+      <div>
+        <label className="text-[11px] font-bold text-carbon-400 tracking-wide block mb-1.5">Productos incluidos</label>
+        <div className="flex gap-2 mb-2">
+          <select value={prodSel} onChange={e=>setProdSel(e.target.value)} className="input-oscuro flex-1 rounded-xl p-2.5 text-sm">
+            {productos.map(p=><option key={p.id} value={p.id} className="bg-carbon-850">{p.nombre}</option>)}
+          </select>
+          <input type="number" min="1" value={cantSel} onChange={e=>setCantSel(e.target.value)} className="input-oscuro w-16 rounded-xl p-2.5 text-sm text-center" />
+          <button type="button" onClick={agregarComponente} className="bg-white/10 hover:bg-white/20 px-3 rounded-xl text-sm"><i className="fa-solid fa-plus"></i></button>
+        </div>
+        <div className="space-y-1.5">
+          {(form.componentes||[]).map((c,i)=>(
+            <div key={i} className="flex items-center justify-between bg-white/5 border border-carbon-700 rounded-lg px-3 py-2 text-xs">
+              <span>{c.cantidad}x {c.nombre}</span>
+              <button onClick={()=>quitarComponente(i)} className="text-marca-400"><i className="fa-solid fa-xmark"></i></button>
+            </div>
+          ))}
+          {(!form.componentes || form.componentes.length===0) && <p className="text-carbon-500 text-xs">Todavía no agregaste productos al combo.</p>}
+        </div>
+      </div>
+
+      <button onClick={()=>onGuardar(form)} className="w-full bg-gradient-to-br from-marca-400 to-marca-600 shadow-glow-marca hover:brightness-110 active:scale-[.98] text-white py-3 rounded-xl text-sm font-bold transition">Guardar combo</button>
+    </div>
+  );
+}
+
+function ConfiguracionForm({config,onGuardar}){
+  const [form,setForm] = useState(JSON.parse(JSON.stringify(config)));
+  const set = (k,v)=>setForm(f=>({...f,[k]:v}));
+  const setPago = (k,v)=>setForm(f=>({...f,pagos:{...f.pagos,[k]:v}}));
+  const setHorario = (i,campo,v)=>setForm(f=>{
+    const horarios = [...f.horarios]; horarios[i] = {...horarios[i], [campo]:v}; return {...f,horarios};
+  });
+  const agregarHorario = ()=>setForm(f=>({...f,horarios:[...f.horarios,{dia:"",horario:""}]}));
+  const quitarHorario = (i)=>setForm(f=>({...f,horarios:f.horarios.filter((_,idx)=>idx!==i)}));
+
+  return (
+    <div className="p-6 space-y-7">
+      <div>
+        <h3 className="font-heading text-sm mb-3 text-ambar-300"><i className="fa-solid fa-user-lock mr-1.5"></i>Usuario administrador</h3>
+        <div className="grid grid-cols-2 gap-3">
+          <Campo label="Usuario"><input value={form.adminUser} onChange={e=>set("adminUser",e.target.value)} className="input-oscuro w-full rounded-xl p-3 text-sm" /></Campo>
+          <Campo label="Contraseña"><input value={form.adminPass} onChange={e=>set("adminPass",e.target.value)} className="input-oscuro w-full rounded-xl p-3 text-sm" /></Campo>
+        </div>
+      </div>
+
+      <div>
+        <h3 className="font-heading text-sm mb-3 text-ambar-300"><i className="fa-solid fa-share-nodes mr-1.5"></i>Redes y contacto</h3>
+        <div className="space-y-3">
+          <Campo label="WhatsApp (con código de país, sin +)"><input value={form.whatsapp} onChange={e=>set("whatsapp",e.target.value)} placeholder="5491100000000" className="input-oscuro w-full rounded-xl p-3 text-sm" /></Campo>
+          <Campo label="Usuario de Instagram"><input value={form.instagram} onChange={e=>set("instagram",e.target.value)} placeholder="tu_negocio" className="input-oscuro w-full rounded-xl p-3 text-sm" /></Campo>
+          <Campo label="Dirección para Google Maps"><input value={form.mapsQuery} onChange={e=>set("mapsQuery",e.target.value)} placeholder="Calle 123, Ciudad" className="input-oscuro w-full rounded-xl p-3 text-sm" /></Campo>
+        </div>
+      </div>
+
+      <div>
+        <h3 className="font-heading text-sm mb-3 text-ambar-300"><i className="fa-regular fa-clock mr-1.5"></i>Horarios de atención</h3>
+        <div className="space-y-2">
+          {form.horarios.map((h,i)=>(
+            <div key={i} className="flex gap-2">
+              <input value={h.dia} onChange={e=>setHorario(i,"dia",e.target.value)} placeholder="Días" className="input-oscuro w-2/5 rounded-lg p-2.5 text-xs" />
+              <input value={h.horario} onChange={e=>setHorario(i,"horario",e.target.value)} placeholder="Horario" className="input-oscuro flex-1 rounded-lg p-2.5 text-xs" />
+              <button onClick={()=>quitarHorario(i)} className="text-marca-400 px-2"><i className="fa-solid fa-xmark"></i></button>
+            </div>
+          ))}
+        </div>
+        <button onClick={agregarHorario} className="mt-2 text-xs font-bold text-ambar-400 hover:text-ambar-300 transition"><i className="fa-solid fa-plus mr-1"></i>Agregar fila</button>
+      </div>
+
+      <div>
+        <h3 className="font-heading text-sm mb-3 text-ambar-300"><i className="fa-solid fa-money-check-dollar mr-1.5"></i>Métodos de pago</h3>
+        <div className="space-y-3">
+          <label className="flex items-center gap-2 text-sm font-semibold text-carbon-200">
+            <input type="checkbox" checked={form.pagos.efectivo} onChange={e=>setPago("efectivo",e.target.checked)} className="accent-ambar-500" />Efectivo
+          </label>
+
+          <div className="bg-white/[.03] border border-carbon-700 rounded-xl p-3.5">
+            <label className="flex items-center gap-2 text-sm font-semibold text-carbon-200 mb-2.5">
+              <input type="checkbox" checked={form.pagos.transferencia.activo} onChange={e=>setPago("transferencia",{...form.pagos.transferencia,activo:e.target.checked})} className="accent-ambar-500" />Transferencia bancaria
+            </label>
+            {form.pagos.transferencia.activo && (
+              <div className="grid grid-cols-2 gap-2">
+                <input value={form.pagos.transferencia.alias} onChange={e=>setPago("transferencia",{...form.pagos.transferencia,alias:e.target.value})} placeholder="Alias" className="input-oscuro rounded-lg p-2.5 text-xs" />
+                <input value={form.pagos.transferencia.cbu} onChange={e=>setPago("transferencia",{...form.pagos.transferencia,cbu:e.target.value})} placeholder="CBU" className="input-oscuro rounded-lg p-2.5 text-xs" />
+              </div>
+            )}
+          </div>
+
+          <div className="bg-white/[.03] border border-carbon-700 rounded-xl p-3.5">
+            <label className="flex items-center gap-2 text-sm font-semibold text-carbon-200 mb-2.5">
+              <input type="checkbox" checked={form.pagos.mercadopago.activo} onChange={e=>setPago("mercadopago",{...form.pagos.mercadopago,activo:e.target.checked})} className="accent-ambar-500" />Mercado Pago
+            </label>
+            {form.pagos.mercadopago.activo && (
+              <input value={form.pagos.mercadopago.qrUrl} onChange={e=>setPago("mercadopago",{...form.pagos.mercadopago,qrUrl:e.target.value})} placeholder="URL de la imagen del QR" className="input-oscuro w-full rounded-lg p-2.5 text-xs" />
+            )}
+          </div>
+        </div>
+      </div>
+
+      <button onClick={()=>onGuardar(form)} className="w-full bg-gradient-to-br from-marca-400 to-marca-600 shadow-glow-marca hover:brightness-110 active:scale-[.98] text-white py-3 rounded-xl text-sm font-bold transition">Guardar configuración</button>
+    </div>
+  );
+}
+
+function Campo({label,children}){
+  return <div><label className="text-[11px] font-bold text-carbon-400 tracking-wide block mb-1.5">{label}</label>{children}</div>;
+}
+
+function ScannerModal({onScan}){
+  const [error,setError] = useState("");
+  const [buscando,setBuscando] = useState(true);
+  const qrRef = useRef(null);
+  const detenidoRef = useRef(false);
+
+  const detenerYLimpiar = () => {
+    if(!qrRef.current || detenidoRef.current) return Promise.resolve();
+    detenidoRef.current = true;
+    return qrRef.current.stop()
+      .catch(()=>{})
+      .then(()=>{ try{ qrRef.current.clear(); }catch(e){} });
+  };
+
+  useEffect(()=>{
+    let activo = true;
+    if(!window.Html5Qrcode){
+      setError("La librería de escaneo no cargó. Revisá tu conexión a internet y volvé a intentar.");
+      return;
+    }
+    if(location.protocol !== "https:" && location.hostname !== "localhost"){
+      setError("La cámara solo funciona en el sitio publicado (https). Probá desde el link de Vercel, no abriendo el archivo directo.");
+      return;
+    }
+    try{
+      const html5Qr = new Html5Qrcode("reader");
+      qrRef.current = html5Qr;
+      html5Qr.start(
+        {facingMode:"environment"},
+        {fps:10, qrbox:{width:250,height:150}},
+        (decodedText)=>{
+          if(!activo) return;
+          activo = false;
+          detenerYLimpiar().then(()=>{ onScan(decodedText); });
+        },
+        ()=>{}
+      ).then(()=>setBuscando(false)).catch(()=>{
+        setError("No se pudo acceder a la cámara. Revisá los permisos del navegador o usá la carga manual.");
+      });
+    }catch(e){
+      setError("El navegador no permite usar la cámara acá. Usá la carga manual.");
+    }
+    return ()=>{ activo=false; detenerYLimpiar(); };
+  },[]);
+
+  return (
+    <div className="p-6">
+      <div id="reader" className="border border-carbon-700"></div>
+      {error && <p className="text-marca-400 text-xs mt-3 font-semibold">{error}</p>}
+      {!error && <p className="text-[11px] text-carbon-500 mt-3">Apuntá con la cámara al código de barras del producto.</p>}
+    </div>
+  );
+}
+
+class ErrorBoundary extends React.Component{
+  constructor(props){ super(props); this.state = {error:null}; }
+  static getDerivedStateFromError(error){ return {error}; }
+  render(){
+    if(this.state.error){
+      return (
+        <div className="min-h-screen flex items-center justify-center p-6 text-center">
+          <div>
+            <i className="fa-solid fa-triangle-exclamation text-4xl text-marca-500 mb-4"></i>
+            <p className="font-heading text-lg mb-2">Uy, algo se rompió</p>
+            <p className="text-carbon-400 text-sm mb-5">Probá recargar la página. Si vuelve a pasar, avisale a Matías.</p>
+            <button onClick={()=>window.location.reload()} className="bg-gradient-to-br from-marca-400 to-marca-600 shadow-glow-marca text-white px-6 py-3 rounded-xl text-sm font-bold">Recargar</button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<ErrorBoundary><App/></ErrorBoundary>);
+</script>
+</body>
+</html>

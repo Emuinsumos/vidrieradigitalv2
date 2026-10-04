@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+html { scroll-behavior: smooth; }
+body { @apply bg-crema text-cafe font-sans antialiased overflow-x-hidden; }
+@keyframes slideUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+.fade-up { animation: slideUp .7s ease both; }
+.btn { @apply inline-flex items-center justify-center rounded-full px-6 py-3.5 font-semibold transition duration-200 active:scale-95 text-center; }
+.btn-primary { @apply bg-acento text-white hover:brightness-110 shadow-md; }
+.btn-outline { @apply border-2 border-cafe text-cafe hover:bg-cafe hover:text-crema; }
+.section { @apply px-5 py-16 md:py-24 max-w-6xl mx-auto; }

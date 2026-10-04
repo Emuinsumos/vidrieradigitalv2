@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo · El Argentino | Café · Bar · Parrilla</title>
+<meta name="description" content="Café, desayuno, almuerzo y parrilla en El Argentino. Mirá nuestro menú del día.">
+<meta property="og:title" content="El Argentino">
+<meta property="og:description" content="Café · Desayuno · Almuerzo · Parrilla">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#120B08">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.85em' font-size='80'%3E☕%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,500;1,700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['EB Garamond', 'serif'],
+          heading: ['Playfair Display', 'serif'],
+        },
+        colors: {
+          cafe: {
+            50: '#F6F2EB',
+            100: '#EDE3D3',
+            200: '#DDCBA8',
+            300: '#C7AD7C',
+            400: '#A8875A',
+            500: '#8C6C42',
+            600: '#6B4F30',
+            700: '#4A3520',
+            800: '#2C1D12',
+            900: '#120B08',
+          },
+          bronce: {
+            300: '#F2D388',
+            400: '#D6AE55',
+            500: '#B8863B',
+            600: '#946624',
+          },
+          vino: {
+            500: '#8B2626',
+            600: '#6B1B1B',
+            700: '#520E0E',
+            800: '#2E0808',
+          }
+        },
+        boxShadow: {
+          'premium': '0 25px 50px -12px rgba(18, 11, 8, 0.45)',
+          'gold-glow': '0 0 45px rgba(214, 174, 85, 0.18)',
+          'inner-gold': 'inset 0 0 0 1px rgba(214, 174, 85, 0.25)',
+        },
+        animation: {
+          'fade-in': 'fadeIn 0.5s ease forwards',
+          'slide-up': 'slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+          'slide-down': 'slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+          'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          'logo-in': 'logoIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+          'shimmer': 'shimmer 2.5s linear infinite',
+        },
+        keyframes: {
+          fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+          slideUp: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+          slideDown: { '0%': { opacity: '0', transform: 'translateY(-14px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+          logoIn: { '0%': { opacity: '0', transform: 'scale(0.85) rotate(-4deg)' }, '100%': { opacity: '1', transform: 'scale(1) rotate(0)' } },
+          shimmer: { '0%': { backgroundPosition: '-200% 0' }, '100%': { backgroundPosition: '200% 0' } },
+        }
+      }
+    }
+  }
+</script>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<style>
+  body {
+    font-family: 'EB Garamond', serif;
+    background-color: #F6F2EB;
+    color: #2A1D14;
+  }
+  h1, h2, h3, .font-heading { font-family: 'Playfair Display', serif; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* Fondo general: papel/marfil texturizado */
+  .bg-papel {
+    background-color: #F6F2EB;
+    background-image:
+      radial-gradient(at 0% 0%, rgba(214,174,85,0.07) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(82,14,14,0.03) 0px, transparent 40%),
+      radial-gradient(at 100% 100%, rgba(214,174,85,0.05) 0px, transparent 45%),
+      repeating-radial-gradient(circle at 20px 20px, rgba(140,108,66,0.035) 0px, transparent 1.4px);
+    background-size: auto, auto, auto, 40px 40px;
+  }
+
+  /* Fondo atmosférico oscuro para el header, con filigrana metálica sutil */
+  .bg-atmosferico {
+    background-color: #120B08;
+    background-image:
+      radial-gradient(at 15% 0%, rgba(214,174,85,0.16) 0px, transparent 55%),
+      radial-gradient(at 85% 100%, rgba(82,14,14,0.25) 0px, transparent 55%),
+      repeating-linear-gradient(135deg, rgba(214,174,85,0.05) 0px, rgba(214,174,85,0.05) 1px, transparent 1px, transparent 22px);
+  }
+
+  .filete-borde {
+    border: 1px solid rgba(184,134,59,0.25);
+    box-shadow: 0 20px 40px -18px rgba(18, 11, 8, 0.35);
+  }
+
+  .glass-dark {
+    background: rgba(26, 17, 13, 0.55);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  .texto-shimmer {
+    background: linear-gradient(90deg, #B8863B 0%, #F2D388 25%, #D6AE55 50%, #F2D388 75%, #B8863B 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .monograma {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    letter-spacing: 2px;
+  }
+
+  .btn-red {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 9999px;
+    color: #ffffff;
+    font-size: 20px;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .btn-red:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.4); }
+  .btn-whatsapp { background-color: #25D366; }
+  .btn-instagram { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); }
+
+  .imagen-zoom { overflow: hidden; }
+  .imagen-zoom img { transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+  .imagen-zoom:hover img { transform: scale(1.08); }
+</style>
+</head>
+<body class="bg-papel min-h-screen antialiased selection:bg-bronce-400 selection:text-cafe-900">
+
+<div id="root"></div>
+
+<script src="seed.js"></script>
+<script src="../demo-db.js"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+const NOMBRE_NEGOCIO = "El Argentino";
+const TAGLINE = "Café · Desayuno · Almuerzo · Parrilla";
+
+// Credenciales de admin — cambiar acá cuando quieras
+const ADMIN_USUARIO = "demo";
+const ADMIN_CONTRASENA = "demo";
+
+function resizeImagen(file, callback, maxSize = 900) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img = new Image();
+    img.onload = () => {
+      let { width, height } = img;
+      if (width > height && width > maxSize) { height *= maxSize / width; width = maxSize; }
+      else if (height > maxSize) { width *= maxSize / height; height = maxSize; }
+      const canvas = document.createElement('canvas');
+      canvas.width = width; canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+      callback(canvas.toDataURL('image/jpeg', 0.82));
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function App() {
+  const [productos, setProductos] = useState({});
+  const [categorias, setCategorias] = useState([]);
+  const [config, setConfig] = useState({ whatsapp: '', instagram: '', logo: '', direccion: '' });
+
+  const [categoriaActiva, setCategoriaActiva] = useState('todas');
+  const [busqueda, setBusqueda] = useState('');
+
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [mostrarAdminModal, setMostrarAdminModal] = useState(false);
+  const [adminTab, setAdminTab] = useState('pedidos');
+  const [usuario, setUsuario] = useState('');
+  const [contrasena, setContrasena] = useState('');
+  const [errorLogin, setErrorLogin] = useState('');
+
+  const [form, setForm] = useState({ nombre: '', categoria: '', descripcion: '', precio: '', imagen: '', insumos: [] });
+  const [editandoId, setEditandoId] = useState(null);
+
+  const [nuevaCategoria, setNuevaCategoria] = useState('');
+
+  const [whatsappInput, setWhatsappInput] = useState('');
+  const [instagramInput, setInstagramInput] = useState('');
+  const [direccionInput, setDireccionInput] = useState('');
+
+  const [platoDelDia, setPlatoDelDia] = useState(null);
+  const [platoForm, setPlatoForm] = useState({ nombre: '', descripcion: '', precio: '', imagen: '', insumos: [] });
+
+  const [carrito, setCarrito] = useState([]);
+  const [mostrarCarrito, setMostrarCarrito] = useState(false);
+  const [modoConsumo, setModoConsumo] = useState('mesa');
+  const [pedidoForm, setPedidoForm] = useState({ nombre: '', telefono: '', direccion: '', mesa: '' });
+  const [enviandoPedido, setEnviandoPedido] = useState(false);
+
+  const [mesas, setMesas] = useState({});
+  const [nuevaMesaNumero, setNuevaMesaNumero] = useState('');
+  const [mesaPorQR, setMesaPorQR] = useState(null);
+
+  const [pedidos, setPedidos] = useState({});
+  const [confirmacionPedido, setConfirmacionPedido] = useState(null);
+
+  const [insumos, setInsumos] = useState({});
+  const [insumoForm, setInsumoForm] = useState({ nombre: '', unidad: '', cantidad: '', minimo: '' });
+  const [editandoInsumoId, setEditandoInsumoId] = useState(null);
+  const [selInsumoProd, setSelInsumoProd] = useState('');
+  const [cantInsumoProd, setCantInsumoProd] = useState('');
+  const [selInsumoPlato, setSelInsumoPlato] = useState('');
+  const [cantInsumoPlato, setCantInsumoPlato] = useState('');
+
+  const [chatbotConfig, setChatbotConfig] = useState({ saludo: '', preguntas: {} });
+  const [chatSaludoInput, setChatSaludoInput] = useState('');
+  const [mostrarChat, setMostrarChat] = useState(false);
+  const [preguntaActiva, setPreguntaActiva] = useState(null);
+  const [preguntaForm, setPreguntaForm] = useState({ pregunta: '', respuesta: '' });
+  const [editandoPreguntaId, setEditandoPreguntaId] = useState(null);
+
+  const [combos, setCombos] = useState({});
+  const [comboForm, setComboForm] = useState({ nombre: '', descripcion: '', precio: '', imagen: '', insumos: [] });
+  const [editandoComboId, setEditandoComboId] = useState(null);
+  const [selInsumoCombo, setSelInsumoCombo] = useState('');
+  const [cantInsumoCombo, setCantInsumoCombo] = useState('');
+
+  const [modoVistaCocina, setModoVistaCocina] = useState(false);
+
+  function fechaISO(ts) {
+    const d = new Date(ts || Date.now());
+    const pad = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  }
+  const [fechaCajaSeleccionada, setFechaCajaSeleccionada] = useState(fechaISO());
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const mesaUrl = params.get('mesa');
+    if (mesaUrl) {
+      setMesaPorQR(mesaUrl);
+      setModoConsumo('mesa');
+      setPedidoForm(f => ({ ...f, mesa: mesaUrl }));
+    }
+    if (params.get('cocina')) setModoVistaCocina(true);
+  }, []);
+
+  useEffect(() => {
+    db.ref('productos').on('value', s => setProductos(s.val() || {}));
+    db.ref('categorias').on('value', s => setCategorias(s.val() || []));
+    db.ref('config').on('value', s => {
+      const c = s.val() || {};
+      setConfig(c);
+      setWhatsappInput(c.whatsapp || '');
+      setInstagramInput(c.instagram || '');
+      setDireccionInput(c.direccion || '');
+    });
+    db.ref('platoDelDia').on('value', s => {
+      const p = s.val();
+      setPlatoDelDia(p);
+      if (p) setPlatoForm({ nombre: p.nombre || '', descripcion: p.descripcion || '', precio: p.precio ? String(p.precio) : '', imagen: p.imagen || '', insumos: p.insumos || [] });
+    });
+    db.ref('mesas').on('value', s => setMesas(s.val() || {}));
+    db.ref('pedidos').on('value', s => setPedidos(s.val() || {}));
+    db.ref('insumos').on('value', s => setInsumos(s.val() || {}));
+    db.ref('chatbot').on('value', s => {
+      const c = s.val() || { saludo: '', preguntas: {} };
+      setChatbotConfig(c);
+      setChatSaludoInput(c.saludo || '');
+    });
+    db.ref('combos').on('value', s => setCombos(s.val() || {}));
+  }, []);
+
+  const listaProductos = Object.entries(productos).map(([id, p]) => ({ id, ...p }));
+
+  const productosFiltrados = listaProductos.filter(p => {
+    const pasaCategoria = categoriaActiva === 'todas' || p.categoria === categoriaActiva;
+    const pasaBusqueda = !busqueda || p.nombre.toLowerCase().includes(busqueda.toLowerCase());
+    return pasaCategoria && pasaBusqueda;
+  });
+
+  const categoriasConProductos = categorias.filter(c => listaProductos.some(p => p.categoria === c));
+
+  function intentarLogin() {
+    if (usuario === ADMIN_USUARIO && contrasena === ADMIN_CONTRASENA) {
+      setIsAdmin(true);
+      setErrorLogin('');
+      setUsuario(''); setContrasena('');
+    } else {
+      setErrorLogin('Usuario o contraseña incorrectos');
+    }
+  }
+  function cerrarSesion() {
+    setIsAdmin(false);
+    setMostrarAdminModal(false);
+  }
+
+  function resetForm() {
+    setForm({ nombre: '', categoria: categorias[0] || '', descripcion: '', precio: '', imagen: '', insumos: [] });
+    setEditandoId(null);
+    setSelInsumoProd(''); setCantInsumoProd('');
+  }
+  function editarProducto(p) {
+    setForm({ nombre: p.nombre, categoria: p.categoria, descripcion: p.descripcion || '', precio: String(p.precio), imagen: p.imagen || '', insumos: p.insumos || [] });
+    setEditandoId(p.id);
+    setAdminTab('productos');
+  }
+  function guardarProducto() {
+    if (!form.nombre || !form.categoria || !form.precio) return;
+    const id = editandoId || db.ref('productos').push().key;
+    db.ref('productos/' + id).set({
+      nombre: form.nombre,
+      categoria: form.categoria,
+      descripcion: form.descripcion || '',
+      precio: Number(form.precio),
+      imagen: form.imagen || '',
+      insumos: form.insumos || []
+    });
+    resetForm();
+  }
+  function eliminarProducto(id) {
+    if (confirm('¿Eliminar este ítem del menú?')) db.ref('productos/' + id).remove();
+  }
+  function handleImagenProducto(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    resizeImagen(file, dataUrl => setForm(f => ({ ...f, imagen: dataUrl })));
+    e.target.value = '';
+  }
+  function agregarInsumoAProducto() {
+    if (!selInsumoProd || !cantInsumoProd) return;
+    setForm(f => ({ ...f, insumos: [...(f.insumos || []), { insumoId: selInsumoProd, cantidad: Number(cantInsumoProd) }] }));
+    setSelInsumoProd(''); setCantInsumoProd('');
+  }
+  function quitarInsumoDeProducto(idx) {
+    setForm(f => ({ ...f, insumos: f.insumos.filter((_, i) => i !== idx) }));
+  }
+
+  function agregarCategoria() {
+    if (!nuevaCategoria || categorias.includes(nuevaCategoria)) return;
+    db.ref('categorias').set([...categorias, nuevaCategoria]).then(() => setNuevaCategoria(''));
+  }
+  function eliminarCategoria(cat) {
+    if (listaProductos.some(p => p.categoria === cat)) {
+      alert('Esta categoría tiene ítems del menú cargados. Cambiá o eliminá esos ítems antes de borrarla.');
+      return;
+    }
+    db.ref('categorias').set(categorias.filter(c => c !== cat));
+  }
+
+  function agregarAlCarrito(p) {
+    setCarrito(prev => {
+      const existe = prev.find(it => it.id === p.id);
+      if (existe) return prev.map(it => it.id === p.id ? { ...it, cantidad: it.cantidad + 1 } : it);
+      return [...prev, { id: p.id, nombre: p.nombre, precio: p.precio, cantidad: 1, insumos: p.insumos || [] }];
+    });
+  }
+  function agregarPlatoDelDiaAlCarrito() {
+    if (!platoDelDia) return;
+    const idPlato = 'plato-del-dia';
+    setCarrito(prev => {
+      const existe = prev.find(it => it.id === idPlato);
+      if (existe) return prev.map(it => it.id === idPlato ? { ...it, cantidad: it.cantidad + 1 } : it);
+      return [...prev, { id: idPlato, nombre: platoDelDia.nombre, precio: platoDelDia.precio, cantidad: 1, insumos: platoDelDia.insumos || [] }];
+    });
+  }
+  function agregarComboAlCarrito(c) {
+    const cartId = 'combo-' + c.id;
+    setCarrito(prev => {
+      const existe = prev.find(it => it.id === cartId);
+      if (existe) return prev.map(it => it.id === cartId ? { ...it, cantidad: it.cantidad + 1 } : it);
+      return [...prev, { id: cartId, nombre: c.nombre, precio: c.precio, cantidad: 1, insumos: c.insumos || [] }];
+    });
+  }
+  function cambiarCantidadCarrito(id, delta) {
+    setCarrito(prev => prev
+      .map(it => it.id === id ? { ...it, cantidad: it.cantidad + delta } : it)
+      .filter(it => it.cantidad > 0));
+  }
+  const totalCarrito = carrito.reduce((a, it) => a + it.cantidad * it.precio, 0);
+  const cantidadCarrito = carrito.reduce((a, it) => a + it.cantidad, 0);
+
+  function puedeEnviarPedido() {
+    if (carrito.length === 0) return false;
+    if (modoConsumo === 'mesa') return !!pedidoForm.mesa;
+    if (modoConsumo === 'delivery') return !!pedidoForm.nombre && !!pedidoForm.telefono && !!pedidoForm.direccion;
+    return !!pedidoForm.nombre; // take away
+  }
+
+  function descontarStockPorPedido(items) {
+    const updates = {};
+    items.forEach(it => {
+      (it.insumos || []).forEach(ins => {
+        const totalUsado = ins.cantidad * it.cantidad;
+        if (!totalUsado) return;
+        updates['insumos/' + ins.insumoId + '/cantidad'] = firebase.database.ServerValue.increment(-totalUsado);
+      });
+    });
+    if (Object.keys(updates).length > 0) db.ref().update(updates);
+  }
+
+  function enviarPedido() {
+    if (!puedeEnviarPedido()) return;
+    if (modoConsumo !== 'mesa' && !config.whatsapp) return;
+    setEnviandoPedido(true);
+
+    const pedidoData = {
+      modo: modoConsumo,
+      mesa: pedidoForm.mesa || null,
+      nombre: pedidoForm.nombre || null,
+      telefono: pedidoForm.telefono || null,
+      direccion: pedidoForm.direccion || null,
+      items: carrito,
+      total: totalCarrito,
+      estado: 'nuevo',
+      creado: Date.now()
+    };
+
+    db.ref('pedidos').push().set(pedidoData).then(() => {
+      descontarStockPorPedido(carrito);
+      if (modoConsumo === 'mesa') {
+        setConfirmacionPedido(`¡Pedido enviado a la Mesa ${pedidoForm.mesa}! Ya lo estamos preparando.`);
+        setCarrito([]);
+        setEnviandoPedido(false);
+      } else {
+        const lineas = [];
+        lineas.push(`Nuevo pedido - ${NOMBRE_NEGOCIO}`);
+        if (modoConsumo === 'takeaway') lineas.push(`Modo: Take away - ${pedidoForm.nombre}`);
+        if (modoConsumo === 'delivery') {
+          lineas.push(`Modo: Delivery`);
+          lineas.push(`Cliente: ${pedidoForm.nombre}`);
+          lineas.push(`Teléfono: ${pedidoForm.telefono}`);
+          lineas.push(`Dirección: ${pedidoForm.direccion}`);
+        }
+        lineas.push('-------------------------');
+        carrito.forEach(it => lineas.push(`${it.cantidad}x ${it.nombre} - $${it.cantidad * it.precio}`));
+        lineas.push('-------------------------');
+        lineas.push(`Total: $${totalCarrito}`);
+        const mensaje = encodeURIComponent(lineas.join('\n'));
+        window.open(`https://wa.me/${config.whatsapp}?text=${mensaje}`, '_blank');
+        setCarrito([]);
+        setPedidoForm({ nombre: '', telefono: '', direccion: '', mesa: mesaPorQR || '' });
+        setMostrarCarrito(false);
+        setEnviandoPedido(false);
+      }
+    }).catch(() => setEnviandoPedido(false));
+  }
+  function cerrarConfirmacionPedido() {
+    setConfirmacionPedido(null);
+    setPedidoForm({ nombre: '', telefono: '', direccion: '', mesa: mesaPorQR || '' });
+    setMostrarCarrito(false);
+  }
+
+  const ESTADOS_PEDIDO = ['nuevo', 'recibido', 'entregado', 'cobrado'];
+  const ESTADO_LABEL = { nuevo: 'Nuevo pedido', recibido: 'Recibido', entregado: 'Entregado', cobrado: 'Cobrado' };
+  const ESTADO_ESTILO = {
+    nuevo: 'bg-sky-100 text-sky-700',
+    recibido: 'bg-bronce-200 text-cafe-800',
+    entregado: 'bg-orange-100 text-orange-700',
+    cobrado: 'bg-green-100 text-green-700'
+  };
+  const listaPedidos = Object.entries(pedidos).map(([id, p]) => ({ id, ...p })).sort((a,b) => (b.creado||0) - (a.creado||0));
+
+  const pedidosCajaSel = listaPedidos.filter(p => fechaISO(p.creado) === fechaCajaSeleccionada);
+  const cobradosCajaSel = pedidosCajaSel.filter(p => p.estado === 'cobrado');
+  const abiertosCajaSel = pedidosCajaSel.filter(p => p.estado !== 'cobrado');
+  const totalCajaSel = cobradosCajaSel.reduce((a, p) => a + (p.total || 0), 0);
+  const totalPorCobrarSel = abiertosCajaSel.reduce((a, p) => a + (p.total || 0), 0);
+  const desglosePorModoSel = { mesa: 0, takeaway: 0, delivery: 0 };
+  cobradosCajaSel.forEach(p => { desglosePorModoSel[p.modo] = (desglosePorModoSel[p.modo] || 0) + (p.total || 0); });
+
+  function etiquetaFecha(fechaStr) {
+    if (fechaStr === fechaISO()) return 'Hoy';
+    const [y, m, d] = fechaStr.split('-').map(Number);
+    const fecha = new Date(y, m - 1, d);
+    const texto = fecha.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' });
+    return texto.charAt(0).toUpperCase() + texto.slice(1);
+  }
+
+  const historialDias = (() => {
+    const mapa = {};
+    listaPedidos.filter(p => p.estado === 'cobrado').forEach(p => {
+      const f = fechaISO(p.creado);
+      mapa[f] = (mapa[f] || 0) + (p.total || 0);
+    });
+    return Object.entries(mapa).map(([fecha, total]) => ({ fecha, total })).sort((a, b) => b.fecha.localeCompare(a.fecha)).slice(0, 14);
+  })();
+
+  const topProductos = (() => {
+    const conteo = {};
+    listaPedidos.filter(p => p.estado === 'cobrado').forEach(p => {
+      (p.items || []).forEach(it => {
+        if (!conteo[it.nombre]) conteo[it.nombre] = { nombre: it.nombre, cantidad: 0, total: 0 };
+        conteo[it.nombre].cantidad += it.cantidad;
+        conteo[it.nombre].total += it.cantidad * it.precio;
+      });
+    });
+    return Object.values(conteo).sort((a, b) => b.cantidad - a.cantidad).slice(0, 10);
+  })();
+
+  function linkCocina() {
+    return `${window.location.origin}${window.location.pathname}?cocina=1`;
+  }
+
+  function avanzarEstadoPedido(id, estadoActual) {
+    const idx = ESTADOS_PEDIDO.indexOf(estadoActual);
+    if (idx === -1 || idx === ESTADOS_PEDIDO.length - 1) return;
+    db.ref('pedidos/' + id + '/estado').set(ESTADOS_PEDIDO[idx + 1]);
+  }
+  function horaCorta(ts) {
+    if (!ts) return '';
+    return new Date(ts).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+  }
+  function etiquetaOrigenPedido(p) {
+    if (p.modo === 'mesa') return `Mesa ${p.mesa}`;
+    if (p.modo === 'takeaway') return `Take away - ${p.nombre}`;
+    return `Delivery - ${p.nombre}`;
+  }
+
+  const listaMesas = Object.entries(mesas).map(([id, m]) => ({ id, ...m })).sort((a,b) => Number(a.numero) - Number(b.numero));
+
+  function agregarMesa() {
+    if (!nuevaMesaNumero) return;
+    if (listaMesas.some(m => m.numero === nuevaMesaNumero)) { alert('Ya existe una mesa con ese número.'); return; }
+    db.ref('mesas').push().set({ numero: nuevaMesaNumero }).then(() => setNuevaMesaNumero(''));
+  }
+  function eliminarMesa(id) {
+    if (confirm('¿Eliminar esta mesa y su QR?')) db.ref('mesas/' + id).remove();
+  }
+  function linkMesa(numero) {
+    return `${window.location.origin}${window.location.pathname}?mesa=${numero}`;
+  }
+  function qrMesa(numero) {
+    return `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(linkMesa(numero))}`;
+  }
+
+  function guardarPlatoDelDia() {
+    if (!platoForm.nombre || !platoForm.precio) return;
+    db.ref('platoDelDia').set({
+      nombre: platoForm.nombre,
+      descripcion: platoForm.descripcion || '',
+      precio: Number(platoForm.precio),
+      imagen: platoForm.imagen || '',
+      insumos: platoForm.insumos || [],
+      fecha: Date.now()
+    });
+  }
+  function quitarPlatoDelDia() {
+    if (confirm('¿Quitar el plato del día de la pantalla principal?')) {
+      db.ref('platoDelDia').remove();
+      setPlatoForm({ nombre: '', descripcion: '', precio: '', imagen: '', insumos: [] });
+    }
+  }
+  function agregarInsumoAPlato() {
+    if (!selInsumoPlato || !cantInsumoPlato) return;
+    setPlatoForm(f => ({ ...f, insumos: [...(f.insumos || []), { insumoId: selInsumoPlato, cantidad: Number(cantInsumoPlato) }] }));
+    setSelInsumoPlato(''); setCantInsumoPlato('');
+  }
+  function quitarInsumoDePlato(idx) {
+    setPlatoForm(f => ({ ...f, insumos: f.insumos.filter((_, i) => i !== idx) }));
+  }
+  function handleImagenPlato(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    resizeImagen(file, dataUrl => setPlatoForm(f => ({ ...f, imagen: dataUrl })));
+    e.target.value = '';
+  }
+
+  const listaInsumos = Object.entries(insumos).map(([id, i]) => ({ id, ...i }));
+
+  function resetInsumoForm() {
+    setInsumoForm({ nombre: '', unidad: '', cantidad: '', minimo: '' });
+    setEditandoInsumoId(null);
+  }
+  function editarInsumo(i) {
+    setInsumoForm({ nombre: i.nombre, unidad: i.unidad || '', cantidad: String(i.cantidad ?? ''), minimo: String(i.minimo ?? '') });
+    setEditandoInsumoId(i.id);
+  }
+  function guardarInsumo() {
+    if (!insumoForm.nombre) return;
+    const id = editandoInsumoId || db.ref('insumos').push().key;
+    db.ref('insumos/' + id).set({
+      nombre: insumoForm.nombre,
+      unidad: insumoForm.unidad || '',
+      cantidad: Number(insumoForm.cantidad) || 0,
+      minimo: Number(insumoForm.minimo) || 0
+    });
+    resetInsumoForm();
+  }
+  function eliminarInsumo(id) {
+    if (confirm('¿Eliminar este insumo? Los productos que lo usan dejarán de descontar stock por él.')) db.ref('insumos/' + id).remove();
+  }
+
+  const listaCombos = Object.entries(combos).map(([id, c]) => ({ id, ...c }));
+  function resetComboForm() {
+    setComboForm({ nombre: '', descripcion: '', precio: '', imagen: '', insumos: [] });
+    setEditandoComboId(null);
+    setSelInsumoCombo(''); setCantInsumoCombo('');
+  }
+  function editarCombo(c) {
+    setComboForm({ nombre: c.nombre, descripcion: c.descripcion || '', precio: String(c.precio), imagen: c.imagen || '', insumos: c.insumos || [] });
+    setEditandoComboId(c.id);
+  }
+  function guardarCombo() {
+    if (!comboForm.nombre || !comboForm.precio) return;
+    const id = editandoComboId || db.ref('combos').push().key;
+    db.ref('combos/' + id).set({
+      nombre: comboForm.nombre,
+      descripcion: comboForm.descripcion || '',
+      precio: Number(comboForm.precio),
+      imagen: comboForm.imagen || '',
+      insumos: comboForm.insumos || []
+    });
+    resetComboForm();
+  }
+  function eliminarCombo(id) {
+    if (confirm('¿Eliminar este combo/promo?')) db.ref('combos/' + id).remove();
+  }
+  function handleImagenCombo(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    resizeImagen(file, dataUrl => setComboForm(f => ({ ...f, imagen: dataUrl })));
+    e.target.value = '';
+  }
+  function agregarInsumoACombo() {
+    if (!selInsumoCombo || !cantInsumoCombo) return;
+    setComboForm(f => ({ ...f, insumos: [...(f.insumos || []), { insumoId: selInsumoCombo, cantidad: Number(cantInsumoCombo) }] }));
+    setSelInsumoCombo(''); setCantInsumoCombo('');
+  }
+  function quitarInsumoDeCombo(idx) {
+    setComboForm(f => ({ ...f, insumos: f.insumos.filter((_, i) => i !== idx) }));
+  }
+
+  const listaPreguntasBot = Object.entries(chatbotConfig.preguntas || {}).map(([id, p]) => ({ id, ...p }));
+  const SALUDO_BOT_DEFAULT = '¡Hola! 👋 Soy el asistente de El Argentino. Elegí una pregunta:';
+
+  function guardarSaludoBot() {
+    db.ref('chatbot/saludo').set(chatSaludoInput);
+  }
+  function resetPreguntaBotForm() {
+    setPreguntaForm({ pregunta: '', respuesta: '' });
+    setEditandoPreguntaId(null);
+  }
+  function editarPreguntaBot(p) {
+    setPreguntaForm({ pregunta: p.pregunta, respuesta: p.respuesta });
+    setEditandoPreguntaId(p.id);
+  }
+  function guardarPreguntaBot() {
+    if (!preguntaForm.pregunta || !preguntaForm.respuesta) return;
+    const id = editandoPreguntaId || db.ref('chatbot/preguntas').push().key;
+    db.ref('chatbot/preguntas/' + id).set({ pregunta: preguntaForm.pregunta, respuesta: preguntaForm.respuesta });
+    resetPreguntaBotForm();
+  }
+  function eliminarPreguntaBot(id) {
+    if (confirm('¿Eliminar esta pregunta del chatbot?')) db.ref('chatbot/preguntas/' + id).remove();
+  }
+  function abrirChat() {
+    setPreguntaActiva(null);
+    setMostrarChat(true);
+  }
+
+  function guardarConfig() {
+    db.ref('config').set({ ...config, whatsapp: whatsappInput, instagram: instagramInput, direccion: direccionInput });
+  }
+  function handleLogo(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    resizeImagen(file, dataUrl => {
+      db.ref('config').set({ ...config, whatsapp: whatsappInput, instagram: instagramInput, direccion: direccionInput, logo: dataUrl });
+    }, 300);
+  }
+
+  // ===================== VISTA COCINA (pantalla completa, sin login) =====================
+  if (modoVistaCocina) {
+    const pedidosCocina = listaPedidos
+      .filter(p => p.estado === 'nuevo' || p.estado === 'recibido')
+      .sort((a, b) => (a.creado || 0) - (b.creado || 0));
+
+    return (
+      <div className="min-h-screen bg-cafe-900 text-cafe-50 p-4 sm:p-6">
+        <div className="flex items-center justify-between mb-5">
+          <h1 className="font-heading text-2xl sm:text-3xl font-bold text-bronce-400"><i className="fa-solid fa-kitchen-set mr-2"></i>Cocina</h1>
+          <span className="bg-bronce-500 text-cafe-900 text-xs font-bold px-3 py-1.5 rounded-full">{pedidosCocina.length} pendiente{pedidosCocina.length === 1 ? '' : 's'}</span>
+        </div>
+
+        {pedidosCocina.length === 0 && (
+          <div className="text-center py-24 text-cafe-500">
+            <i className="fa-solid fa-mug-hot text-5xl mb-4"></i>
+            <p className="text-lg">No hay pedidos pendientes.</p>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {pedidosCocina.map(p => (
+            <div key={p.id} className="bg-cafe-800 border border-cafe-700 rounded-2xl p-4">
+              <div className="flex justify-between items-start mb-2">
+                <h2 className="font-heading text-xl font-bold text-bronce-300">{etiquetaOrigenPedido(p)}</h2>
+                <span className="text-cafe-400 text-sm">{horaCorta(p.creado)}</span>
+              </div>
+              <div className="space-y-1 mb-4 text-lg">
+                {(p.items || []).map((it, idx) => (
+                  <p key={idx}>{it.cantidad}x {it.nombre}</p>
+                ))}
+              </div>
+              <button
+                onClick={() => avanzarEstadoPedido(p.id, p.estado)}
+                className={`w-full py-3 rounded-xl text-base font-bold ${p.estado === 'nuevo' ? 'bg-sky-500 text-white' : 'bg-bronce-500 text-cafe-900'}`}>
+                {p.estado === 'nuevo' ? 'Marcar como recibido' : 'Marcar como entregado'}
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="pb-16">
+
+      {/* ===================== HEADER ===================== */}
+      <header className="relative overflow-hidden bg-atmosferico">
+        {/* Brillo dorado superior */}
+        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[420px] h-[420px] rounded-full bg-bronce-500/20 blur-3xl pointer-events-none"></div>
+
+        <div className="relative max-w-4xl mx-auto px-4 py-8 sm:py-12">
+          <div className="glass-dark border border-bronce-500/25 rounded-2xl shadow-premium shadow-inner-gold px-5 py-6 sm:px-9 sm:py-8 flex items-center gap-4 sm:gap-6">
+            {config.logo ? (
+              <div className="relative flex-shrink-0 animate-logo-in">
+                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-bronce-300 via-bronce-500 to-bronce-600 blur-[2px]"></div>
+                <img src={config.logo} className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-bronce-400" />
+              </div>
+            ) : (
+              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-bronce-400 to-bronce-600 flex items-center justify-center flex-shrink-0 animate-logo-in shadow-gold-glow">
+                <i className="fa-solid fa-mug-saucer text-cafe-900 text-xl"></i>
+              </div>
+            )}
+
+            <div className="flex-1 min-w-0 text-center">
+              <h1 className="font-heading text-3xl sm:text-5xl font-black tracking-tight texto-shimmer leading-none animate-shimmer">{NOMBRE_NEGOCIO}</h1>
+              <div className="inline-flex items-center gap-1.5 mt-2.5 mb-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-bronce-600/20 via-bronce-400/25 to-bronce-600/20 border border-bronce-500/30 text-bronce-300 text-[11px] sm:text-xs">
+                <i className="fa-solid fa-star"></i><i className="fa-solid fa-star"></i><i className="fa-solid fa-star"></i>
+              </div>
+              <p className="text-cafe-200/80 text-xs sm:text-sm tracking-[0.15em] uppercase">{TAGLINE}</p>
+            </div>
+
+            <div className="flex flex-col gap-2.5 flex-shrink-0">
+              {config.whatsapp && (
+                <a href={`https://wa.me/${config.whatsapp}`} target="_blank" className="btn-red btn-whatsapp !w-10 !h-10 !text-base ring-1 ring-bronce-500/30"><i className="fa-brands fa-whatsapp"></i></a>
+              )}
+              {config.instagram && (
+                <a href={`https://instagram.com/${config.instagram}`} target="_blank" className="btn-red btn-instagram !w-10 !h-10 !text-base ring-1 ring-bronce-500/30"><i className="fa-brands fa-instagram"></i></a>
+              )}
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* ===================== AVISO MESA POR QR ===================== */}
+      {mesaPorQR && (
+        <div className="bg-gradient-to-r from-bronce-600 via-bronce-400 to-bronce-600 text-cafe-900 text-center text-sm font-bold py-2 tracking-wide">
+          <i className="fa-solid fa-chair mr-1.5"></i>Pedido para la Mesa {mesaPorQR}
+        </div>
+      )}
+
+      {/* ===================== PLATO DEL DÍA / SUGERENCIA DEL CHEF ===================== */}
+      {platoDelDia && (
+        <div className="bg-atmosferico relative overflow-hidden shadow-premium">
+          <div className="absolute -left-16 -top-16 w-56 h-56 rounded-full bg-vino-600/25 blur-3xl pointer-events-none"></div>
+          <div className="absolute -right-10 -bottom-10 w-40 h-40 rounded-full bg-bronce-500/15 blur-3xl pointer-events-none"></div>
+          <div className="max-w-4xl mx-auto px-5 py-5 sm:py-6 flex items-center gap-4 relative">
+            {platoDelDia.imagen && (
+              <div className="relative flex-shrink-0">
+                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-bronce-300 to-bronce-600 blur-[2px]"></div>
+                <img src={platoDelDia.imagen} className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-bronce-400" />
+              </div>
+            )}
+            <div className="min-w-0 flex-1">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-bronce-400 font-semibold flex items-center gap-1.5">
+                <i className="fa-solid fa-champagne-glasses"></i>Sugerencia del Chef
+              </p>
+              <h2 className="font-heading text-xl sm:text-2xl font-bold leading-tight truncate text-bronce-200 mt-0.5">{platoDelDia.nombre}</h2>
+              {platoDelDia.descripcion && <p className="text-cafe-200/70 text-sm leading-snug line-clamp-1 italic">{platoDelDia.descripcion}</p>}
+            </div>
+            <div className="flex flex-col items-end gap-2 flex-shrink-0">
+              <p className="font-heading text-2xl sm:text-3xl font-bold texto-shimmer">${platoDelDia.precio}</p>
+              <button onClick={agregarPlatoDelDiaAlCarrito} className="bg-gradient-to-r from-bronce-500 to-bronce-400 text-cafe-900 text-xs font-bold px-4 py-2 rounded-full flex items-center gap-1.5 hover:shadow-gold-glow transition-all duration-300">
+                <i className="fa-solid fa-plus"></i>Pedir
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ===================== COMBOS Y PROMOS ===================== */}
+      {listaCombos.length > 0 && (
+        <div className="max-w-4xl mx-auto px-5 mt-8">
+          <h2 className="font-heading text-xl font-bold text-cafe-900 mb-3 flex items-center gap-2">
+            <i className="fa-solid fa-gem text-vino-600"></i>Combos y Promos Exclusivas
+          </h2>
+          <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+            {listaCombos.map(c => (
+              <div key={c.id} className="group flex-shrink-0 w-60 bg-white rounded-2xl border border-bronce-400/60 overflow-hidden animate-fade-in relative shadow-premium transition-all duration-300 hover:-translate-y-1 hover:shadow-gold-glow hover:border-bronce-500">
+                <span className="absolute top-3 left-3 z-10 bg-gradient-to-r from-vino-700 to-vino-600 text-bronce-200 text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wide shadow-md">
+                  <i className="fa-solid fa-crown mr-1"></i>PROMO
+                </span>
+                <div className="w-full aspect-square bg-cafe-100 imagen-zoom">
+                  {c.imagen ? <img src={c.imagen} className="w-full h-full object-cover" /> : (
+                    <div className="w-full h-full flex items-center justify-center text-cafe-300"><i className="fa-solid fa-tags text-2xl"></i></div>
+                  )}
+                </div>
+                <div className="p-3.5">
+                  <h3 className="font-heading font-bold text-cafe-900 leading-tight text-sm">{c.nombre}</h3>
+                  {c.descripcion && <p className="text-xs text-cafe-500 mt-1 leading-snug line-clamp-2">{c.descripcion}</p>}
+                  <div className="flex items-center justify-between mt-2.5">
+                    <p className="font-heading font-bold text-vino-600 text-lg">${c.precio}</p>
+                    <button onClick={() => agregarComboAlCarrito(c)} className="w-9 h-9 rounded-full bg-gradient-to-br from-cafe-800 to-cafe-900 text-bronce-300 flex items-center justify-center transition-all duration-300 active:scale-90 hover:shadow-gold-glow flex-shrink-0 border border-bronce-500/30">
+                      <i className="fa-solid fa-plus text-xs"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ===================== BUSCADOR + CATEGORÍAS ===================== */}
+      <div className="max-w-4xl mx-auto px-5 mt-8">
+        <div className="relative">
+          <i className="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-bronce-500 text-sm"></i>
+          <input
+            value={busqueda}
+            onChange={e => setBusqueda(e.target.value)}
+            placeholder="¿Qué se te antoja hoy?"
+            className="w-full bg-white filete-borde rounded-full py-3 pl-12 pr-4 text-sm shadow-lg focus:outline-none focus:ring-2 focus:ring-bronce-400 transition-all duration-300 placeholder:text-cafe-400/70 placeholder:italic"
+          />
+        </div>
+
+        <div className="sticky top-0 z-30 -mx-5 px-5 py-3 mt-4 bg-papel/90 backdrop-blur-sm">
+          <div className="flex gap-2 overflow-x-auto no-scrollbar">
+            <button
+              onClick={() => setCategoriaActiva('todas')}
+              className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium border transition-all duration-300 ${categoriaActiva === 'todas' ? 'bg-gradient-to-r from-cafe-800 to-cafe-900 text-bronce-300 border-bronce-500/40 shadow-gold-glow' : 'bg-white text-cafe-700 border-cafe-200 hover:border-bronce-400'}`}>
+              Todo
+            </button>
+            {categoriasConProductos.map(c => (
+              <button
+                key={c}
+                onClick={() => setCategoriaActiva(c)}
+                className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium border transition-all duration-300 ${categoriaActiva === c ? 'bg-gradient-to-r from-cafe-800 to-cafe-900 text-bronce-300 border-bronce-500/40 shadow-gold-glow' : 'bg-white text-cafe-700 border-cafe-200 hover:border-bronce-400'}`}>
+                {c}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ===================== MENÚ ===================== */}
+      <div className="max-w-4xl mx-auto px-5 mt-2">
+        {productosFiltrados.length === 0 && (
+          <div className="text-center py-16 text-cafe-400">
+            <i className="fa-solid fa-utensils text-3xl mb-3"></i>
+            <p>{listaProductos.length === 0 ? 'Todavía no hay ítems cargados en el menú.' : 'No encontramos nada con ese filtro.'}</p>
+          </div>
+        )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {productosFiltrados.map(p => (
+            <div key={p.id} className="group bg-white rounded-2xl filete-borde overflow-hidden flex animate-fade-in transition-all duration-300 hover:shadow-gold-glow hover:border-bronce-400">
+              <div className="w-28 h-28 sm:w-32 sm:h-32 flex-shrink-0 bg-cafe-100 imagen-zoom">
+                {p.imagen ? <img src={p.imagen} className="w-full h-full object-cover aspect-square" /> : (
+                  <div className="w-full h-full flex items-center justify-center text-cafe-300"><i className="fa-solid fa-utensils text-2xl"></i></div>
+                )}
+              </div>
+              <div className="p-3.5 flex flex-col justify-between flex-1 min-w-0">
+                <div>
+                  <h3 className="font-heading font-bold text-cafe-900 leading-tight">{p.nombre}</h3>
+                  {p.descripcion && <p className="text-xs text-cafe-500 mt-1 leading-snug line-clamp-2">{p.descripcion}</p>}
+                </div>
+                <div className="flex items-center justify-between mt-1.5">
+                  <p className="font-heading font-bold text-vino-600 text-lg">${p.precio}</p>
+                  <button onClick={() => agregarAlCarrito(p)} className="w-9 h-9 rounded-full bg-gradient-to-br from-cafe-800 to-cafe-900 text-bronce-300 flex items-center justify-center transition-all duration-300 active:scale-90 hover:shadow-gold-glow flex-shrink-0 border border-bronce-500/30" title="Agregar al pedido">
+                    <i className="fa-solid fa-plus text-xs"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ===================== ENCONTRANOS (MAPA + RESEÑAS) ===================== */}
+      {config.direccion && (
+        <div className="max-w-4xl mx-auto px-5 mt-12">
+          <h2 className="font-heading text-2xl font-bold text-cafe-900 mb-4 text-center">Encontranos</h2>
+          <div className="bg-white rounded-2xl filete-borde p-2.5">
+            <div className="rounded-xl overflow-hidden border border-bronce-500/20">
+              <iframe
+                title="Ubicación"
+                width="100%"
+                height="220"
+                style={{ border: 0 }}
+                loading="lazy"
+                src={`https://www.google.com/maps?q=${encodeURIComponent(config.direccion)}&output=embed`}>
+              </iframe>
+            </div>
+            <p className="text-center text-sm text-cafe-600 mt-3"><i className="fa-solid fa-location-dot mr-1.5 text-bronce-500"></i>{config.direccion}</p>
+            <div className="flex gap-2.5 mt-3">
+              <a
+                href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(config.direccion)}`}
+                target="_blank" rel="noreferrer"
+                className="flex-1 bg-gradient-to-r from-cafe-800 to-cafe-900 text-bronce-300 text-center py-3 rounded-xl text-sm font-bold transition-all duration-300 hover:shadow-gold-glow border border-bronce-500/30">
+                <i className="fa-solid fa-diamond-turn-right mr-1.5"></i>Cómo llegar
+              </a>
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(NOMBRE_NEGOCIO + ' ' + config.direccion)}`}
+                target="_blank" rel="noreferrer"
+                className="flex-1 bg-white border border-bronce-400 text-cafe-800 text-center py-3 rounded-xl text-sm font-bold transition-all duration-300 hover:bg-bronce-50">
+                <i className="fa-solid fa-star text-bronce-500 mr-1.5"></i>Ver reseñas
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ===================== FOOTER ===================== */}
+      <footer className="max-w-4xl mx-auto px-5 mt-12 pb-4 text-center">
+        <div className="w-10 h-10 rounded-full border border-bronce-400/50 flex items-center justify-center mx-auto mb-2 monograma text-bronce-500 text-sm">
+          {NOMBRE_NEGOCIO.split(' ').map(w => w[0]).join('').slice(0,2)}
+        </div>
+        <p className="text-xs text-cafe-400 tracking-wide">{NOMBRE_NEGOCIO} — {TAGLINE}</p>
+      </footer>
+
+      {/* ===================== BOTÓN ADMIN ===================== */}
+      <button
+        onClick={() => setMostrarAdminModal(true)}
+        className="fixed bottom-5 left-5 z-40 bg-gradient-to-br from-cafe-800 to-cafe-900 text-bronce-400 w-11 h-11 rounded-full flex items-center justify-center shadow-premium border border-bronce-500/30 hover:scale-105 hover:shadow-gold-glow transition-all duration-300"
+        title="Administración">
+        <i className="fa-solid fa-gear"></i>
+      </button>
+
+      {/* ===================== BOTÓN CHATBOT ===================== */}
+      <button
+        onClick={abrirChat}
+        className="fixed bottom-20 left-5 z-40 bg-gradient-to-br from-bronce-500 to-bronce-600 text-cafe-900 w-11 h-11 rounded-full flex items-center justify-center shadow-premium hover:scale-105 hover:shadow-gold-glow transition-all duration-300 animate-pulse-slow"
+        title="Preguntas frecuentes">
+        <i className="fa-solid fa-comment-dots"></i>
+      </button>
+
+      {/* ===================== BOTÓN CARRITO ===================== */}
+      {carrito.length > 0 && (
+        <button
+          onClick={() => setMostrarCarrito(true)}
+          className="fixed bottom-5 right-5 z-40 bg-gradient-to-r from-vino-700 to-vino-600 text-white pl-4 pr-5 h-12 rounded-full flex items-center gap-2.5 shadow-premium border border-bronce-500/30 hover:scale-105 hover:shadow-gold-glow transition-all duration-300">
+          <span className="relative">
+            <i className="fa-solid fa-receipt"></i>
+            <span className="absolute -top-2 -right-2.5 bg-gradient-to-br from-bronce-300 to-bronce-500 text-cafe-900 text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center animate-pulse-slow">{cantidadCarrito}</span>
+          </span>
+          <span className="font-heading font-bold text-sm">${totalCarrito}</span>
+        </button>
+      )}
+
+      {/* ===================== MODAL CHATBOT ===================== */}
+      {mostrarChat && (
+        <div className="fixed inset-0 bg-cafe-900/60 backdrop-blur-md z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+          <div className="bg-cafe-50 w-full sm:max-w-sm sm:rounded-2xl rounded-t-3xl max-h-[85vh] overflow-y-auto animate-slide-up flex flex-col shadow-premium">
+            <div className="sticky top-0 bg-atmosferico text-bronce-300 px-5 py-4 flex justify-between items-center flex-shrink-0 border-b border-bronce-500/25">
+              <h3 className="font-heading font-bold"><i className="fa-solid fa-comment-dots mr-2"></i>Preguntas frecuentes</h3>
+              <button onClick={() => setMostrarChat(false)} className="text-bronce-300/80 hover:text-bronce-300"><i className="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <div className="p-4 space-y-3">
+              {!preguntaActiva ? (
+                <>
+                  <div className="bg-white filete-borde rounded-2xl rounded-tl-sm p-3.5 text-sm text-cafe-800">
+                    {chatbotConfig.saludo || SALUDO_BOT_DEFAULT}
+                  </div>
+                  <div className="space-y-1.5">
+                    {listaPreguntasBot.length === 0 && <p className="text-cafe-400 text-xs text-center py-3">Todavía no hay preguntas cargadas.</p>}
+                    {listaPreguntasBot.map(p => (
+                      <button key={p.id} onClick={() => setPreguntaActiva(p)} className="w-full text-left bg-white border border-cafe-200 hover:border-bronce-400 hover:shadow-md rounded-xl px-3.5 py-2.5 text-sm text-cafe-800 font-medium transition-all duration-300">
+                        {p.pregunta}
+                      </button>
+                    ))}
+                    {config.whatsapp && (
+                      <a href={`https://wa.me/${config.whatsapp}`} target="_blank" className="w-full flex items-center justify-center gap-2 bg-[#25D366] text-white rounded-xl px-3.5 py-2.5 text-sm font-bold mt-2 transition-all duration-300 hover:brightness-110">
+                        <i className="fa-brands fa-whatsapp"></i>Hablar con nosotros
+                      </a>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="bg-atmosferico text-bronce-200 rounded-2xl rounded-tr-sm p-3.5 text-sm ml-8 border border-bronce-500/25">{preguntaActiva.pregunta}</div>
+                  <div className="bg-white filete-borde rounded-2xl rounded-tl-sm p-3.5 text-sm text-cafe-800 mr-4">{preguntaActiva.respuesta}</div>
+                  <button onClick={() => setPreguntaActiva(null)} className="w-full bg-cafe-100 text-cafe-700 rounded-xl py-2.5 text-sm font-bold mt-1 transition-all duration-300 hover:bg-cafe-200">
+                    <i className="fa-solid fa-arrow-left mr-1.5"></i>Volver a las preguntas
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ===================== MODAL CARRITO / PEDIDO ===================== */}
+      {mostrarCarrito && (
+        <div className="fixed inset-0 bg-cafe-900/60 backdrop-blur-md z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+          <div className="bg-cafe-50 w-full sm:max-w-md sm:rounded-2xl rounded-t-3xl max-h-[92vh] overflow-y-auto animate-slide-up shadow-premium">
+            <div className="sticky top-0 bg-atmosferico text-bronce-300 px-5 py-4 flex justify-between items-center border-b border-bronce-500/25">
+              <h3 className="font-heading font-bold">{confirmacionPedido ? '¡Listo!' : 'Tu pedido'}</h3>
+              <button onClick={confirmacionPedido ? cerrarConfirmacionPedido : () => setMostrarCarrito(false)} className="text-bronce-300/80 hover:text-bronce-300"><i className="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            {confirmacionPedido ? (
+              <div className="p-8 text-center space-y-4">
+                <div className="w-16 h-16 rounded-full bg-green-100 text-green-600 flex items-center justify-center mx-auto text-2xl">
+                  <i className="fa-solid fa-check"></i>
+                </div>
+                <p className="text-cafe-800 font-medium">{confirmacionPedido}</p>
+                <button onClick={cerrarConfirmacionPedido} className="w-full bg-gradient-to-r from-cafe-800 to-cafe-900 text-bronce-300 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 hover:shadow-gold-glow">Cerrar</button>
+              </div>
+            ) : (
+            <div className="p-4 space-y-4">
+              <div className="space-y-2">
+                {carrito.length === 0 && <p className="text-cafe-400 text-sm text-center py-4">Todavía no agregaste nada.</p>}
+                {carrito.map(it => (
+                  <div key={it.id} className="flex items-center gap-2.5 bg-white border border-cafe-100 rounded-xl p-2.5 shadow-sm">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-sm text-cafe-800 truncate">{it.nombre}</p>
+                      <p className="text-xs text-cafe-400">${it.precio} c/u</p>
+                    </div>
+                    <button onClick={() => cambiarCantidadCarrito(it.id, -1)} className="w-7 h-7 rounded-full bg-cafe-100 text-cafe-700 flex items-center justify-center transition-all duration-300 active:scale-90 hover:bg-cafe-200"><i className="fa-solid fa-minus text-xs"></i></button>
+                    <span className="w-5 text-center font-bold text-sm">{it.cantidad}</span>
+                    <button onClick={() => cambiarCantidadCarrito(it.id, 1)} className="w-7 h-7 rounded-full bg-gradient-to-br from-cafe-800 to-cafe-900 text-bronce-300 flex items-center justify-center transition-all duration-300 active:scale-90 border border-bronce-500/30"><i className="fa-solid fa-plus text-xs"></i></button>
+                  </div>
+                ))}
+              </div>
+
+              {carrito.length > 0 && (
+                <>
+                  <div className="flex justify-between items-center border-t border-bronce-400/30 pt-3">
+                    <span className="font-heading font-bold text-cafe-900">Total</span>
+                    <span className="font-heading font-bold text-vino-600 text-xl">${totalCarrito}</span>
+                  </div>
+
+                  <div>
+                    <p className="text-xs font-bold text-cafe-600 mb-1.5">¿Cómo lo vas a consumir?</p>
+                    {mesaPorQR ? (
+                      <div className="bg-gradient-to-r from-cafe-800 to-cafe-900 text-bronce-300 rounded-xl py-2.5 text-center text-sm font-bold border border-bronce-500/30">
+                        <i className="fa-solid fa-chair mr-1.5"></i>Mesa {mesaPorQR}
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-3 gap-2">
+                        {[['mesa','En el lugar'],['takeaway','Take away'],['delivery','Delivery']].map(([id,label]) => (
+                          <button key={id} onClick={() => setModoConsumo(id)} className={`py-2 rounded-xl text-xs font-bold border transition-all duration-300 ${modoConsumo===id ? 'bg-gradient-to-r from-cafe-800 to-cafe-900 text-bronce-300 border-bronce-500/40 shadow-gold-glow' : 'bg-white text-cafe-600 border-cafe-200'}`}>{label}</button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {modoConsumo === 'mesa' && !mesaPorQR && (
+                    <input value={pedidoForm.mesa} onChange={e => setPedidoForm({...pedidoForm, mesa: e.target.value})} placeholder="Número de mesa" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-bronce-400" />
+                  )}
+                  {modoConsumo === 'takeaway' && (
+                    <input value={pedidoForm.nombre} onChange={e => setPedidoForm({...pedidoForm, nombre: e.target.value})} placeholder="Tu nombre" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-bronce-400" />
+                  )}
+                  {modoConsumo === 'delivery' && (
+                    <div className="space-y-2">
+                      <input value={pedidoForm.nombre} onChange={e => setPedidoForm({...pedidoForm, nombre: e.target.value})} placeholder="Tu nombre" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-bronce-400" />
+                      <input value={pedidoForm.telefono} onChange={e => setPedidoForm({...pedidoForm, telefono: e.target.value})} placeholder="Teléfono" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-bronce-400" />
+                      <input value={pedidoForm.direccion} onChange={e => setPedidoForm({...pedidoForm, direccion: e.target.value})} placeholder="Dirección de entrega" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-bronce-400" />
+                    </div>
+                  )}
+
+                  {modoConsumo !== 'mesa' && !config.whatsapp && <p className="text-vino-600 text-xs">Falta cargar el WhatsApp del local en Configuración.</p>}
+
+                  {modoConsumo === 'mesa' ? (
+                    <button
+                      onClick={enviarPedido}
+                      disabled={!puedeEnviarPedido() || enviandoPedido}
+                      className="w-full bg-gradient-to-r from-cafe-800 to-cafe-900 disabled:opacity-40 text-bronce-300 py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-gold-glow border border-bronce-500/30">
+                      <i className="fa-solid fa-bell-concierge"></i>{enviandoPedido ? 'Enviando...' : 'Enviar pedido a la mesa'}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={enviarPedido}
+                      disabled={!puedeEnviarPedido() || !config.whatsapp || enviandoPedido}
+                      className="w-full bg-[#25D366] disabled:opacity-40 text-white py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all duration-300 hover:brightness-110">
+                      <i className="fa-brands fa-whatsapp"></i>{enviandoPedido ? 'Enviando...' : 'Enviar pedido por WhatsApp'}
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ===================== MODAL ADMIN ===================== */}
+      {mostrarAdminModal && (
+        <div className="fixed inset-0 bg-cafe-900/60 backdrop-blur-md z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+          <div className="bg-cafe-50 w-full sm:max-w-2xl sm:rounded-2xl rounded-t-3xl max-h-[92vh] overflow-y-auto animate-slide-up shadow-premium">
+            <div className="sticky top-0 bg-atmosferico text-bronce-300 px-5 py-4 flex justify-between items-center border-b border-bronce-500/25 z-10">
+              <h3 className="font-heading font-bold">{isAdmin ? 'Administración' : 'Ingresar'}</h3>
+              <button onClick={() => setMostrarAdminModal(false)} className="text-bronce-300/80 hover:text-bronce-300"><i className="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            {!isAdmin ? (
+              <div className="p-6 space-y-3">
+                <input value={usuario} onChange={e => setUsuario(e.target.value)} placeholder="Usuario" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-bronce-400" />
+                <input value={contrasena} onChange={e => setContrasena(e.target.value)} type="password" placeholder="Contraseña" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-bronce-400" onKeyDown={e => e.key === 'Enter' && intentarLogin()} />
+                {errorLogin && <p className="text-vino-600 text-xs">{errorLogin}</p>}
+                <button onClick={intentarLogin} className="w-full bg-gradient-to-r from-cafe-800 to-cafe-900 text-bronce-300 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 hover:shadow-gold-glow">Entrar</button>
+              </div>
+            ) : (
+              <div className="p-4">
+                <div className="flex gap-1.5 mb-4 overflow-x-auto no-scrollbar">
+                  {[['pedidos','Pedidos'],['caja','Caja'],['productos','Menú'],['combos','Combos'],['platodeldia','Plato del día'],['stock','Stock'],['mesas','Mesas'],['categorias','Categorías'],['chatbot','Chatbot'],['config','Configuración']].map(([id,label]) => (
+                    <button key={id} onClick={() => setAdminTab(id)} className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-300 ${adminTab===id ? 'bg-gradient-to-r from-cafe-800 to-cafe-900 text-bronce-300 shadow-gold-glow' : 'bg-cafe-100 text-cafe-600 hover:bg-cafe-200'}`}>{label}</button>
+                  ))}
+                  <button onClick={cerrarSesion} className="ml-auto flex-shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold bg-gradient-to-r from-vino-700 to-vino-600 text-white">Salir</button>
+                </div>
+
+                {adminTab === 'pedidos' && (
+                  <div className="space-y-3">
+                    <a
+                      href={linkCocina()} target="_blank" rel="noreferrer"
+                      className="flex items-center justify-center gap-2 bg-gradient-to-r from-cafe-800 to-cafe-900 text-bronce-300 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 hover:shadow-gold-glow border border-bronce-500/30">
+                      <i className="fa-solid fa-kitchen-set"></i>Abrir vista cocina (para tablet/pantalla en la barra)
+                    </a>
+                    {listaPedidos.length === 0 && <p className="text-cafe-400 text-xs text-center py-6">Todavía no llegó ningún pedido.</p>}
+                    {listaPedidos.map(p => (
+                      <div key={p.id} className={`border border-cafe-100 rounded-xl p-3 bg-white ${p.estado === 'cobrado' ? 'opacity-50' : ''}`}>
+                        <div className="flex justify-between items-start mb-1.5">
+                          <div>
+                            <p className="font-heading font-bold text-cafe-900">{etiquetaOrigenPedido(p)}</p>
+                            <p className="text-[10px] text-cafe-400">{horaCorta(p.creado)}</p>
+                          </div>
+                          <p className="font-heading font-bold text-vino-600">${p.total}</p>
+                        </div>
+                        <div className="text-xs text-cafe-600 space-y-0.5 mb-2.5">
+                          {(p.items || []).map((it, idx) => (
+                            <p key={idx}>{it.cantidad}x {it.nombre}</p>
+                          ))}
+                        </div>
+                        <button
+                          onClick={() => avanzarEstadoPedido(p.id, p.estado)}
+                          disabled={p.estado === 'cobrado'}
+                          className={`w-full py-2 rounded-xl text-xs font-bold ${ESTADO_ESTILO[p.estado] || ESTADO_ESTILO.nuevo}`}>
+                          {ESTADO_LABEL[p.estado] || 'Nuevo pedido'}{p.estado !== 'cobrado' && ' · tocar para avanzar'}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {adminTab === 'caja' && (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="date"
+                        value={fechaCajaSeleccionada}
+                        onChange={e => setFechaCajaSeleccionada(e.target.value)}
+                        max={fechaISO()}
+                        className="flex-1 border border-cafe-200 rounded-xl p-2.5 text-sm"
+                      />
+                      {fechaCajaSeleccionada !== fechaISO() && (
+                        <button onClick={() => setFechaCajaSeleccionada(fechaISO())} className="bg-cafe-100 text-cafe-700 px-3 py-2.5 rounded-xl text-xs font-bold">Hoy</button>
+                      )}
+                    </div>
+
+                    <div className="bg-cafe-900 text-bronce-300 rounded-2xl p-5 text-center">
+                      <p className="text-xs uppercase tracking-widest text-bronce-400 mb-1">Facturado — {etiquetaFecha(fechaCajaSeleccionada)}</p>
+                      <p className="font-heading text-4xl font-bold">${totalCajaSel}</p>
+                      <p className="text-cafe-300 text-xs mt-1">{cobradosCajaSel.length} pedido{cobradosCajaSel.length === 1 ? '' : 's'} cobrado{cobradosCajaSel.length === 1 ? '' : 's'}</p>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2">
+                      {[['mesa','En el lugar'],['takeaway','Take away'],['delivery','Delivery']].map(([id,label]) => (
+                        <div key={id} className="bg-white border border-cafe-100 rounded-xl p-2.5 text-center">
+                          <p className="text-[10px] text-cafe-400">{label}</p>
+                          <p className="font-heading font-bold text-cafe-900">${desglosePorModoSel[id] || 0}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    {totalPorCobrarSel > 0 && (
+                      <div className="bg-bronce-500/10 border border-bronce-300 rounded-xl p-3 flex justify-between items-center">
+                        <div>
+                          <p className="text-xs font-bold text-cafe-700">Por cobrar todavía</p>
+                          <p className="text-[10px] text-cafe-500">{abiertosCajaSel.length} pedido{abiertosCajaSel.length === 1 ? '' : 's'} en curso</p>
+                        </div>
+                        <p className="font-heading font-bold text-vino-600 text-lg">${totalPorCobrarSel}</p>
+                      </div>
+                    )}
+
+                    <div>
+                      <p className="text-xs font-bold text-cafe-500 mb-1.5">Pedidos cobrados — {etiquetaFecha(fechaCajaSeleccionada)}</p>
+                      <div className="space-y-1.5">
+                        {cobradosCajaSel.length === 0 && <p className="text-cafe-400 text-xs text-center py-3">Todavía no se cobró nada ese día.</p>}
+                        {cobradosCajaSel.map(p => (
+                          <div key={p.id} className="flex justify-between items-center bg-white border border-cafe-100 rounded-lg px-3 py-2 text-xs">
+                            <div>
+                              <p className="font-bold text-cafe-800">{etiquetaOrigenPedido(p)}</p>
+                              <p className="text-cafe-400">{horaCorta(p.creado)}</p>
+                            </div>
+                            <p className="font-heading font-bold text-vino-600">${p.total}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="border-t border-cafe-200 pt-4">
+                      <p className="text-xs font-bold text-cafe-500 mb-1.5">Historial — últimos días</p>
+                      <div className="space-y-1">
+                        {historialDias.length === 0 && <p className="text-cafe-400 text-xs text-center py-2">Todavía no hay ningún día cerrado.</p>}
+                        {historialDias.map(d => (
+                          <button
+                            key={d.fecha}
+                            onClick={() => setFechaCajaSeleccionada(d.fecha)}
+                            className={`w-full flex justify-between items-center px-3 py-2 rounded-lg text-xs ${d.fecha === fechaCajaSeleccionada ? 'bg-cafe-900 text-bronce-300' : 'bg-white border border-cafe-100 text-cafe-700'}`}>
+                            <span>{etiquetaFecha(d.fecha)}</span>
+                            <span className="font-heading font-bold">${d.total}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="border-t border-cafe-200 pt-4">
+                      <p className="text-xs font-bold text-cafe-500 mb-1.5">Productos más vendidos (histórico)</p>
+                      <div className="space-y-1">
+                        {topProductos.length === 0 && <p className="text-cafe-400 text-xs text-center py-2">Todavía no hay pedidos cobrados.</p>}
+                        {topProductos.map((p, idx) => (
+                          <div key={p.nombre} className="flex items-center gap-2.5 bg-white border border-cafe-100 rounded-lg px-3 py-2 text-xs">
+                            <span className="font-heading font-bold text-bronce-500 w-4 flex-shrink-0">{idx + 1}</span>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-bold text-cafe-800 truncate">{p.nombre}</p>
+                              <p className="text-cafe-400">{p.cantidad} vendidos</p>
+                            </div>
+                            <p className="font-heading font-bold text-vino-600">${p.total}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {adminTab === 'productos' && (
+                  <div className="space-y-4">
+                    <div className="border border-cafe-200 rounded-xl p-3 space-y-2 bg-white">
+                      <h4 className="font-bold text-xs uppercase tracking-wider text-cafe-400">{editandoId ? 'Editar ítem' : 'Nuevo ítem del menú'}</h4>
+                      <input value={form.nombre} onChange={e => setForm({...form, nombre: e.target.value})} placeholder="Nombre del plato/bebida" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm" />
+                      <select value={form.categoria} onChange={e => setForm({...form, categoria: e.target.value})} className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm bg-white">
+                        <option value="">Elegir categoría...</option>
+                        {categorias.map(c => <option key={c} value={c}>{c}</option>)}
+                      </select>
+                      {categorias.length === 0 && <p className="text-xs text-vino-600">Primero cargá una categoría en la pestaña "Categorías".</p>}
+                      <textarea value={form.descripcion} onChange={e => setForm({...form, descripcion: e.target.value})} placeholder="Descripción breve" rows="2" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm"></textarea>
+                      <input value={form.precio} onChange={e => setForm({...form, precio: e.target.value})} type="number" placeholder="Precio" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm" />
+                      <div className="flex items-center gap-3">
+                        <label className="flex-shrink-0 bg-cafe-100 text-cafe-700 text-xs font-bold px-3 py-2 rounded-xl cursor-pointer">
+                          <i className="fa-solid fa-camera mr-1.5"></i>Foto
+                          <input type="file" accept="image/*" onChange={handleImagenProducto} className="hidden" />
+                        </label>
+                        {form.imagen && <img src={form.imagen} className="w-12 h-12 rounded-lg object-cover" />}
+                      </div>
+
+                      <div className="border-t border-cafe-100 pt-2">
+                        <p className="text-xs font-bold text-cafe-500 mb-1.5">Insumos que consume (para descontar stock)</p>
+                        {(form.insumos || []).length > 0 && (
+                          <div className="space-y-1 mb-2">
+                            {form.insumos.map((ins, idx) => (
+                              <div key={idx} className="flex items-center justify-between bg-cafe-50 rounded-lg px-2 py-1 text-xs">
+                                <span>{insumos[ins.insumoId]?.nombre || '(insumo eliminado)'} — {ins.cantidad} {insumos[ins.insumoId]?.unidad || ''}</span>
+                                <button onClick={() => quitarInsumoDeProducto(idx)} className="text-vino-600"><i className="fa-solid fa-xmark"></i></button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        {listaInsumos.length === 0 ? (
+                          <p className="text-[11px] text-cafe-400">Cargá insumos primero en la pestaña "Stock".</p>
+                        ) : (
+                          <div className="flex gap-1.5">
+                            <select value={selInsumoProd} onChange={e => setSelInsumoProd(e.target.value)} className="flex-1 border border-cafe-200 rounded-lg p-2 text-xs bg-white">
+                              <option value="">Insumo...</option>
+                              {listaInsumos.map(i => <option key={i.id} value={i.id}>{i.nombre}</option>)}
+                            </select>
+                            <input value={cantInsumoProd} onChange={e => setCantInsumoProd(e.target.value)} type="number" placeholder="Cant." className="w-16 border border-cafe-200 rounded-lg p-2 text-xs" />
+                            <button onClick={agregarInsumoAProducto} className="bg-cafe-900 text-bronce-300 px-3 rounded-lg text-xs font-bold">+</button>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex gap-2">
+                        <button onClick={guardarProducto} className="flex-1 bg-cafe-900 text-bronce-300 py-2 rounded-xl text-xs font-bold">{editandoId ? 'Guardar cambios' : 'Agregar al menú'}</button>
+                        {editandoId && <button onClick={resetForm} className="px-4 bg-cafe-100 rounded-xl text-xs font-bold">Cancelar</button>}
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      {listaProductos.length === 0 && <p className="text-cafe-400 text-xs text-center py-4">Todavía no cargaste ítems.</p>}
+                      {listaProductos.map(p => (
+                        <div key={p.id} className="flex items-center gap-2.5 border border-cafe-100 bg-white p-2 rounded-xl text-xs">
+                          <div className="w-9 h-9 rounded-lg bg-cafe-100 flex-shrink-0 overflow-hidden">{p.imagen && <img src={p.imagen} className="w-full h-full object-cover" />}</div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-bold text-cafe-800 truncate">{p.nombre}</p>
+                            <p className="text-cafe-400">{p.categoria} · ${p.precio}</p>
+                          </div>
+                          <button onClick={() => editarProducto(p)} className="text-cafe-500 px-1.5"><i className="fa-solid fa-pen"></i></button>
+                          <button onClick={() => eliminarProducto(p.id)} className="text-vino-600 px-1.5"><i className="fa-solid fa-trash-can"></i></button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {adminTab === 'combos' && (
+                  <div className="space-y-4">
+                    <p className="text-xs text-cafe-500">Los combos y promos aparecen destacados arriba del menú, con su propio precio fijo, y se piden igual que cualquier ítem.</p>
+                    <div className="border border-cafe-200 rounded-xl p-3 space-y-2 bg-white">
+                      <h4 className="font-bold text-xs uppercase tracking-wider text-cafe-400">{editandoComboId ? 'Editar combo/promo' : 'Nuevo combo/promo'}</h4>
+                      <input value={comboForm.nombre} onChange={e => setComboForm({...comboForm, nombre: e.target.value})} placeholder="Ej: Combo Café + Medialunas x2" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm" />
+                      <textarea value={comboForm.descripcion} onChange={e => setComboForm({...comboForm, descripcion: e.target.value})} placeholder="Descripción breve" rows="2" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm"></textarea>
+                      <input value={comboForm.precio} onChange={e => setComboForm({...comboForm, precio: e.target.value})} type="number" placeholder="Precio del combo" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm" />
+                      <div className="flex items-center gap-3">
+                        <label className="flex-shrink-0 bg-cafe-100 text-cafe-700 text-xs font-bold px-3 py-2 rounded-xl cursor-pointer">
+                          <i className="fa-solid fa-camera mr-1.5"></i>Foto
+                          <input type="file" accept="image/*" onChange={handleImagenCombo} className="hidden" />
+                        </label>
+                        {comboForm.imagen && <img src={comboForm.imagen} className="w-12 h-12 rounded-lg object-cover" />}
+                      </div>
+
+                      <div className="border-t border-cafe-100 pt-2">
+                        <p className="text-xs font-bold text-cafe-500 mb-1.5">Insumos que consume (para descontar stock)</p>
+                        {(comboForm.insumos || []).length > 0 && (
+                          <div className="space-y-1 mb-2">
+                            {comboForm.insumos.map((ins, idx) => (
+                              <div key={idx} className="flex items-center justify-between bg-cafe-50 rounded-lg px-2 py-1 text-xs">
+                                <span>{insumos[ins.insumoId]?.nombre || '(insumo eliminado)'} — {ins.cantidad} {insumos[ins.insumoId]?.unidad || ''}</span>
+                                <button onClick={() => quitarInsumoDeCombo(idx)} className="text-vino-600"><i className="fa-solid fa-xmark"></i></button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        {listaInsumos.length === 0 ? (
+                          <p className="text-[11px] text-cafe-400">Cargá insumos primero en la pestaña "Stock".</p>
+                        ) : (
+                          <div className="flex gap-1.5">
+                            <select value={selInsumoCombo} onChange={e => setSelInsumoCombo(e.target.value)} className="flex-1 border border-cafe-200 rounded-lg p-2 text-xs bg-white">
+                              <option value="">Insumo...</option>
+                              {listaInsumos.map(i => <option key={i.id} value={i.id}>{i.nombre}</option>)}
+                            </select>
+                            <input value={cantInsumoCombo} onChange={e => setCantInsumoCombo(e.target.value)} type="number" placeholder="Cant." className="w-16 border border-cafe-200 rounded-lg p-2 text-xs" />
+                            <button onClick={agregarInsumoACombo} className="bg-cafe-900 text-bronce-300 px-3 rounded-lg text-xs font-bold">+</button>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex gap-2">
+                        <button onClick={guardarCombo} className="flex-1 bg-vino-600 text-white py-2 rounded-xl text-xs font-bold">{editandoComboId ? 'Guardar cambios' : 'Agregar combo/promo'}</button>
+                        {editandoComboId && <button onClick={resetComboForm} className="px-4 bg-cafe-100 rounded-xl text-xs font-bold">Cancelar</button>}
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      {listaCombos.length === 0 && <p className="text-cafe-400 text-xs text-center py-4">Todavía no cargaste combos ni promos.</p>}
+                      {listaCombos.map(c => (
+                        <div key={c.id} className="flex items-center gap-2.5 border border-cafe-100 bg-white p-2 rounded-xl text-xs">
+                          <div className="w-9 h-9 rounded-lg bg-cafe-100 flex-shrink-0 overflow-hidden">{c.imagen && <img src={c.imagen} className="w-full h-full object-cover" />}</div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-bold text-cafe-800 truncate">{c.nombre}</p>
+                            <p className="text-cafe-400">${c.precio}</p>
+                          </div>
+                          <button onClick={() => editarCombo(c)} className="text-cafe-500 px-1.5"><i className="fa-solid fa-pen"></i></button>
+                          <button onClick={() => eliminarCombo(c.id)} className="text-vino-600 px-1.5"><i className="fa-solid fa-trash-can"></i></button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {adminTab === 'platodeldia' && (
+                  <div className="space-y-3">
+                    <p className="text-xs text-cafe-500">Se muestra destacado arriba de todo en la pantalla principal. Actualizalo cada día.</p>
+                    <input value={platoForm.nombre} onChange={e => setPlatoForm({...platoForm, nombre: e.target.value})} placeholder="Nombre del plato" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm" />
+                    <textarea value={platoForm.descripcion} onChange={e => setPlatoForm({...platoForm, descripcion: e.target.value})} placeholder="Descripción breve" rows="2" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm"></textarea>
+                    <input value={platoForm.precio} onChange={e => setPlatoForm({...platoForm, precio: e.target.value})} type="number" placeholder="Precio" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm" />
+                    <div className="flex items-center gap-3">
+                      <label className="flex-shrink-0 bg-cafe-100 text-cafe-700 text-xs font-bold px-3 py-2 rounded-xl cursor-pointer">
+                        <i className="fa-solid fa-camera mr-1.5"></i>Foto
+                        <input type="file" accept="image/*" onChange={handleImagenPlato} className="hidden" />
+                      </label>
+                      {platoForm.imagen && <img src={platoForm.imagen} className="w-12 h-12 rounded-full object-cover" />}
+                    </div>
+
+                    <div className="border-t border-cafe-100 pt-2">
+                      <p className="text-xs font-bold text-cafe-500 mb-1.5">Insumos que consume (para descontar stock)</p>
+                      {(platoForm.insumos || []).length > 0 && (
+                        <div className="space-y-1 mb-2">
+                          {platoForm.insumos.map((ins, idx) => (
+                            <div key={idx} className="flex items-center justify-between bg-cafe-50 rounded-lg px-2 py-1 text-xs">
+                              <span>{insumos[ins.insumoId]?.nombre || '(insumo eliminado)'} — {ins.cantidad} {insumos[ins.insumoId]?.unidad || ''}</span>
+                              <button onClick={() => quitarInsumoDePlato(idx)} className="text-vino-600"><i className="fa-solid fa-xmark"></i></button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      {listaInsumos.length === 0 ? (
+                        <p className="text-[11px] text-cafe-400">Cargá insumos primero en la pestaña "Stock".</p>
+                      ) : (
+                        <div className="flex gap-1.5">
+                          <select value={selInsumoPlato} onChange={e => setSelInsumoPlato(e.target.value)} className="flex-1 border border-cafe-200 rounded-lg p-2 text-xs bg-white">
+                            <option value="">Insumo...</option>
+                            {listaInsumos.map(i => <option key={i.id} value={i.id}>{i.nombre}</option>)}
+                          </select>
+                          <input value={cantInsumoPlato} onChange={e => setCantInsumoPlato(e.target.value)} type="number" placeholder="Cant." className="w-16 border border-cafe-200 rounded-lg p-2 text-xs" />
+                          <button onClick={agregarInsumoAPlato} className="bg-cafe-900 text-bronce-300 px-3 rounded-lg text-xs font-bold">+</button>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button onClick={guardarPlatoDelDia} className="flex-1 bg-vino-600 text-white py-2 rounded-xl text-xs font-bold">Publicar plato del día</button>
+                      {platoDelDia && <button onClick={quitarPlatoDelDia} className="px-4 bg-cafe-100 rounded-xl text-xs font-bold">Quitar</button>}
+                    </div>
+                  </div>
+                )}
+
+                {adminTab === 'stock' && (
+                  <div className="space-y-4">
+                    <div className="border border-cafe-200 rounded-xl p-3 space-y-2 bg-white">
+                      <h4 className="font-bold text-xs uppercase tracking-wider text-cafe-400">{editandoInsumoId ? 'Editar insumo' : 'Nuevo insumo'}</h4>
+                      <input value={insumoForm.nombre} onChange={e => setInsumoForm({...insumoForm, nombre: e.target.value})} placeholder="Ej: Carne picada, Pan, Coca cola 1.5L" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm" />
+                      <div className="flex gap-2">
+                        <input value={insumoForm.unidad} onChange={e => setInsumoForm({...insumoForm, unidad: e.target.value})} placeholder="Unidad (kg, l, unidad...)" className="flex-1 border border-cafe-200 rounded-xl p-2.5 text-sm" />
+                        <input value={insumoForm.cantidad} onChange={e => setInsumoForm({...insumoForm, cantidad: e.target.value})} type="number" placeholder="Stock actual" className="flex-1 border border-cafe-200 rounded-xl p-2.5 text-sm" />
+                      </div>
+                      <input value={insumoForm.minimo} onChange={e => setInsumoForm({...insumoForm, minimo: e.target.value})} type="number" placeholder="Aviso de stock bajo cuando llegue a..." className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm" />
+                      <div className="flex gap-2">
+                        <button onClick={guardarInsumo} className="flex-1 bg-cafe-900 text-bronce-300 py-2 rounded-xl text-xs font-bold">{editandoInsumoId ? 'Guardar cambios' : 'Agregar insumo'}</button>
+                        {editandoInsumoId && <button onClick={resetInsumoForm} className="px-4 bg-cafe-100 rounded-xl text-xs font-bold">Cancelar</button>}
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      {listaInsumos.length === 0 && <p className="text-cafe-400 text-xs text-center py-4">Todavía no cargaste insumos.</p>}
+                      {listaInsumos.map(i => {
+                        const bajoStock = i.minimo > 0 && Number(i.cantidad) <= Number(i.minimo);
+                        return (
+                          <div key={i.id} className={`flex items-center gap-2.5 border p-2.5 rounded-xl text-xs ${bajoStock ? 'border-vino-300 bg-vino-500/5' : 'border-cafe-100 bg-white'}`}>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-bold text-cafe-800 truncate">{i.nombre}</p>
+                              <p className={bajoStock ? 'text-vino-600 font-bold' : 'text-cafe-400'}>
+                                {i.cantidad} {i.unidad} en stock{bajoStock && ' · ¡bajo stock!'}
+                              </p>
+                            </div>
+                            <button onClick={() => editarInsumo(i)} className="text-cafe-500 px-1.5"><i className="fa-solid fa-pen"></i></button>
+                            <button onClick={() => eliminarInsumo(i.id)} className="text-vino-600 px-1.5"><i className="fa-solid fa-trash-can"></i></button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {adminTab === 'mesas' && (
+                  <div className="space-y-4">
+                    <p className="text-xs text-cafe-500">Cargá el número de cada mesa. Se genera un QR que, al escanearlo, abre el menú identificado con esa mesa — y el pedido llega marcado con el número.</p>
+                    <div className="flex gap-2">
+                      <input value={nuevaMesaNumero} onChange={e => setNuevaMesaNumero(e.target.value)} placeholder="Ej: 4" className="flex-1 border border-cafe-200 rounded-xl p-2.5 text-sm" onKeyDown={e => e.key==='Enter' && agregarMesa()} />
+                      <button onClick={agregarMesa} className="bg-cafe-900 text-bronce-300 px-4 rounded-xl text-sm font-bold">Agregar</button>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      {listaMesas.length === 0 && <p className="text-cafe-400 text-xs col-span-2">Todavía no cargaste mesas.</p>}
+                      {listaMesas.map(m => (
+                        <div key={m.id} className="bg-white border border-cafe-100 rounded-xl p-3 flex flex-col items-center gap-2">
+                          <p className="font-heading font-bold text-cafe-900">Mesa {m.numero}</p>
+                          <a href={qrMesa(m.numero)} target="_blank" rel="noreferrer">
+                            <img src={qrMesa(m.numero)} className="w-32 h-32 rounded-lg border border-cafe-100" alt={`QR mesa ${m.numero}`} />
+                          </a>
+                          <p className="text-[10px] text-cafe-400 text-center">Tocá el QR para verlo grande y guardarlo</p>
+                          <button onClick={() => eliminarMesa(m.id)} className="text-vino-600 text-xs font-bold"><i className="fa-solid fa-trash-can mr-1"></i>Eliminar</button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {adminTab === 'categorias' && (
+                  <div className="space-y-4">
+                    <div className="flex gap-2">
+                      <input value={nuevaCategoria} onChange={e => setNuevaCategoria(e.target.value)} placeholder="Ej: Desayunos, Parrilla, Bebidas..." className="flex-1 border border-cafe-200 rounded-xl p-2.5 text-sm" onKeyDown={e => e.key==='Enter' && agregarCategoria()} />
+                      <button onClick={agregarCategoria} className="bg-cafe-900 text-bronce-300 px-4 rounded-xl text-sm font-bold">Agregar</button>
+                    </div>
+                    <div className="space-y-1.5">
+                      {categorias.length === 0 && <p className="text-cafe-400 text-xs">Todavía no cargaste categorías.</p>}
+                      {categorias.map(c => (
+                        <div key={c} className="flex justify-between items-center border border-cafe-100 bg-white p-2.5 rounded-xl text-sm">
+                          <span className="text-cafe-800 font-medium">{c}</span>
+                          <button onClick={() => eliminarCategoria(c)} className="text-vino-600"><i className="fa-solid fa-trash-can"></i></button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {adminTab === 'chatbot' && (
+                  <div className="space-y-4">
+                    <div>
+                      <label className="text-xs font-bold text-cafe-600 block mb-1">Saludo inicial</label>
+                      <textarea value={chatSaludoInput} onChange={e => setChatSaludoInput(e.target.value)} placeholder={SALUDO_BOT_DEFAULT} rows="2" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm"></textarea>
+                      <button onClick={guardarSaludoBot} className="mt-1.5 bg-cafe-900 text-bronce-300 px-4 py-1.5 rounded-xl text-xs font-bold">Guardar saludo</button>
+                    </div>
+
+                    <div className="border border-cafe-200 rounded-xl p-3 space-y-2 bg-white">
+                      <h4 className="font-bold text-xs uppercase tracking-wider text-cafe-400">{editandoPreguntaId ? 'Editar pregunta' : 'Nueva pregunta'}</h4>
+                      <input value={preguntaForm.pregunta} onChange={e => setPreguntaForm({...preguntaForm, pregunta: e.target.value})} placeholder="Ej: ¿Hacen delivery?" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm" />
+                      <textarea value={preguntaForm.respuesta} onChange={e => setPreguntaForm({...preguntaForm, respuesta: e.target.value})} placeholder="Respuesta" rows="2" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm"></textarea>
+                      <div className="flex gap-2">
+                        <button onClick={guardarPreguntaBot} className="flex-1 bg-cafe-900 text-bronce-300 py-2 rounded-xl text-xs font-bold">{editandoPreguntaId ? 'Guardar cambios' : 'Agregar pregunta'}</button>
+                        {editandoPreguntaId && <button onClick={resetPreguntaBotForm} className="px-4 bg-cafe-100 rounded-xl text-xs font-bold">Cancelar</button>}
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      {listaPreguntasBot.length === 0 && <p className="text-cafe-400 text-xs text-center py-4">Todavía no cargaste preguntas.</p>}
+                      {listaPreguntasBot.map(p => (
+                        <div key={p.id} className="flex items-center gap-2.5 border border-cafe-100 bg-white p-2 rounded-xl text-xs">
+                          <div className="flex-1 min-w-0">
+                            <p className="font-bold text-cafe-800 truncate">{p.pregunta}</p>
+                            <p className="text-cafe-400 truncate">{p.respuesta}</p>
+                          </div>
+                          <button onClick={() => editarPreguntaBot(p)} className="text-cafe-500 px-1.5"><i className="fa-solid fa-pen"></i></button>
+                          <button onClick={() => eliminarPreguntaBot(p.id)} className="text-vino-600 px-1.5"><i className="fa-solid fa-trash-can"></i></button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {adminTab === 'config' && (
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-xs font-bold text-cafe-600 block mb-1">Logo</label>
+                      <div className="flex items-center gap-3">
+                        {config.logo && <img src={config.logo} className="w-12 h-12 rounded-full object-cover" />}
+                        <label className="bg-cafe-100 text-cafe-700 text-xs font-bold px-3 py-2 rounded-xl cursor-pointer">
+                          Subir logo<input type="file" accept="image/*" onChange={handleLogo} className="hidden" />
+                        </label>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-cafe-600 block mb-1">WhatsApp (solo números, con código de país)</label>
+                      <input value={whatsappInput} onChange={e => setWhatsappInput(e.target.value)} placeholder="5491122334455" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm" />
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-cafe-600 block mb-1">Instagram (usuario, sin @)</label>
+                      <input value={instagramInput} onChange={e => setInstagramInput(e.target.value)} placeholder="tu_negocio" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm" />
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-cafe-600 block mb-1">Dirección</label>
+                      <input value={direccionInput} onChange={e => setDireccionInput(e.target.value)} placeholder="Calle 48 2085, ..." className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm" />
+                    </div>
+                    <button onClick={guardarConfig} className="w-full bg-cafe-900 text-bronce-300 py-2.5 rounded-xl text-sm font-bold">Guardar configuración</button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

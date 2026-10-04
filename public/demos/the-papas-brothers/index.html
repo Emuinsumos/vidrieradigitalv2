@@ -1,0 +1,1634 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo · The Papa's Brothers | Hamburguesas Artesanales</title>
+<meta name="description" content="Hamburguesas artesanales con blend 100% carne en The Papa's Brothers. Mirá nuestro menú.">
+<meta property="og:title" content="The Papa's Brothers">
+<meta property="og:description" content="Hamburguesas artesanales · Blend 100% carne">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#140D0A">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.85em' font-size='80'%3E🍔%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Nunito', 'sans-serif'],
+          heading: ['Anton', 'sans-serif'],
+        },
+        colors: {
+          cafe: {
+            50: '#FFF9F0',
+            100: '#F5E6CC',
+            200: '#E3C99A',
+            300: '#C9A468',
+            400: '#9C7A45',
+            500: '#6E5530',
+            600: '#4A3820',
+            700: '#332616',
+            800: '#20160D',
+            900: '#140D0A',
+          },
+          bronce: {
+            300: '#FFDD66',
+            400: '#FFC72C',
+            500: '#F2A900',
+            600: '#C98600',
+          },
+          vino: {
+            500: '#E8262C',
+            600: '#C81E23',
+            700: '#9E1616',
+            800: '#6B0F0F',
+          },
+          celeste: {
+            400: '#7BB661',
+            500: '#4E8C3B',
+            600: '#3A6B2A',
+          }
+        },
+        animation: {
+          'fade-in': 'fadeIn 0.4s ease forwards',
+          'slide-up': 'slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+          'slide-down': 'slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+          'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          'bounce-slight': 'bounceSlight 2s infinite',
+        },
+        keyframes: {
+          fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+          slideUp: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+          slideDown: { '0%': { opacity: '0', transform: 'translateY(-14px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+          bounceSlight: { '0%, 100%': { transform: 'translateY(-5%)' }, '50%': { transform: 'translateY(0)' } },
+        }
+      }
+    }
+  }
+</script>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<style>
+  body {
+    font-family: 'Nunito', sans-serif;
+    background-color: #FFF9F0;
+    color: #20160D;
+    overflow-x: hidden;
+  }
+  h1, h2, h3, .font-heading { font-family: 'Anton', sans-serif; letter-spacing: 0.02em; }
+
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: #FFF9F0; }
+  ::-webkit-scrollbar-thumb { background: #C9A468; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #9C7A45; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  .bg-papel {
+    background-color: #FFF9F0;
+    background-image:
+      radial-gradient(at 0% 0%, rgba(242,169,0,0.08) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(200,30,35,0.05) 0px, transparent 50%),
+      url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23e3c99a' fill-opacity='0.15' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
+    background-attachment: fixed;
+  }
+
+  .filete-borde {
+    border: 1px solid rgba(227, 201, 154, 0.5);
+    box-shadow: 0 10px 15px -3px rgba(20, 13, 10, 0.1), 0 4px 6px -2px rgba(20, 13, 10, 0.05);
+    transition: all 0.3s ease;
+  }
+  .filete-borde:hover {
+    border-color: #C9A468;
+    box-shadow: 0 20px 25px -5px rgba(20, 13, 10, 0.15), 0 10px 10px -5px rgba(20, 13, 10, 0.04);
+  }
+
+  .btn-flotante {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .btn-flotante:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 15px 25px -5px rgba(0,0,0,0.3);
+  }
+
+  .delay-100 { animation-delay: 100ms; }
+  .delay-150 { animation-delay: 150ms; }
+  .delay-200 { animation-delay: 200ms; }
+  .delay-300 { animation-delay: 300ms; }
+
+  .btn-red {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 9999px;
+    color: #ffffff;
+    font-size: 20px;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .btn-red:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.4); }
+  .btn-whatsapp { background-color: #25D366; }
+  .btn-instagram { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); }
+</style>
+</head>
+<body class="bg-papel min-h-screen antialiased selection:bg-bronce-400 selection:text-cafe-900">
+
+<div id="root"></div>
+
+<script src="seed.js"></script>
+<script src="../demo-db.js"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+const NOMBRE_NEGOCIO = "The Papa's Brothers";
+const TAGLINE = "Hamburguesas artesanales · Blend 100% carne";
+
+// Credenciales de admin — cambiar acá cuando quieras
+const ADMIN_USUARIO = "demo";
+const ADMIN_CONTRASENA = "demo";
+
+function resizeImagen(file, callback, maxSize = 900) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img = new Image();
+    img.onload = () => {
+      let { width, height } = img;
+      if (width > height && width > maxSize) { height *= maxSize / width; width = maxSize; }
+      else if (height > maxSize) { width *= maxSize / height; height = maxSize; }
+      const canvas = document.createElement('canvas');
+      canvas.width = width; canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+      callback(canvas.toDataURL('image/jpeg', 0.82));
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function MensajeCocinaInput({ pedido, onGuardar }) {
+  const [texto, setTexto] = React.useState(pedido.mensaje || '');
+  return (
+    <div className="flex gap-1.5">
+      <input
+        value={texto}
+        onChange={e => setTexto(e.target.value)}
+        placeholder="Aviso para el cliente (opcional)"
+        className="flex-1 bg-cafe-900 border border-cafe-700 rounded-lg px-2.5 py-1.5 text-xs text-cafe-50 placeholder-cafe-500" />
+      <button onClick={() => onGuardar(pedido.id, texto)} className="bg-cafe-700 text-bronce-300 text-xs font-bold px-3 rounded-lg">
+        <i className="fa-solid fa-paper-plane"></i>
+      </button>
+    </div>
+  );
+}
+
+function App() {
+  const [productos, setProductos] = useState({});
+  const [categorias, setCategorias] = useState([]);
+  const LOGO_DEFAULT = 'data:image/jpeg;base64,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';
+  const [config, setConfig] = useState({ whatsapp: '', instagram: '', logo: LOGO_DEFAULT, direccion: '', alias: '', qrPago: '' });
+
+  const [categoriaActiva, setCategoriaActiva] = useState('todas');
+  const [busqueda, setBusqueda] = useState('');
+
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [mostrarAdminModal, setMostrarAdminModal] = useState(false);
+  const [adminTab, setAdminTab] = useState('pedidos');
+  const [usuario, setUsuario] = useState('');
+  const [contrasena, setContrasena] = useState('');
+  const [errorLogin, setErrorLogin] = useState('');
+
+  const [form, setForm] = useState({ nombre: '', categoria: '', descripcion: '', precio: '', imagen: '', insumos: [], destacado: false });
+  const [editandoId, setEditandoId] = useState(null);
+
+  const [nuevaCategoria, setNuevaCategoria] = useState('');
+
+  const [whatsappInput, setWhatsappInput] = useState('');
+  const [instagramInput, setInstagramInput] = useState('');
+  const [direccionInput, setDireccionInput] = useState('');
+  const [aliasInput, setAliasInput] = useState('');
+
+  const [carrito, setCarrito] = useState([]);
+  const [mostrarCarrito, setMostrarCarrito] = useState(false);
+  const [modoConsumo, setModoConsumo] = useState('takeaway');
+  const [pedidoForm, setPedidoForm] = useState({ nombre: '', telefono: '', direccion: '' });
+  const [enviandoPedido, setEnviandoPedido] = useState(false);
+
+  const [numeroConsulta, setNumeroConsulta] = useState('');
+  const [pedidoConsultado, setPedidoConsultado] = useState(null);
+
+  const [pedidos, setPedidos] = useState({});
+  const [confirmacionPedido, setConfirmacionPedido] = useState(null);
+
+  const [insumos, setInsumos] = useState({});
+  const [insumoForm, setInsumoForm] = useState({ nombre: '', unidad: '', cantidad: '', minimo: '' });
+  const [editandoInsumoId, setEditandoInsumoId] = useState(null);
+  const [selInsumoProd, setSelInsumoProd] = useState('');
+  const [cantInsumoProd, setCantInsumoProd] = useState('');
+
+  const [chatbotConfig, setChatbotConfig] = useState({ saludo: '', preguntas: {} });
+  const [chatSaludoInput, setChatSaludoInput] = useState('');
+  const [mostrarChat, setMostrarChat] = useState(false);
+  const [preguntaActiva, setPreguntaActiva] = useState(null);
+  const [preguntaForm, setPreguntaForm] = useState({ pregunta: '', respuesta: '' });
+  const [editandoPreguntaId, setEditandoPreguntaId] = useState(null);
+
+  const [combos, setCombos] = useState({});
+  const [comboForm, setComboForm] = useState({ nombre: '', descripcion: '', precio: '', imagen: '', insumos: [] });
+  const [editandoComboId, setEditandoComboId] = useState(null);
+  const [selInsumoCombo, setSelInsumoCombo] = useState('');
+  const [cantInsumoCombo, setCantInsumoCombo] = useState('');
+
+  const [modoVistaCocina, setModoVistaCocina] = useState(false);
+
+  function fechaISO(ts) {
+    const d = new Date(ts || Date.now());
+    const pad = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  }
+  const [fechaCajaSeleccionada, setFechaCajaSeleccionada] = useState(fechaISO());
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('cocina')) setModoVistaCocina(true);
+  }, []);
+
+  useEffect(() => {
+    db.ref('productos').on('value', s => setProductos(s.val() || {}));
+    db.ref('categorias').on('value', s => setCategorias(s.val() || []));
+    db.ref('config').on('value', s => {
+      const c = s.val() || {};
+      setConfig({ ...c, logo: c.logo || LOGO_DEFAULT });
+      setWhatsappInput(c.whatsapp || '');
+      setInstagramInput(c.instagram || '');
+      setDireccionInput(c.direccion || '');
+      setAliasInput(c.alias || '');
+    });
+    db.ref('pedidos').on('value', s => setPedidos(s.val() || {}));
+    db.ref('insumos').on('value', s => setInsumos(s.val() || {}));
+    db.ref('chatbot').on('value', s => {
+      const c = s.val() || { saludo: '', preguntas: {} };
+      setChatbotConfig(c);
+      setChatSaludoInput(c.saludo || '');
+    });
+    db.ref('combos').on('value', s => setCombos(s.val() || {}));
+  }, []);
+
+  const listaProductos = Object.entries(productos).map(([id, p]) => ({ id, ...p }));
+  const productosDestacados = listaProductos.filter(p => p.destacado);
+  const [sliderIndex, setSliderIndex] = useState(0);
+  useEffect(() => {
+    if (productosDestacados.length < 2) return;
+    const t = setInterval(() => setSliderIndex(i => (i + 1) % productosDestacados.length), 4000);
+    return () => clearInterval(t);
+  }, [productosDestacados.length]);
+
+  const productosFiltrados = listaProductos.filter(p => {
+    const pasaCategoria = categoriaActiva === 'todas' || p.categoria === categoriaActiva;
+    const pasaBusqueda = !busqueda || p.nombre.toLowerCase().includes(busqueda.toLowerCase());
+    return pasaCategoria && pasaBusqueda;
+  });
+
+  const categoriasConProductos = categorias.filter(c => listaProductos.some(p => p.categoria === c));
+
+  function intentarLogin() {
+    if (usuario === ADMIN_USUARIO && contrasena === ADMIN_CONTRASENA) {
+      setIsAdmin(true);
+      setErrorLogin('');
+      setUsuario(''); setContrasena('');
+    } else {
+      setErrorLogin('Usuario o contraseña incorrectos');
+    }
+  }
+  function cerrarSesion() {
+    setIsAdmin(false);
+    setMostrarAdminModal(false);
+  }
+
+  function resetForm() {
+    setForm({ nombre: '', categoria: categorias[0] || '', descripcion: '', precio: '', imagen: '', insumos: [], destacado: false });
+    setEditandoId(null);
+    setSelInsumoProd(''); setCantInsumoProd('');
+  }
+  function editarProducto(p) {
+    setForm({ nombre: p.nombre, categoria: p.categoria, descripcion: p.descripcion || '', precio: String(p.precio), imagen: p.imagen || '', insumos: p.insumos || [], destacado: !!p.destacado });
+    setEditandoId(p.id);
+    setAdminTab('productos');
+  }
+  function guardarProducto() {
+    if (!form.nombre || !form.categoria || !form.precio) return;
+    const id = editandoId || db.ref('productos').push().key;
+    db.ref('productos/' + id).set({
+      nombre: form.nombre,
+      categoria: form.categoria,
+      descripcion: form.descripcion || '',
+      precio: Number(form.precio),
+      imagen: form.imagen || '',
+      insumos: form.insumos || [],
+      destacado: !!form.destacado
+    });
+    resetForm();
+  }
+  function eliminarProducto(id) {
+    if (confirm('¿Eliminar este ítem del menú?')) db.ref('productos/' + id).remove();
+  }
+  // Carga inicial con las hamburguesas del menú (se ejecuta una sola vez, a mano, desde el panel)
+  function cargarMenuInicial() {
+    if (!confirm('Esto va a crear la categoría "Hamburguesas" y cargar las hamburguesas del menú (Clásica, Cheese Doble, Cheese Bacon, Brothers, Cuarto Brothers, La de Siempre) con sus tamaños y precios. ¿Continuar?')) return;
+    const CATEGORIA = 'Hamburguesas';
+    if (!categorias.includes(CATEGORIA)) db.ref('categorias').set([...categorias, CATEGORIA]);
+    const items = [
+      ['Clásica Simple', 'Blend de 100gr + cheddar + lechuga + tomate y cebolla', 12000],
+      ['Clásica Doble', 'Blend de 100gr + cheddar + lechuga + tomate y cebolla', 13500],
+      ['Clásica Triple', 'Blend de 100gr + cheddar + lechuga + tomate y cebolla', 15200],
+      ['Cheese Doble', 'Doble blend de 100gr + 4 fetas de cheddar', 16700],
+      ['Cheese Bacon Doble', 'Blend de 100gr + cheddar + bacon', 16800],
+      ['Cheese Bacon Triple', 'Blend de 100gr + cheddar + bacon', 19000],
+      ['Brothers Doble', 'Blend de 100gr + cheddar + panceta + huevo + cebolla caramelizada + salsa Brothers', 17800],
+      ['Brothers Triple', 'Blend de 100gr + cheddar + panceta + huevo + cebolla caramelizada + salsa Brothers', 19000],
+      ['Cuarto Brothers Simple', 'Blend de 100gr + cheddar + cebolla picada + mostaza y ketchup', 13800],
+      ['Cuarto Brothers Doble', 'Blend de 100gr + cheddar + cebolla picada + mostaza y ketchup', 16000],
+      ['Cuarto Brothers Triple', 'Blend de 100gr + cheddar + cebolla picada + mostaza y ketchup', 17200],
+      ['La de Siempre Simple', 'Blend de 100gr + cheddar + panceta + cebolla caramelizada + ketchup', 15500],
+      ['La de Siempre Doble', 'Blend de 100gr + cheddar + panceta + cebolla caramelizada + ketchup', 17200],
+      ['La de Siempre Triple', 'Blend de 100gr + cheddar + panceta + cebolla caramelizada + ketchup', 18200],
+    ];
+    const updates = {};
+    items.forEach(([nombre, descripcion, precio]) => {
+      const id = db.ref('productos').push().key;
+      updates['productos/' + id] = { nombre, categoria: CATEGORIA, descripcion, precio, imagen: '', insumos: [] };
+    });
+    db.ref().update(updates);
+  }
+  function handleImagenProducto(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    resizeImagen(file, dataUrl => setForm(f => ({ ...f, imagen: dataUrl })));
+    e.target.value = '';
+  }
+  function agregarInsumoAProducto() {
+    if (!selInsumoProd || !cantInsumoProd) return;
+    setForm(f => ({ ...f, insumos: [...(f.insumos || []), { insumoId: selInsumoProd, cantidad: Number(cantInsumoProd) }] }));
+    setSelInsumoProd(''); setCantInsumoProd('');
+  }
+  function quitarInsumoDeProducto(idx) {
+    setForm(f => ({ ...f, insumos: f.insumos.filter((_, i) => i !== idx) }));
+  }
+
+  function agregarCategoria() {
+    if (!nuevaCategoria || categorias.includes(nuevaCategoria)) return;
+    db.ref('categorias').set([...categorias, nuevaCategoria]).then(() => setNuevaCategoria(''));
+  }
+  function eliminarCategoria(cat) {
+    if (listaProductos.some(p => p.categoria === cat)) {
+      alert('Esta categoría tiene ítems del menú cargados. Cambiá o eliminá esos ítems antes de borrarla.');
+      return;
+    }
+    db.ref('categorias').set(categorias.filter(c => c !== cat));
+  }
+
+  function agregarAlCarrito(p) {
+    setCarrito(prev => {
+      const existe = prev.find(it => it.id === p.id);
+      if (existe) return prev.map(it => it.id === p.id ? { ...it, cantidad: it.cantidad + 1 } : it);
+      return [...prev, { id: p.id, nombre: p.nombre, precio: p.precio, cantidad: 1, insumos: p.insumos || [] }];
+    });
+  }
+  function agregarComboAlCarrito(c) {
+    const cartId = 'combo-' + c.id;
+    setCarrito(prev => {
+      const existe = prev.find(it => it.id === cartId);
+      if (existe) return prev.map(it => it.id === cartId ? { ...it, cantidad: it.cantidad + 1 } : it);
+      return [...prev, { id: cartId, nombre: c.nombre, precio: c.precio, cantidad: 1, insumos: c.insumos || [] }];
+    });
+  }
+  function cambiarCantidadCarrito(id, delta) {
+    setCarrito(prev => prev
+      .map(it => it.id === id ? { ...it, cantidad: it.cantidad + delta } : it)
+      .filter(it => it.cantidad > 0));
+  }
+  const totalCarrito = carrito.reduce((a, it) => a + it.cantidad * it.precio, 0);
+  const cantidadCarrito = carrito.reduce((a, it) => a + it.cantidad, 0);
+
+  function puedeEnviarPedido() {
+    if (carrito.length === 0) return false;
+    if (modoConsumo === 'delivery') return !!pedidoForm.nombre && !!pedidoForm.telefono && !!pedidoForm.direccion;
+    return !!pedidoForm.nombre; // take away
+  }
+
+  function descontarStockPorPedido(items) {
+    const updates = {};
+    items.forEach(it => {
+      (it.insumos || []).forEach(ins => {
+        const totalUsado = ins.cantidad * it.cantidad;
+        if (!totalUsado) return;
+        updates['insumos/' + ins.insumoId + '/cantidad'] = firebase.database.ServerValue.increment(-totalUsado);
+      });
+    });
+    if (Object.keys(updates).length > 0) db.ref().update(updates);
+  }
+
+  const [metodoPagoSel, setMetodoPagoSel] = useState(null); // null | 'efectivo' | 'transferencia' | 'qr'
+  const [montoEfectivo, setMontoEfectivo] = useState('');
+
+  function confirmarMetodoPago(metodo) {
+    if (!puedeEnviarPedido() || !config.whatsapp) return;
+    if (metodo === 'transferencia' && !config.alias) return;
+    if (metodo === 'qr' && !config.qrPago) return;
+    setMetodoPagoSel(metodo);
+  }
+
+  function enviarPedido() {
+    const metodo = metodoPagoSel;
+    if (!puedeEnviarPedido() || !metodo || !config.whatsapp) return;
+    setEnviandoPedido(true);
+
+    db.ref('contadorPedidos').transaction(actual => (actual || 0) + 1).then(res => {
+      const numero = res.snapshot.val();
+      const pedidoData = {
+        numero,
+        modo: modoConsumo,
+        nombre: pedidoForm.nombre || null,
+        telefono: pedidoForm.telefono || null,
+        direccion: pedidoForm.direccion || null,
+        items: carrito,
+        total: totalCarrito,
+        pago: { metodo, monto: metodo === 'efectivo' ? (montoEfectivo || null) : null },
+        estado: 'recibido',
+        mensaje: '',
+        creado: Date.now()
+      };
+
+      db.ref('pedidos').push().set(pedidoData).then(() => {
+        descontarStockPorPedido(carrito);
+        const lineas = [];
+        lineas.push(`Pedido #${numero} - ${NOMBRE_NEGOCIO}`);
+        if (modoConsumo === 'takeaway') lineas.push(`Modo: Take away - ${pedidoForm.nombre}`);
+        if (modoConsumo === 'delivery') {
+          lineas.push(`Modo: Delivery`);
+          lineas.push(`Cliente: ${pedidoForm.nombre}`);
+          lineas.push(`Teléfono: ${pedidoForm.telefono}`);
+          lineas.push(`Dirección: ${pedidoForm.direccion}`);
+        }
+        lineas.push('-------------------------');
+        carrito.forEach(it => lineas.push(`${it.cantidad}x ${it.nombre} - $${it.cantidad * it.precio}`));
+        lineas.push('-------------------------');
+        lineas.push(`Total: $${totalCarrito}`);
+        if (metodo === 'efectivo') lineas.push(`Pago: Efectivo - abona con $${montoEfectivo || totalCarrito}`);
+        if (metodo === 'transferencia') lineas.push(`Pago: Transferencia - envío el comprobante`);
+        if (metodo === 'qr') lineas.push(`Pago: QR - envío el comprobante`);
+        const mensajeWsp = encodeURIComponent(lineas.join('\n'));
+        window.open(`https://wa.me/${config.whatsapp}?text=${mensajeWsp}`, '_blank');
+        setConfirmacionPedido(`¡Pedido #${numero} enviado! Guardá este número para seguir el estado en "Seguí tu pedido".`);
+        setCarrito([]);
+        setPedidoForm({ nombre: '', telefono: '', direccion: '' });
+        setMetodoPagoSel(null);
+        setMontoEfectivo('');
+        setMostrarCarrito(false);
+        setEnviandoPedido(false);
+      });
+    }).catch(() => setEnviandoPedido(false));
+  }
+  function cerrarConfirmacionPedido() {
+    setConfirmacionPedido(null);
+    setPedidoForm({ nombre: '', telefono: '', direccion: '' });
+    setMostrarCarrito(false);
+  }
+
+  const ESTADOS_PEDIDO = ['recibido', 'en_preparacion', 'en_camino', 'entregado', 'cobrado'];
+  const ESTADO_LABEL = { recibido: 'Recibido', en_preparacion: 'En preparación', en_camino: 'En camino / listo', entregado: 'Entregado', cobrado: 'Cobrado' };
+  const ESTADO_ESTILO = {
+    recibido: 'bg-sky-100 text-sky-700',
+    en_preparacion: 'bg-bronce-200 text-cafe-800',
+    en_camino: 'bg-orange-100 text-orange-700',
+    entregado: 'bg-purple-100 text-purple-700',
+    cobrado: 'bg-green-100 text-green-700'
+  };
+  const listaPedidos = Object.entries(pedidos).map(([id, p]) => ({ id, ...p })).sort((a,b) => (b.creado||0) - (a.creado||0));
+
+  const pedidosCajaSel = listaPedidos.filter(p => fechaISO(p.creado) === fechaCajaSeleccionada);
+  const cobradosCajaSel = pedidosCajaSel.filter(p => p.estado === 'cobrado');
+  const abiertosCajaSel = pedidosCajaSel.filter(p => p.estado !== 'cobrado');
+  const totalCajaSel = cobradosCajaSel.reduce((a, p) => a + (p.total || 0), 0);
+  const totalPorCobrarSel = abiertosCajaSel.reduce((a, p) => a + (p.total || 0), 0);
+  const desglosePorModoSel = { takeaway: 0, delivery: 0 };
+  cobradosCajaSel.forEach(p => { desglosePorModoSel[p.modo] = (desglosePorModoSel[p.modo] || 0) + (p.total || 0); });
+
+  function etiquetaFecha(fechaStr) {
+    if (fechaStr === fechaISO()) return 'Hoy';
+    const [y, m, d] = fechaStr.split('-').map(Number);
+    const fecha = new Date(y, m - 1, d);
+    const texto = fecha.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' });
+    return texto.charAt(0).toUpperCase() + texto.slice(1);
+  }
+
+  const historialDias = (() => {
+    const mapa = {};
+    listaPedidos.filter(p => p.estado === 'cobrado').forEach(p => {
+      const f = fechaISO(p.creado);
+      mapa[f] = (mapa[f] || 0) + (p.total || 0);
+    });
+    return Object.entries(mapa).map(([fecha, total]) => ({ fecha, total })).sort((a, b) => b.fecha.localeCompare(a.fecha)).slice(0, 14);
+  })();
+
+  const topProductos = (() => {
+    const conteo = {};
+    listaPedidos.filter(p => p.estado === 'cobrado').forEach(p => {
+      (p.items || []).forEach(it => {
+        if (!conteo[it.nombre]) conteo[it.nombre] = { nombre: it.nombre, cantidad: 0, total: 0 };
+        conteo[it.nombre].cantidad += it.cantidad;
+        conteo[it.nombre].total += it.cantidad * it.precio;
+      });
+    });
+    return Object.values(conteo).sort((a, b) => b.cantidad - a.cantidad).slice(0, 10);
+  })();
+
+  function linkCocina() {
+    return `${window.location.origin}${window.location.pathname}?cocina=1`;
+  }
+
+  function avanzarEstadoPedido(id, estadoActual) {
+    const idx = ESTADOS_PEDIDO.indexOf(estadoActual);
+    if (idx === -1 || idx === ESTADOS_PEDIDO.length - 1) return;
+    db.ref('pedidos/' + id + '/estado').set(ESTADOS_PEDIDO[idx + 1]);
+  }
+  function horaCorta(ts) {
+    if (!ts) return '';
+    return new Date(ts).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+  }
+  function etiquetaOrigenPedido(p) {
+    if (p.modo === 'takeaway') return `Take away - ${p.nombre}`;
+    return `Delivery - ${p.nombre}`;
+  }
+  function etiquetaEstadoPedido(estado, modo) {
+    if (estado === 'recibido') return 'Recibido';
+    if (estado === 'en_preparacion') return 'En preparación';
+    if (estado === 'en_camino') return modo === 'delivery' ? 'En camino' : 'Listo para retirar';
+    if (estado === 'entregado') return 'Entregado';
+    if (estado === 'cobrado') return 'Cobrado';
+    return estado;
+  }
+  function buscarPedido() {
+    const encontrado = listaPedidos.find(p => String(p.numero) === String(numeroConsulta).trim());
+    setPedidoConsultado(encontrado || 'notfound');
+  }
+  function guardarMensajeCocina(id, texto) {
+    db.ref('pedidos/' + id + '/mensaje').set(texto || '');
+  }
+
+  const listaInsumos = Object.entries(insumos).map(([id, i]) => ({ id, ...i }));
+
+  function resetInsumoForm() {
+    setInsumoForm({ nombre: '', unidad: '', cantidad: '', minimo: '' });
+    setEditandoInsumoId(null);
+  }
+  function editarInsumo(i) {
+    setInsumoForm({ nombre: i.nombre, unidad: i.unidad || '', cantidad: String(i.cantidad ?? ''), minimo: String(i.minimo ?? '') });
+    setEditandoInsumoId(i.id);
+  }
+  function guardarInsumo() {
+    if (!insumoForm.nombre) return;
+    const id = editandoInsumoId || db.ref('insumos').push().key;
+    db.ref('insumos/' + id).set({
+      nombre: insumoForm.nombre,
+      unidad: insumoForm.unidad || '',
+      cantidad: Number(insumoForm.cantidad) || 0,
+      minimo: Number(insumoForm.minimo) || 0
+    });
+    resetInsumoForm();
+  }
+  function eliminarInsumo(id) {
+    if (confirm('¿Eliminar este insumo? Los productos que lo usan dejarán de descontar stock por él.')) db.ref('insumos/' + id).remove();
+  }
+
+  const listaCombos = Object.entries(combos).map(([id, c]) => ({ id, ...c }));
+  function resetComboForm() {
+    setComboForm({ nombre: '', descripcion: '', precio: '', imagen: '', insumos: [] });
+    setEditandoComboId(null);
+    setSelInsumoCombo(''); setCantInsumoCombo('');
+  }
+  function editarCombo(c) {
+    setComboForm({ nombre: c.nombre, descripcion: c.descripcion || '', precio: String(c.precio), imagen: c.imagen || '', insumos: c.insumos || [] });
+    setEditandoComboId(c.id);
+  }
+  function guardarCombo() {
+    if (!comboForm.nombre || !comboForm.precio) return;
+    const id = editandoComboId || db.ref('combos').push().key;
+    db.ref('combos/' + id).set({
+      nombre: comboForm.nombre,
+      descripcion: comboForm.descripcion || '',
+      precio: Number(comboForm.precio),
+      imagen: comboForm.imagen || '',
+      insumos: comboForm.insumos || []
+    });
+    resetComboForm();
+  }
+  function eliminarCombo(id) {
+    if (confirm('¿Eliminar este combo/promo?')) db.ref('combos/' + id).remove();
+  }
+  function handleImagenCombo(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    resizeImagen(file, dataUrl => setComboForm(f => ({ ...f, imagen: dataUrl })));
+    e.target.value = '';
+  }
+  function agregarInsumoACombo() {
+    if (!selInsumoCombo || !cantInsumoCombo) return;
+    setComboForm(f => ({ ...f, insumos: [...(f.insumos || []), { insumoId: selInsumoCombo, cantidad: Number(cantInsumoCombo) }] }));
+    setSelInsumoCombo(''); setCantInsumoCombo('');
+  }
+  function quitarInsumoDeCombo(idx) {
+    setComboForm(f => ({ ...f, insumos: f.insumos.filter((_, i) => i !== idx) }));
+  }
+
+  const listaPreguntasBot = Object.entries(chatbotConfig.preguntas || {}).map(([id, p]) => ({ id, ...p }));
+  const SALUDO_BOT_DEFAULT = '¡Hola! 👋 Soy el asistente de The Papa\'s Brothers. Elegí una pregunta:';
+
+  function guardarSaludoBot() {
+    db.ref('chatbot/saludo').set(chatSaludoInput);
+  }
+  function resetPreguntaBotForm() {
+    setPreguntaForm({ pregunta: '', respuesta: '' });
+    setEditandoPreguntaId(null);
+  }
+  function editarPreguntaBot(p) {
+    setPreguntaForm({ pregunta: p.pregunta, respuesta: p.respuesta });
+    setEditandoPreguntaId(p.id);
+  }
+  function guardarPreguntaBot() {
+    if (!preguntaForm.pregunta || !preguntaForm.respuesta) return;
+    const id = editandoPreguntaId || db.ref('chatbot/preguntas').push().key;
+    db.ref('chatbot/preguntas/' + id).set({ pregunta: preguntaForm.pregunta, respuesta: preguntaForm.respuesta });
+    resetPreguntaBotForm();
+  }
+  function eliminarPreguntaBot(id) {
+    if (confirm('¿Eliminar esta pregunta del chatbot?')) db.ref('chatbot/preguntas/' + id).remove();
+  }
+  function abrirChat() {
+    setPreguntaActiva(null);
+    setMostrarChat(true);
+  }
+
+  function guardarConfig() {
+    db.ref('config').set({ ...config, whatsapp: whatsappInput, instagram: instagramInput, direccion: direccionInput, alias: aliasInput });
+  }
+  function handleLogo(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    resizeImagen(file, dataUrl => {
+      db.ref('config').set({ ...config, whatsapp: whatsappInput, instagram: instagramInput, direccion: direccionInput, alias: aliasInput, logo: dataUrl });
+    }, 300);
+  }
+  function handleQrPago(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    resizeImagen(file, dataUrl => {
+      db.ref('config').set({ ...config, whatsapp: whatsappInput, instagram: instagramInput, direccion: direccionInput, alias: aliasInput, qrPago: dataUrl });
+    }, 500);
+  }
+  function quitarQrPago() {
+    if (confirm('¿Quitar el QR de pago?')) db.ref('config').set({ ...config, whatsapp: whatsappInput, instagram: instagramInput, direccion: direccionInput, alias: aliasInput, qrPago: '' });
+  }
+
+  // ===================== VISTA COCINA (pantalla completa, sin login) =====================
+  if (modoVistaCocina) {
+    const pedidosCocina = listaPedidos
+      .filter(p => p.estado === 'recibido' || p.estado === 'en_preparacion' || p.estado === 'en_camino')
+      .sort((a, b) => (a.creado || 0) - (b.creado || 0));
+
+    const BOTON_SIGUIENTE = {
+      recibido: { label: 'Marcar en preparación', clase: 'bg-sky-500 text-white' },
+      en_preparacion: (modo) => ({ label: modo === 'delivery' ? 'Marcar en camino' : 'Marcar listo para retirar', clase: 'bg-bronce-500 text-cafe-900' }),
+      en_camino: { label: 'Marcar entregado', clase: 'bg-green-600 text-white' },
+    };
+
+    return (
+      <div className="min-h-screen bg-cafe-900 text-cafe-50 p-4 sm:p-6">
+        <div className="flex items-center justify-between mb-5">
+          <h1 className="font-heading text-2xl sm:text-3xl font-bold text-bronce-400"><i className="fa-solid fa-kitchen-set mr-2"></i>Cocina</h1>
+          <span className="bg-bronce-500 text-cafe-900 text-xs font-bold px-3 py-1.5 rounded-full">{pedidosCocina.length} pendiente{pedidosCocina.length === 1 ? '' : 's'}</span>
+        </div>
+
+        {pedidosCocina.length === 0 && (
+          <div className="text-center py-24 text-cafe-500">
+            <i className="fa-solid fa-burger text-5xl mb-4"></i>
+            <p className="text-lg">No hay pedidos pendientes.</p>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {pedidosCocina.map(p => {
+            const boton = p.estado === 'en_preparacion' ? BOTON_SIGUIENTE.en_preparacion(p.modo) : BOTON_SIGUIENTE[p.estado];
+            return (
+              <div key={p.id} className="bg-cafe-800 border border-cafe-700 rounded-2xl p-4">
+                <div className="flex justify-between items-start mb-2">
+                  <h2 className="font-heading text-xl font-bold text-bronce-300">Pedido #{p.numero} · {etiquetaOrigenPedido(p)}</h2>
+                  <span className="text-cafe-400 text-sm">{horaCorta(p.creado)}</span>
+                </div>
+                <div className="space-y-1 mb-4 text-lg">
+                  {(p.items || []).map((it, idx) => (
+                    <p key={idx}>{it.cantidad}x {it.nombre}</p>
+                  ))}
+                </div>
+                <button
+                  onClick={() => avanzarEstadoPedido(p.id, p.estado)}
+                  className={`w-full py-3 rounded-xl text-base font-bold mb-2 ${boton.clase}`}>
+                  {boton.label}
+                </button>
+                <MensajeCocinaInput pedido={p} onGuardar={guardarMensajeCocina} />
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="pb-24">
+
+      {/* ===================== HEADER NAVBAR ===================== */}
+      <header className="bg-cafe-900 text-cafe-50 sticky top-0 z-40 shadow-xl border-b-4 border-bronce-500 animate-slide-down">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+          <div className="flex items-center gap-3 cursor-pointer group" onClick={() => { setCategoriaActiva('todas'); setBusqueda(''); }}>
+            {config.logo && <img src={config.logo} alt="Logo" className="w-12 h-12 rounded-full object-cover border-2 border-bronce-400 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 bg-white" />}
+            <div>
+              <h1 className="text-xl sm:text-2xl font-heading text-bronce-400 tracking-wide uppercase group-hover:text-bronce-300 transition-colors leading-none">{NOMBRE_NEGOCIO}</h1>
+              <p className="text-xs text-cafe-200 hidden sm:block opacity-80 mt-1">{TAGLINE}</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 sm:gap-4 flex-shrink-0">
+            {config.whatsapp && (
+              <a href={`https://wa.me/${config.whatsapp}`} target="_blank" rel="noreferrer" className="text-cafe-300 hover:text-bronce-400 transition-colors text-xl"><i className="fa-brands fa-whatsapp"></i></a>
+            )}
+            {config.instagram && (
+              <a href={`https://instagram.com/${config.instagram}`} target="_blank" rel="noreferrer" className="text-cafe-300 hover:text-bronce-400 transition-colors text-xl"><i className="fa-brands fa-instagram"></i></a>
+            )}
+            <button onClick={() => setMostrarCarrito(true)} className="relative p-2 text-cafe-50 hover:text-bronce-400 transition-colors transform hover:scale-110">
+              <i className="fa-solid fa-basket-shopping text-2xl"></i>
+              {carrito.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-vino-600 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full animate-bounce-slight shadow-lg border border-cafe-900">
+                  {cantidadCarrito}
+                </span>
+              )}
+            </button>
+            <button onClick={() => setMostrarAdminModal(true)} className="text-cafe-500 hover:text-cafe-300 transition-colors text-lg">
+              <i className="fa-solid fa-user-gear"></i>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-6xl mx-auto px-4 pt-6">
+        {/* ===================== BUSCADOR ===================== */}
+        <div className="relative mb-8 max-w-md mx-auto animate-fade-in delay-100">
+          <input
+            type="text"
+            placeholder="¿Qué tenés ganas de comer hoy?"
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+            className="w-full bg-white border-2 border-cafe-200 text-cafe-900 rounded-full py-3 px-12 shadow-sm focus:outline-none focus:border-bronce-400 focus:ring-4 focus:ring-bronce-400/20 transition-all font-semibold"
+          />
+          <i className="fa-solid fa-magnifying-glass absolute left-5 top-4 text-cafe-400"></i>
+          {busqueda && (
+            <button onClick={() => setBusqueda('')} className="absolute right-5 top-3.5 text-cafe-400 hover:text-vino-600 transition-colors">
+              <i className="fa-solid fa-xmark text-lg"></i>
+            </button>
+          )}
+        </div>
+
+        {/* ===================== HERO / DESTACADO ===================== */}
+        {productosDestacados.length > 0 && !busqueda && categoriaActiva === 'todas' && (
+          <div className="mb-10 rounded-2xl overflow-hidden relative shadow-2xl animate-slide-up bg-cafe-900 border-2 border-bronce-500/30 group">
+            <div className="absolute inset-0 bg-gradient-to-t from-cafe-900 via-cafe-900/60 to-transparent z-10"></div>
+            {productosDestacados[sliderIndex % productosDestacados.length].imagen ? (
+              <img
+                key={sliderIndex}
+                src={productosDestacados[sliderIndex % productosDestacados.length].imagen}
+                className="w-full h-64 sm:h-80 object-cover opacity-80 group-hover:scale-105 group-hover:opacity-100 transition-all duration-700 animate-fade-in"
+                alt="Destacado" />
+            ) : <div className="w-full h-64 sm:h-80 bg-cafe-800"></div>}
+            <div className="absolute bottom-0 left-0 w-full p-6 z-20">
+              <span className="bg-vino-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-2 inline-block shadow-md">Recomendado</span>
+              <h2 className="text-3xl sm:text-4xl font-heading text-bronce-400 drop-shadow-lg">{productosDestacados[sliderIndex % productosDestacados.length].nombre}</h2>
+              {productosDestacados[sliderIndex % productosDestacados.length].descripcion && (
+                <p className="text-cafe-100 mt-2 max-w-xl text-sm sm:text-base line-clamp-2 drop-shadow">{productosDestacados[sliderIndex % productosDestacados.length].descripcion}</p>
+              )}
+              <div className="mt-4 flex items-center justify-between">
+                <span className="text-2xl font-bold text-white">${productosDestacados[sliderIndex % productosDestacados.length].precio}</span>
+                <button onClick={() => agregarAlCarrito(productosDestacados[sliderIndex % productosDestacados.length])} className="bg-bronce-500 hover:bg-bronce-400 text-cafe-900 font-bold py-2 px-6 rounded-full shadow-lg transform hover:-translate-y-1 transition-all">
+                  Pedir ahora <i className="fa-solid fa-arrow-right ml-1"></i>
+                </button>
+              </div>
+              {productosDestacados.length > 1 && (
+                <div className="flex gap-1.5 mt-4">
+                  {productosDestacados.map((_, idx) => (
+                    <span key={idx} className={`w-1.5 h-1.5 rounded-full transition-all ${idx === sliderIndex % productosDestacados.length ? 'bg-bronce-400 w-4' : 'bg-cafe-50/40'}`}></span>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+      {/* ===================== SEGUÍ TU PEDIDO ===================== */}
+      <div className="mb-8 animate-fade-in delay-100">
+        <div className="bg-cafe-900 rounded-2xl p-4 sm:p-5 shadow-lg">
+          <p className="text-bronce-300 font-heading font-bold text-sm mb-2"><i className="fa-solid fa-magnifying-glass mr-1.5"></i>Seguí tu pedido</p>
+          <div className="flex gap-2">
+            <input
+              value={numeroConsulta}
+              onChange={e => setNumeroConsulta(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && buscarPedido()}
+              placeholder="Número de pedido (ej: 12)"
+              className="flex-1 border border-cafe-700 bg-cafe-800 text-cafe-50 placeholder-cafe-400 rounded-xl p-2.5 text-sm" />
+            <button onClick={buscarPedido} className="bg-bronce-500 text-cafe-900 px-4 rounded-xl text-sm font-bold flex-shrink-0">Ver estado</button>
+          </div>
+
+          {pedidoConsultado === 'notfound' && (
+            <p className="text-vino-500 text-sm mt-3">No encontramos ningún pedido con ese número.</p>
+          )}
+
+          {pedidoConsultado && pedidoConsultado !== 'notfound' && (
+            <div className="mt-3 bg-cafe-800 rounded-xl p-3.5">
+              <div className="flex justify-between items-center mb-2">
+                <p className="font-heading font-bold text-bronce-300">Pedido #{pedidoConsultado.numero}</p>
+                <span className="text-cafe-400 text-xs">{horaCorta(pedidoConsultado.creado)}</span>
+              </div>
+              <div className="flex items-center justify-between gap-1 mb-3">
+                {['recibido', 'en_preparacion', 'en_camino'].map((est, idx) => {
+                  const idxActual = ['recibido', 'en_preparacion', 'en_camino'].indexOf(pedidoConsultado.estado);
+                  const activo = idxActual >= idx || pedidoConsultado.estado === 'entregado' || pedidoConsultado.estado === 'cobrado';
+                  return (
+                    <div key={est} className="flex-1 flex flex-col items-center gap-1">
+                      <div className={`w-full h-1.5 rounded-full ${activo ? 'bg-bronce-500' : 'bg-cafe-700'}`}></div>
+                      <span className={`text-[10px] text-center ${activo ? 'text-bronce-300 font-bold' : 'text-cafe-500'}`}>{etiquetaEstadoPedido(est, pedidoConsultado.modo)}</span>
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="text-cafe-50 text-sm font-bold text-center">{etiquetaEstadoPedido(pedidoConsultado.estado, pedidoConsultado.modo)}</p>
+              {pedidoConsultado.mensaje && (
+                <p className="text-bronce-200 text-xs text-center mt-2 bg-cafe-900 rounded-lg p-2"><i className="fa-solid fa-message mr-1"></i>{pedidoConsultado.mensaje}</p>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ===================== COMBOS Y PROMOS ===================== */}
+      {listaCombos.length > 0 && (
+        <div className="mb-8 animate-fade-in delay-150">
+          <h2 className="font-heading text-lg font-bold text-cafe-900 mb-2 flex items-center gap-2"><i className="fa-solid fa-tags text-vino-600"></i>Combos y Promos</h2>
+          <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1">
+            {listaCombos.map(c => (
+              <div key={c.id} className="flex-shrink-0 w-56 bg-white rounded-lg border-2 border-bronce-400 overflow-hidden filete-borde relative">
+                <span className="absolute top-2 left-2 bg-vino-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full z-10">PROMO</span>
+                <div className="w-full h-28 bg-cafe-100">
+                  {c.imagen ? <img src={c.imagen} className="w-full h-full object-cover" /> : (
+                    <div className="w-full h-full flex items-center justify-center text-cafe-300"><i className="fa-solid fa-tags text-2xl"></i></div>
+                  )}
+                </div>
+                <div className="p-3">
+                  <h3 className="font-heading font-bold text-cafe-900 leading-tight text-sm">{c.nombre}</h3>
+                  {c.descripcion && <p className="text-xs text-cafe-500 mt-1 leading-snug line-clamp-2">{c.descripcion}</p>}
+                  <div className="flex items-center justify-between mt-2">
+                    <p className="font-heading font-bold text-vino-600">${c.precio}</p>
+                    <button onClick={() => agregarComboAlCarrito(c)} className="w-8 h-8 rounded-full bg-cafe-900 text-bronce-300 flex items-center justify-center hover:bg-cafe-800 transition flex-shrink-0">
+                      <i className="fa-solid fa-plus text-xs"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ===================== CATEGORÍAS ===================== */}
+      <div className="flex gap-3 overflow-x-auto no-scrollbar pb-4 mb-6 animate-fade-in delay-200 px-1">
+        <button
+          onClick={() => setCategoriaActiva('todas')}
+          className={`whitespace-nowrap px-6 py-2.5 rounded-full font-bold text-sm transition-all shadow-sm ${categoriaActiva === 'todas' ? 'bg-cafe-900 text-bronce-400 scale-105' : 'bg-white text-cafe-600 hover:bg-cafe-100 border border-cafe-200'}`}
+        >
+          Menú Completo
+        </button>
+        {categoriasConProductos.map(c => (
+          <button
+            key={c}
+            onClick={() => setCategoriaActiva(c)}
+            className={`whitespace-nowrap px-6 py-2.5 rounded-full font-bold text-sm transition-all shadow-sm ${categoriaActiva === c ? 'bg-cafe-900 text-bronce-400 scale-105' : 'bg-white text-cafe-600 hover:bg-cafe-100 border border-cafe-200'}`}
+          >
+            {c}
+          </button>
+        ))}
+      </div>
+
+      {/* ===================== MENÚ / GRILLA ===================== */}
+      <div className="mb-10">
+        {productosFiltrados.length === 0 && (
+          <div className="text-center py-16 animate-fade-in">
+            <i className="fa-solid fa-burger text-6xl text-cafe-200 mb-4 animate-bounce-slight"></i>
+            <h3 className="text-2xl font-heading text-cafe-400">{listaProductos.length === 0 ? 'Todavía no hay ítems cargados' : 'No encontramos lo que buscás'}</h3>
+            <p className="text-cafe-500">{listaProductos.length === 0 ? 'Se van a mostrar acá apenas se cargue el menú.' : 'Probá con otra búsqueda o categoría.'}</p>
+          </div>
+        )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {productosFiltrados.map((p, idx) => (
+            <div key={p.id} className="bg-white rounded-2xl overflow-hidden filete-borde flex flex-col group animate-slide-up" style={{ animationDelay: `${(idx % 10) * 100}ms` }}>
+              <div className="h-48 overflow-hidden relative bg-cafe-50">
+                {p.destacado && (
+                  <div className="absolute top-3 left-3 bg-bronce-500 text-cafe-900 text-xs font-bold px-2 py-1 rounded shadow-md z-10 uppercase tracking-widest"><i className="fa-solid fa-star mr-1"></i>Top</div>
+                )}
+                {p.imagen ? <img src={p.imagen} alt={p.nombre} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" /> : (
+                  <div className="w-full h-full flex items-center justify-center text-cafe-300"><i className="fa-solid fa-utensils text-3xl"></i></div>
+                )}
+              </div>
+              <div className="p-5 flex-1 flex flex-col">
+                <div className="flex justify-between items-start mb-2 gap-2">
+                  <h3 className="text-xl font-heading text-cafe-900 leading-tight">{p.nombre}</h3>
+                  <span className="text-lg font-bold text-vino-600 flex-shrink-0">${p.precio}</span>
+                </div>
+                {p.descripcion && <p className="text-cafe-500 text-sm mb-4 flex-1 line-clamp-3 leading-relaxed">{p.descripcion}</p>}
+                <button
+                  onClick={() => agregarAlCarrito(p)}
+                  className="w-full bg-cafe-100 text-cafe-800 hover:bg-cafe-900 hover:text-bronce-400 font-bold py-3 rounded-xl transition-colors shadow-sm flex items-center justify-center gap-2 mt-auto"
+                >
+                  <i className="fa-solid fa-plus"></i> Agregar al pedido
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ===================== ENCONTRANOS (MAPA + RESEÑAS) ===================== */}
+      {config.direccion && (
+        <div className="mb-10">
+          <h2 className="font-heading text-xl font-bold text-cafe-900 mb-3 text-center">Encontranos</h2>
+          <div className="rounded-xl overflow-hidden filete-borde">
+            <iframe
+              title="Ubicación"
+              width="100%"
+              height="220"
+              style={{ border: 0 }}
+              loading="lazy"
+              src={`https://www.google.com/maps?q=${encodeURIComponent(config.direccion)}&output=embed`}>
+            </iframe>
+          </div>
+          <p className="text-center text-sm text-cafe-600 mt-2"><i className="fa-solid fa-location-dot mr-1.5"></i>{config.direccion}</p>
+          <div className="flex gap-2 mt-3">
+            <a
+              href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(config.direccion)}`}
+              target="_blank" rel="noreferrer"
+              className="flex-1 bg-cafe-900 text-bronce-300 text-center py-2.5 rounded-xl text-sm font-bold">
+              <i className="fa-solid fa-diamond-turn-right mr-1.5"></i>Cómo llegar
+            </a>
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(NOMBRE_NEGOCIO + ' ' + config.direccion)}`}
+              target="_blank" rel="noreferrer"
+              className="flex-1 bg-white border border-cafe-200 text-cafe-800 text-center py-2.5 rounded-xl text-sm font-bold">
+              <i className="fa-solid fa-star text-bronce-500 mr-1.5"></i>Ver reseñas
+            </a>
+          </div>
+        </div>
+      )}
+
+        {/* ===================== FOOTER ===================== */}
+        <footer className="text-center text-xs text-cafe-400 pb-4">
+          <p>{NOMBRE_NEGOCIO} — {TAGLINE}</p>
+        </footer>
+      </main>
+
+      {/* ===================== BOTÓN CHATBOT ===================== */}
+      <button
+        onClick={abrirChat}
+        className="fixed bottom-5 left-5 z-40 bg-celeste-500 text-white w-11 h-11 rounded-full flex items-center justify-center shadow-xl hover:scale-105 transition animate-pulse-slow"
+        title="Preguntas frecuentes">
+        <i className="fa-solid fa-comment-dots"></i>
+      </button>
+
+      {/* ===================== MODAL CHATBOT ===================== */}
+      {mostrarChat && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+          <div className="bg-cafe-50 w-full sm:max-w-sm sm:rounded-2xl rounded-t-3xl max-h-[85vh] overflow-y-auto animate-slide-up flex flex-col">
+            <div className="sticky top-0 bg-cafe-900 text-bronce-300 px-5 py-3.5 flex justify-between items-center flex-shrink-0">
+              <h3 className="font-heading font-bold"><i className="fa-solid fa-comment-dots mr-2"></i>Preguntas frecuentes</h3>
+              <button onClick={() => setMostrarChat(false)} className="text-bronce-300/80 hover:text-bronce-300"><i className="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <div className="p-4 space-y-3">
+              {!preguntaActiva ? (
+                <>
+                  <div className="bg-white filete-borde rounded-2xl rounded-tl-sm p-3 text-sm text-cafe-800">
+                    {chatbotConfig.saludo || SALUDO_BOT_DEFAULT}
+                  </div>
+                  <div className="space-y-1.5">
+                    {listaPreguntasBot.length === 0 && <p className="text-cafe-400 text-xs text-center py-3">Todavía no hay preguntas cargadas.</p>}
+                    {listaPreguntasBot.map(p => (
+                      <button key={p.id} onClick={() => setPreguntaActiva(p)} className="w-full text-left bg-white border border-cafe-200 hover:border-bronce-400 rounded-xl px-3.5 py-2.5 text-sm text-cafe-800 font-medium transition">
+                        {p.pregunta}
+                      </button>
+                    ))}
+                    {config.whatsapp && (
+                      <a href={`https://wa.me/${config.whatsapp}`} target="_blank" className="w-full flex items-center justify-center gap-2 bg-[#25D366] text-white rounded-xl px-3.5 py-2.5 text-sm font-bold mt-2">
+                        <i className="fa-brands fa-whatsapp"></i>Hablar con nosotros
+                      </a>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="bg-cafe-900 text-bronce-200 rounded-2xl rounded-tr-sm p-3 text-sm ml-8">{preguntaActiva.pregunta}</div>
+                  <div className="bg-white filete-borde rounded-2xl rounded-tl-sm p-3 text-sm text-cafe-800 mr-4">{preguntaActiva.respuesta}</div>
+                  <button onClick={() => setPreguntaActiva(null)} className="w-full bg-cafe-100 text-cafe-700 rounded-xl py-2.5 text-sm font-bold mt-1">
+                    <i className="fa-solid fa-arrow-left mr-1.5"></i>Volver a las preguntas
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ===================== PANEL CARRITO LATERAL ===================== */}
+      {mostrarCarrito && (
+        <div className="fixed inset-0 z-50 flex justify-end">
+          <div className="absolute inset-0 bg-cafe-900/60 backdrop-blur-sm animate-fade-in" onClick={() => !confirmacionPedido && setMostrarCarrito(false)}></div>
+          <div className="relative w-full max-w-md bg-white h-full shadow-2xl flex flex-col animate-slide-up sm:animate-fade-in">
+            <div className="p-5 bg-cafe-900 text-bronce-400 flex justify-between items-center border-b-4 border-bronce-500 flex-shrink-0">
+              <h2 className="text-2xl font-heading"><i className="fa-solid fa-basket-shopping mr-2"></i>{confirmacionPedido ? '¡Listo!' : 'Tu Pedido'}</h2>
+              <button onClick={confirmacionPedido ? cerrarConfirmacionPedido : () => setMostrarCarrito(false)} className="text-cafe-50 hover:text-vino-500 text-xl transition-colors"><i className="fa-solid fa-xmark"></i></button>
+            </div>
+
+            {confirmacionPedido ? (
+              <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-4 bg-papel">
+                <div className="w-16 h-16 rounded-full bg-green-100 text-green-600 flex items-center justify-center mx-auto text-2xl">
+                  <i className="fa-solid fa-check"></i>
+                </div>
+                <p className="text-cafe-800 font-medium">{confirmacionPedido}</p>
+                <button onClick={cerrarConfirmacionPedido} className="w-full bg-cafe-900 text-bronce-300 py-3 rounded-xl text-sm font-bold">Cerrar</button>
+              </div>
+            ) : (
+              <>
+                <div className="flex-1 overflow-y-auto p-5 bg-papel">
+                  {carrito.length === 0 ? (
+                    <div className="text-center text-cafe-400 mt-10">
+                      <i className="fa-solid fa-bag-shopping text-5xl mb-3 opacity-50"></i>
+                      <p className="font-semibold">El carrito está vacío</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {carrito.map(it => (
+                        <div key={it.id} className="flex gap-3 items-center bg-white p-3 rounded-xl shadow-sm border border-cafe-100">
+                          {it.imagen ? <img src={it.imagen} className="w-16 h-16 rounded-lg object-cover flex-shrink-0" alt={it.nombre} /> : (
+                            <div className="w-16 h-16 rounded-lg bg-cafe-100 flex items-center justify-center text-cafe-300 flex-shrink-0"><i className="fa-solid fa-utensils"></i></div>
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-bold text-cafe-900 leading-tight truncate">{it.nombre}</h4>
+                            <span className="text-vino-600 font-bold text-sm">${it.precio} c/u</span>
+                          </div>
+                          <div className="flex items-center gap-2 flex-shrink-0">
+                            <button onClick={() => cambiarCantidadCarrito(it.id, -1)} className="w-7 h-7 rounded-full bg-cafe-50 text-cafe-700 flex items-center justify-center hover:bg-cafe-200 transition-colors"><i className="fa-solid fa-minus text-xs"></i></button>
+                            <span className="w-5 text-center font-bold text-sm">{it.cantidad}</span>
+                            <button onClick={() => cambiarCantidadCarrito(it.id, 1)} className="w-7 h-7 rounded-full bg-cafe-900 text-bronce-300 flex items-center justify-center"><i className="fa-solid fa-plus text-xs"></i></button>
+                          </div>
+                        </div>
+                      ))}
+
+                      <div className="pt-3 space-y-4">
+                        <div>
+                          <p className="text-xs font-bold text-cafe-600 mb-1.5">¿Cómo lo vas a consumir?</p>
+                          <div className="grid grid-cols-2 gap-2">
+                            {[['takeaway','Take away'],['delivery','Delivery']].map(([id,label]) => (
+                              <button key={id} onClick={() => { setModoConsumo(id); setMetodoPagoSel(null); }} className={`py-2.5 rounded-xl text-xs font-bold border transition-colors ${modoConsumo===id ? 'bg-cafe-900 text-bronce-300 border-cafe-900' : 'bg-white text-cafe-600 border-cafe-200 hover:bg-cafe-100'}`}>{label}</button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {modoConsumo === 'takeaway' && (
+                          <input value={pedidoForm.nombre} onChange={e => setPedidoForm({...pedidoForm, nombre: e.target.value})} placeholder="Tu nombre" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-bronce-400" />
+                        )}
+                        {modoConsumo === 'delivery' && (
+                          <div className="space-y-2">
+                            <input value={pedidoForm.nombre} onChange={e => setPedidoForm({...pedidoForm, nombre: e.target.value})} placeholder="Tu nombre" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-bronce-400" />
+                            <input value={pedidoForm.telefono} onChange={e => setPedidoForm({...pedidoForm, telefono: e.target.value})} placeholder="Teléfono" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-bronce-400" />
+                            <input value={pedidoForm.direccion} onChange={e => setPedidoForm({...pedidoForm, direccion: e.target.value})} placeholder="Dirección de entrega" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-bronce-400" />
+                          </div>
+                        )}
+
+                        {!config.whatsapp && <p className="text-vino-600 text-xs">Falta cargar el WhatsApp del local en Configuración.</p>}
+
+                        {puedeEnviarPedido() && (
+                          <div>
+                            <p className="text-xs font-bold text-cafe-600 mb-1.5">¿Cómo vas a pagar?</p>
+                            <div className="grid grid-cols-3 gap-2">
+                              <button onClick={() => confirmarMetodoPago('efectivo')} className={`py-2.5 rounded-xl text-xs font-bold border transition-colors ${metodoPagoSel==='efectivo' ? 'bg-cafe-900 text-bronce-300 border-cafe-900' : 'bg-white text-cafe-600 border-cafe-200 hover:bg-cafe-100'}`}>
+                                <i className="fa-solid fa-money-bill-wave block mb-0.5"></i>Efectivo
+                              </button>
+                              <button onClick={() => confirmarMetodoPago('transferencia')} disabled={!config.alias} className={`py-2.5 rounded-xl text-xs font-bold border disabled:opacity-30 transition-colors ${metodoPagoSel==='transferencia' ? 'bg-cafe-900 text-bronce-300 border-cafe-900' : 'bg-white text-cafe-600 border-cafe-200 hover:bg-cafe-100'}`}>
+                                <i className="fa-solid fa-right-left block mb-0.5"></i>Transferencia
+                              </button>
+                              <button onClick={() => confirmarMetodoPago('qr')} disabled={!config.qrPago} className={`py-2.5 rounded-xl text-xs font-bold border disabled:opacity-30 transition-colors ${metodoPagoSel==='qr' ? 'bg-cafe-900 text-bronce-300 border-cafe-900' : 'bg-white text-cafe-600 border-cafe-200 hover:bg-cafe-100'}`}>
+                                <i className="fa-solid fa-qrcode block mb-0.5"></i>QR
+                              </button>
+                            </div>
+                          </div>
+                        )}
+
+                        {metodoPagoSel === 'efectivo' && (
+                          <div className="bg-white border border-cafe-200 rounded-xl p-3 shadow-sm">
+                            <p className="text-xs font-bold text-cafe-700 mb-1.5">¿Con cuánto vas a pagar?</p>
+                            <input type="number" inputMode="numeric" value={montoEfectivo} onChange={e => setMontoEfectivo(e.target.value)} placeholder={`Ej: ${totalCarrito}`} className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-bronce-400" />
+                          </div>
+                        )}
+                        {metodoPagoSel === 'transferencia' && (
+                          <div className="bg-white border border-cafe-200 rounded-xl p-3 text-center shadow-sm">
+                            <p className="text-xs text-cafe-600 mb-1">Transferí a este alias:</p>
+                            <p className="font-heading font-bold text-lg text-cafe-900 break-all">{config.alias}</p>
+                            <p className="text-xs text-vino-600 mt-2">Enviá tu comprobante de pago y el número de pedido al WhatsApp.</p>
+                          </div>
+                        )}
+                        {metodoPagoSel === 'qr' && (
+                          <div className="bg-white border border-cafe-200 rounded-xl p-3 text-center shadow-sm">
+                            <img src={config.qrPago} className="w-40 h-40 mx-auto rounded-lg border border-cafe-200" />
+                            <p className="text-xs text-vino-600 mt-2">Enviá tu comprobante de pago y el número de pedido al WhatsApp.</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {carrito.length > 0 && (
+                  <div className="p-6 bg-white border-t border-cafe-200 shadow-[0_-10px_20px_rgba(0,0,0,0.05)] flex-shrink-0">
+                    <div className="flex justify-between items-end mb-4">
+                      <span className="text-cafe-500 font-bold">Total a pagar:</span>
+                      <span className="text-3xl font-heading text-cafe-900">${totalCarrito}</span>
+                    </div>
+                    <button
+                      onClick={enviarPedido}
+                      disabled={!puedeEnviarPedido() || !metodoPagoSel || (metodoPagoSel==='efectivo' && !montoEfectivo) || !config.whatsapp || enviandoPedido}
+                      className="w-full bg-bronce-500 hover:bg-bronce-400 disabled:opacity-40 disabled:hover:bg-bronce-500 text-cafe-900 font-heading text-lg py-4 rounded-xl shadow-lg transition-transform transform hover:-translate-y-1 flex items-center justify-center gap-2">
+                      <i className="fa-brands fa-whatsapp text-xl"></i>{enviandoPedido ? 'Enviando...' : 'Enviar Pedido'}
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ===================== MODAL ADMIN ===================== */}
+      {mostrarAdminModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-cafe-900/80 backdrop-blur-sm animate-fade-in" onClick={() => !isAdmin && setMostrarAdminModal(false)}></div>
+          <div className="relative bg-cafe-50 w-full sm:max-w-2xl rounded-2xl shadow-2xl overflow-hidden max-h-[92vh] overflow-y-auto animate-slide-up">
+            <div className="sticky top-0 bg-cafe-900 text-bronce-300 px-5 py-3.5 flex justify-between items-center border-b-4 border-bronce-500 z-10">
+              <h3 className="font-heading font-bold"><i className="fa-solid fa-lock mr-2"></i>{isAdmin ? 'Administración' : 'Ingresar'}</h3>
+              <button onClick={() => setMostrarAdminModal(false)} className="text-cafe-50 hover:text-vino-500 transition-colors"><i className="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            {!isAdmin ? (
+              <div className="p-6 space-y-3">
+                <input value={usuario} onChange={e => setUsuario(e.target.value)} placeholder="Usuario" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm" />
+                <input value={contrasena} onChange={e => setContrasena(e.target.value)} type="password" placeholder="Contraseña" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm" onKeyDown={e => e.key === 'Enter' && intentarLogin()} />
+                {errorLogin && <p className="text-vino-600 text-xs animate-bounce-slight">{errorLogin}</p>}
+                <button onClick={intentarLogin} className="w-full bg-cafe-900 text-bronce-300 py-2.5 rounded-xl text-sm font-bold hover:bg-cafe-800">Entrar</button>
+              </div>
+            ) : (
+              <div className="p-4">
+                <div className="flex gap-1.5 mb-4 overflow-x-auto no-scrollbar">
+                  {[['pedidos','Pedidos'],['caja','Caja'],['productos','Menú'],['combos','Combos'],['stock','Stock'],['categorias','Categorías'],['chatbot','Chatbot'],['config','Configuración']].map(([id,label]) => (
+                    <button key={id} onClick={() => setAdminTab(id)} className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold ${adminTab===id ? 'bg-cafe-900 text-bronce-300' : 'bg-cafe-100 text-cafe-600'}`}>{label}</button>
+                  ))}
+                  <button onClick={cerrarSesion} className="ml-auto flex-shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold bg-vino-600 text-white">Salir</button>
+                </div>
+
+                {adminTab === 'pedidos' && (
+                  <div className="space-y-3">
+                    <a
+                      href={linkCocina()} target="_blank" rel="noreferrer"
+                      className="flex items-center justify-center gap-2 bg-cafe-900 text-bronce-300 py-2.5 rounded-xl text-xs font-bold">
+                      <i className="fa-solid fa-kitchen-set"></i>Abrir vista cocina (para tablet/pantalla en la cocina)
+                    </a>
+                    {listaPedidos.length === 0 && <p className="text-cafe-400 text-xs text-center py-6">Todavía no llegó ningún pedido.</p>}
+                    {listaPedidos.map(p => (
+                      <div key={p.id} className={`border border-cafe-100 rounded-xl p-3 bg-white ${p.estado === 'cobrado' ? 'opacity-50' : ''}`}>
+                        <div className="flex justify-between items-start mb-1.5">
+                          <div>
+                            <p className="font-heading font-bold text-cafe-900">#{p.numero} · {etiquetaOrigenPedido(p)}</p>
+                            <p className="text-[10px] text-cafe-400">{horaCorta(p.creado)}</p>
+                          </div>
+                          <p className="font-heading font-bold text-vino-600">${p.total}</p>
+                        </div>
+                        <div className="text-xs text-cafe-600 space-y-0.5 mb-2.5">
+                          {(p.items || []).map((it, idx) => (
+                            <p key={idx}>{it.cantidad}x {it.nombre}</p>
+                          ))}
+                        </div>
+                        <button
+                          onClick={() => avanzarEstadoPedido(p.id, p.estado)}
+                          disabled={p.estado === 'cobrado'}
+                          className={`w-full py-2 rounded-xl text-xs font-bold ${ESTADO_ESTILO[p.estado] || ESTADO_ESTILO.recibido}`}>
+                          {ESTADO_LABEL[p.estado] || 'Recibido'}{p.estado !== 'cobrado' && ' · tocar para avanzar'}
+                        </button>
+                        <div className="mt-2">
+                          <MensajeCocinaInput pedido={p} onGuardar={guardarMensajeCocina} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {adminTab === 'caja' && (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="date"
+                        value={fechaCajaSeleccionada}
+                        onChange={e => setFechaCajaSeleccionada(e.target.value)}
+                        max={fechaISO()}
+                        className="flex-1 border border-cafe-200 rounded-xl p-2.5 text-sm"
+                      />
+                      {fechaCajaSeleccionada !== fechaISO() && (
+                        <button onClick={() => setFechaCajaSeleccionada(fechaISO())} className="bg-cafe-100 text-cafe-700 px-3 py-2.5 rounded-xl text-xs font-bold">Hoy</button>
+                      )}
+                    </div>
+
+                    <div className="bg-cafe-900 text-bronce-300 rounded-2xl p-5 text-center">
+                      <p className="text-xs uppercase tracking-widest text-bronce-400 mb-1">Facturado — {etiquetaFecha(fechaCajaSeleccionada)}</p>
+                      <p className="font-heading text-4xl font-bold">${totalCajaSel}</p>
+                      <p className="text-cafe-300 text-xs mt-1">{cobradosCajaSel.length} pedido{cobradosCajaSel.length === 1 ? '' : 's'} cobrado{cobradosCajaSel.length === 1 ? '' : 's'}</p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      {[['takeaway','Take away'],['delivery','Delivery']].map(([id,label]) => (
+                        <div key={id} className="bg-white border border-cafe-100 rounded-xl p-2.5 text-center">
+                          <p className="text-[10px] text-cafe-400">{label}</p>
+                          <p className="font-heading font-bold text-cafe-900">${desglosePorModoSel[id] || 0}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    {totalPorCobrarSel > 0 && (
+                      <div className="bg-bronce-500/10 border border-bronce-300 rounded-xl p-3 flex justify-between items-center">
+                        <div>
+                          <p className="text-xs font-bold text-cafe-700">Por cobrar todavía</p>
+                          <p className="text-[10px] text-cafe-500">{abiertosCajaSel.length} pedido{abiertosCajaSel.length === 1 ? '' : 's'} en curso</p>
+                        </div>
+                        <p className="font-heading font-bold text-vino-600 text-lg">${totalPorCobrarSel}</p>
+                      </div>
+                    )}
+
+                    <div>
+                      <p className="text-xs font-bold text-cafe-500 mb-1.5">Pedidos cobrados — {etiquetaFecha(fechaCajaSeleccionada)}</p>
+                      <div className="space-y-1.5">
+                        {cobradosCajaSel.length === 0 && <p className="text-cafe-400 text-xs text-center py-3">Todavía no se cobró nada ese día.</p>}
+                        {cobradosCajaSel.map(p => (
+                          <div key={p.id} className="flex justify-between items-center bg-white border border-cafe-100 rounded-lg px-3 py-2 text-xs">
+                            <div>
+                              <p className="font-bold text-cafe-800">{etiquetaOrigenPedido(p)}</p>
+                              <p className="text-cafe-400">{horaCorta(p.creado)}</p>
+                            </div>
+                            <p className="font-heading font-bold text-vino-600">${p.total}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="border-t border-cafe-200 pt-4">
+                      <p className="text-xs font-bold text-cafe-500 mb-1.5">Historial — últimos días</p>
+                      <div className="space-y-1">
+                        {historialDias.length === 0 && <p className="text-cafe-400 text-xs text-center py-2">Todavía no hay ningún día cerrado.</p>}
+                        {historialDias.map(d => (
+                          <button
+                            key={d.fecha}
+                            onClick={() => setFechaCajaSeleccionada(d.fecha)}
+                            className={`w-full flex justify-between items-center px-3 py-2 rounded-lg text-xs ${d.fecha === fechaCajaSeleccionada ? 'bg-cafe-900 text-bronce-300' : 'bg-white border border-cafe-100 text-cafe-700'}`}>
+                            <span>{etiquetaFecha(d.fecha)}</span>
+                            <span className="font-heading font-bold">${d.total}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="border-t border-cafe-200 pt-4">
+                      <p className="text-xs font-bold text-cafe-500 mb-1.5">Productos más vendidos (histórico)</p>
+                      <div className="space-y-1">
+                        {topProductos.length === 0 && <p className="text-cafe-400 text-xs text-center py-2">Todavía no hay pedidos cobrados.</p>}
+                        {topProductos.map((p, idx) => (
+                          <div key={p.nombre} className="flex items-center gap-2.5 bg-white border border-cafe-100 rounded-lg px-3 py-2 text-xs">
+                            <span className="font-heading font-bold text-bronce-500 w-4 flex-shrink-0">{idx + 1}</span>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-bold text-cafe-800 truncate">{p.nombre}</p>
+                              <p className="text-cafe-400">{p.cantidad} vendidos</p>
+                            </div>
+                            <p className="font-heading font-bold text-vino-600">${p.total}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {adminTab === 'productos' && (
+                  <div className="space-y-4">
+                    <div className="border border-cafe-200 rounded-xl p-3 space-y-2 bg-white">
+                      <h4 className="font-bold text-xs uppercase tracking-wider text-cafe-400">{editandoId ? 'Editar ítem' : 'Nuevo ítem del menú'}</h4>
+                      <input value={form.nombre} onChange={e => setForm({...form, nombre: e.target.value})} placeholder="Nombre del plato/bebida" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm" />
+                      <select value={form.categoria} onChange={e => setForm({...form, categoria: e.target.value})} className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm bg-white">
+                        <option value="">Elegir categoría...</option>
+                        {categorias.map(c => <option key={c} value={c}>{c}</option>)}
+                      </select>
+                      {categorias.length === 0 && <p className="text-xs text-vino-600">Primero cargá una categoría en la pestaña "Categorías".</p>}
+                      <textarea value={form.descripcion} onChange={e => setForm({...form, descripcion: e.target.value})} placeholder="Descripción breve" rows="2" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm"></textarea>
+                      <input value={form.precio} onChange={e => setForm({...form, precio: e.target.value})} type="number" placeholder="Precio" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm" />
+                      <div className="flex items-center gap-3">
+                        <label className="flex-shrink-0 bg-cafe-100 text-cafe-700 text-xs font-bold px-3 py-2 rounded-xl cursor-pointer">
+                          <i className="fa-solid fa-camera mr-1.5"></i>Foto
+                          <input type="file" accept="image/*" onChange={handleImagenProducto} className="hidden" />
+                        </label>
+                        {form.imagen && <img src={form.imagen} className="w-12 h-12 rounded-lg object-cover" />}
+                      </div>
+
+                      <label className="flex items-center gap-2 text-xs font-bold text-cafe-600">
+                        <input type="checkbox" checked={!!form.destacado} onChange={e => setForm({...form, destacado: e.target.checked})} className="w-4 h-4" />
+                        Mostrar en el banner de destacados del inicio
+                      </label>
+
+                      <div className="border-t border-cafe-100 pt-2">
+                        <p className="text-xs font-bold text-cafe-500 mb-1.5">Insumos que consume (para descontar stock)</p>
+                        {(form.insumos || []).length > 0 && (
+                          <div className="space-y-1 mb-2">
+                            {form.insumos.map((ins, idx) => (
+                              <div key={idx} className="flex items-center justify-between bg-cafe-50 rounded-lg px-2 py-1 text-xs">
+                                <span>{insumos[ins.insumoId]?.nombre || '(insumo eliminado)'} — {ins.cantidad} {insumos[ins.insumoId]?.unidad || ''}</span>
+                                <button onClick={() => quitarInsumoDeProducto(idx)} className="text-vino-600"><i className="fa-solid fa-xmark"></i></button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        {listaInsumos.length === 0 ? (
+                          <p className="text-[11px] text-cafe-400">Cargá insumos primero en la pestaña "Stock".</p>
+                        ) : (
+                          <div className="flex gap-1.5">
+                            <select value={selInsumoProd} onChange={e => setSelInsumoProd(e.target.value)} className="flex-1 border border-cafe-200 rounded-lg p-2 text-xs bg-white">
+                              <option value="">Insumo...</option>
+                              {listaInsumos.map(i => <option key={i.id} value={i.id}>{i.nombre}</option>)}
+                            </select>
+                            <input value={cantInsumoProd} onChange={e => setCantInsumoProd(e.target.value)} type="number" placeholder="Cant." className="w-16 border border-cafe-200 rounded-lg p-2 text-xs" />
+                            <button onClick={agregarInsumoAProducto} className="bg-cafe-900 text-bronce-300 px-3 rounded-lg text-xs font-bold">+</button>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex gap-2">
+                        <button onClick={guardarProducto} className="flex-1 bg-cafe-900 text-bronce-300 py-2 rounded-xl text-xs font-bold">{editandoId ? 'Guardar cambios' : 'Agregar al menú'}</button>
+                        {editandoId && <button onClick={resetForm} className="px-4 bg-cafe-100 rounded-xl text-xs font-bold">Cancelar</button>}
+                      </div>
+                    </div>
+
+                    {listaProductos.length === 0 && (
+                      <button onClick={cargarMenuInicial} className="w-full bg-vino-600 text-white py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2">
+                        <i className="fa-solid fa-burger"></i>Cargar menú inicial (hamburguesas de la carta)
+                      </button>
+                    )}
+
+                    <div className="space-y-1.5">
+                      {listaProductos.length === 0 && <p className="text-cafe-400 text-xs text-center py-4">Todavía no cargaste ítems.</p>}
+                      {listaProductos.map(p => (
+                        <div key={p.id} className="flex items-center gap-2.5 border border-cafe-100 bg-white p-2 rounded-xl text-xs">
+                          <div className="w-9 h-9 rounded-lg bg-cafe-100 flex-shrink-0 overflow-hidden">{p.imagen && <img src={p.imagen} className="w-full h-full object-cover" />}</div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-bold text-cafe-800 truncate">{p.nombre}</p>
+                            <p className="text-cafe-400">{p.categoria} · ${p.precio}</p>
+                          </div>
+                          <button onClick={() => editarProducto(p)} className="text-cafe-500 px-1.5"><i className="fa-solid fa-pen"></i></button>
+                          <button onClick={() => eliminarProducto(p.id)} className="text-vino-600 px-1.5"><i className="fa-solid fa-trash-can"></i></button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {adminTab === 'combos' && (
+                  <div className="space-y-4">
+                    <p className="text-xs text-cafe-500">Los combos y promos aparecen destacados arriba del menú, con su propio precio fijo, y se piden igual que cualquier ítem.</p>
+                    <div className="border border-cafe-200 rounded-xl p-3 space-y-2 bg-white">
+                      <h4 className="font-bold text-xs uppercase tracking-wider text-cafe-400">{editandoComboId ? 'Editar combo/promo' : 'Nuevo combo/promo'}</h4>
+                      <input value={comboForm.nombre} onChange={e => setComboForm({...comboForm, nombre: e.target.value})} placeholder="Ej: Combo Doble + Papas + Gaseosa" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm" />
+                      <textarea value={comboForm.descripcion} onChange={e => setComboForm({...comboForm, descripcion: e.target.value})} placeholder="Descripción breve" rows="2" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm"></textarea>
+                      <input value={comboForm.precio} onChange={e => setComboForm({...comboForm, precio: e.target.value})} type="number" placeholder="Precio del combo" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm" />
+                      <div className="flex items-center gap-3">
+                        <label className="flex-shrink-0 bg-cafe-100 text-cafe-700 text-xs font-bold px-3 py-2 rounded-xl cursor-pointer">
+                          <i className="fa-solid fa-camera mr-1.5"></i>Foto
+                          <input type="file" accept="image/*" onChange={handleImagenCombo} className="hidden" />
+                        </label>
+                        {comboForm.imagen && <img src={comboForm.imagen} className="w-12 h-12 rounded-lg object-cover" />}
+                      </div>
+
+                      <div className="border-t border-cafe-100 pt-2">
+                        <p className="text-xs font-bold text-cafe-500 mb-1.5">Insumos que consume (para descontar stock)</p>
+                        {(comboForm.insumos || []).length > 0 && (
+                          <div className="space-y-1 mb-2">
+                            {comboForm.insumos.map((ins, idx) => (
+                              <div key={idx} className="flex items-center justify-between bg-cafe-50 rounded-lg px-2 py-1 text-xs">
+                                <span>{insumos[ins.insumoId]?.nombre || '(insumo eliminado)'} — {ins.cantidad} {insumos[ins.insumoId]?.unidad || ''}</span>
+                                <button onClick={() => quitarInsumoDeCombo(idx)} className="text-vino-600"><i className="fa-solid fa-xmark"></i></button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        {listaInsumos.length === 0 ? (
+                          <p className="text-[11px] text-cafe-400">Cargá insumos primero en la pestaña "Stock".</p>
+                        ) : (
+                          <div className="flex gap-1.5">
+                            <select value={selInsumoCombo} onChange={e => setSelInsumoCombo(e.target.value)} className="flex-1 border border-cafe-200 rounded-lg p-2 text-xs bg-white">
+                              <option value="">Insumo...</option>
+                              {listaInsumos.map(i => <option key={i.id} value={i.id}>{i.nombre}</option>)}
+                            </select>
+                            <input value={cantInsumoCombo} onChange={e => setCantInsumoCombo(e.target.value)} type="number" placeholder="Cant." className="w-16 border border-cafe-200 rounded-lg p-2 text-xs" />
+                            <button onClick={agregarInsumoACombo} className="bg-cafe-900 text-bronce-300 px-3 rounded-lg text-xs font-bold">+</button>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex gap-2">
+                        <button onClick={guardarCombo} className="flex-1 bg-vino-600 text-white py-2 rounded-xl text-xs font-bold">{editandoComboId ? 'Guardar cambios' : 'Agregar combo/promo'}</button>
+                        {editandoComboId && <button onClick={resetComboForm} className="px-4 bg-cafe-100 rounded-xl text-xs font-bold">Cancelar</button>}
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      {listaCombos.length === 0 && <p className="text-cafe-400 text-xs text-center py-4">Todavía no cargaste combos ni promos.</p>}
+                      {listaCombos.map(c => (
+                        <div key={c.id} className="flex items-center gap-2.5 border border-cafe-100 bg-white p-2 rounded-xl text-xs">
+                          <div className="w-9 h-9 rounded-lg bg-cafe-100 flex-shrink-0 overflow-hidden">{c.imagen && <img src={c.imagen} className="w-full h-full object-cover" />}</div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-bold text-cafe-800 truncate">{c.nombre}</p>
+                            <p className="text-cafe-400">${c.precio}</p>
+                          </div>
+                          <button onClick={() => editarCombo(c)} className="text-cafe-500 px-1.5"><i className="fa-solid fa-pen"></i></button>
+                          <button onClick={() => eliminarCombo(c.id)} className="text-vino-600 px-1.5"><i className="fa-solid fa-trash-can"></i></button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {adminTab === 'stock' && (
+                  <div className="space-y-4">
+                    <div className="border border-cafe-200 rounded-xl p-3 space-y-2 bg-white">
+                      <h4 className="font-bold text-xs uppercase tracking-wider text-cafe-400">{editandoInsumoId ? 'Editar insumo' : 'Nuevo insumo'}</h4>
+                      <input value={insumoForm.nombre} onChange={e => setInsumoForm({...insumoForm, nombre: e.target.value})} placeholder="Ej: Carne picada, Pan, Coca cola 1.5L" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm" />
+                      <div className="flex gap-2">
+                        <input value={insumoForm.unidad} onChange={e => setInsumoForm({...insumoForm, unidad: e.target.value})} placeholder="Unidad (kg, l, unidad...)" className="flex-1 border border-cafe-200 rounded-xl p-2.5 text-sm" />
+                        <input value={insumoForm.cantidad} onChange={e => setInsumoForm({...insumoForm, cantidad: e.target.value})} type="number" placeholder="Stock actual" className="flex-1 border border-cafe-200 rounded-xl p-2.5 text-sm" />
+                      </div>
+                      <input value={insumoForm.minimo} onChange={e => setInsumoForm({...insumoForm, minimo: e.target.value})} type="number" placeholder="Aviso de stock bajo cuando llegue a..." className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm" />
+                      <div className="flex gap-2">
+                        <button onClick={guardarInsumo} className="flex-1 bg-cafe-900 text-bronce-300 py-2 rounded-xl text-xs font-bold">{editandoInsumoId ? 'Guardar cambios' : 'Agregar insumo'}</button>
+                        {editandoInsumoId && <button onClick={resetInsumoForm} className="px-4 bg-cafe-100 rounded-xl text-xs font-bold">Cancelar</button>}
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      {listaInsumos.length === 0 && <p className="text-cafe-400 text-xs text-center py-4">Todavía no cargaste insumos.</p>}
+                      {listaInsumos.map(i => {
+                        const bajoStock = i.minimo > 0 && Number(i.cantidad) <= Number(i.minimo);
+                        return (
+                          <div key={i.id} className={`flex items-center gap-2.5 border p-2.5 rounded-xl text-xs ${bajoStock ? 'border-vino-300 bg-vino-500/5' : 'border-cafe-100 bg-white'}`}>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-bold text-cafe-800 truncate">{i.nombre}</p>
+                              <p className={bajoStock ? 'text-vino-600 font-bold' : 'text-cafe-400'}>
+                                {i.cantidad} {i.unidad} en stock{bajoStock && ' · ¡bajo stock!'}
+                              </p>
+                            </div>
+                            <button onClick={() => editarInsumo(i)} className="text-cafe-500 px-1.5"><i className="fa-solid fa-pen"></i></button>
+                            <button onClick={() => eliminarInsumo(i.id)} className="text-vino-600 px-1.5"><i className="fa-solid fa-trash-can"></i></button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {adminTab === 'categorias' && (
+                  <div className="space-y-4">
+                    <div className="flex gap-2">
+                      <input value={nuevaCategoria} onChange={e => setNuevaCategoria(e.target.value)} placeholder="Ej: Clásicas, Cheese, Brothers, Bebidas..." className="flex-1 border border-cafe-200 rounded-xl p-2.5 text-sm" onKeyDown={e => e.key==='Enter' && agregarCategoria()} />
+                      <button onClick={agregarCategoria} className="bg-cafe-900 text-bronce-300 px-4 rounded-xl text-sm font-bold">Agregar</button>
+                    </div>
+                    <div className="space-y-1.5">
+                      {categorias.length === 0 && <p className="text-cafe-400 text-xs">Todavía no cargaste categorías.</p>}
+                      {categorias.map(c => (
+                        <div key={c} className="flex justify-between items-center border border-cafe-100 bg-white p-2.5 rounded-xl text-sm">
+                          <span className="text-cafe-800 font-medium">{c}</span>
+                          <button onClick={() => eliminarCategoria(c)} className="text-vino-600"><i className="fa-solid fa-trash-can"></i></button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {adminTab === 'chatbot' && (
+                  <div className="space-y-4">
+                    <div>
+                      <label className="text-xs font-bold text-cafe-600 block mb-1">Saludo inicial</label>
+                      <textarea value={chatSaludoInput} onChange={e => setChatSaludoInput(e.target.value)} placeholder={SALUDO_BOT_DEFAULT} rows="2" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm"></textarea>
+                      <button onClick={guardarSaludoBot} className="mt-1.5 bg-cafe-900 text-bronce-300 px-4 py-1.5 rounded-xl text-xs font-bold">Guardar saludo</button>
+                    </div>
+
+                    <div className="border border-cafe-200 rounded-xl p-3 space-y-2 bg-white">
+                      <h4 className="font-bold text-xs uppercase tracking-wider text-cafe-400">{editandoPreguntaId ? 'Editar pregunta' : 'Nueva pregunta'}</h4>
+                      <input value={preguntaForm.pregunta} onChange={e => setPreguntaForm({...preguntaForm, pregunta: e.target.value})} placeholder="Ej: ¿Hacen delivery?" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm" />
+                      <textarea value={preguntaForm.respuesta} onChange={e => setPreguntaForm({...preguntaForm, respuesta: e.target.value})} placeholder="Respuesta" rows="2" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm"></textarea>
+                      <div className="flex gap-2">
+                        <button onClick={guardarPreguntaBot} className="flex-1 bg-cafe-900 text-bronce-300 py-2 rounded-xl text-xs font-bold">{editandoPreguntaId ? 'Guardar cambios' : 'Agregar pregunta'}</button>
+                        {editandoPreguntaId && <button onClick={resetPreguntaBotForm} className="px-4 bg-cafe-100 rounded-xl text-xs font-bold">Cancelar</button>}
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      {listaPreguntasBot.length === 0 && <p className="text-cafe-400 text-xs text-center py-4">Todavía no cargaste preguntas.</p>}
+                      {listaPreguntasBot.map(p => (
+                        <div key={p.id} className="flex items-center gap-2.5 border border-cafe-100 bg-white p-2 rounded-xl text-xs">
+                          <div className="flex-1 min-w-0">
+                            <p className="font-bold text-cafe-800 truncate">{p.pregunta}</p>
+                            <p className="text-cafe-400 truncate">{p.respuesta}</p>
+                          </div>
+                          <button onClick={() => editarPreguntaBot(p)} className="text-cafe-500 px-1.5"><i className="fa-solid fa-pen"></i></button>
+                          <button onClick={() => eliminarPreguntaBot(p.id)} className="text-vino-600 px-1.5"><i className="fa-solid fa-trash-can"></i></button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {adminTab === 'config' && (
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-xs font-bold text-cafe-600 block mb-1">Logo</label>
+                      <div className="flex items-center gap-3">
+                        {config.logo && <img src={config.logo} className="w-12 h-12 rounded-full object-cover" />}
+                        <label className="bg-cafe-100 text-cafe-700 text-xs font-bold px-3 py-2 rounded-xl cursor-pointer">
+                          Subir logo<input type="file" accept="image/*" onChange={handleLogo} className="hidden" />
+                        </label>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-cafe-600 block mb-1">WhatsApp (solo números, con código de país)</label>
+                      <input value={whatsappInput} onChange={e => setWhatsappInput(e.target.value)} placeholder="5491122334455" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm" />
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-cafe-600 block mb-1">Instagram (usuario, sin @)</label>
+                      <input value={instagramInput} onChange={e => setInstagramInput(e.target.value)} placeholder="tu_negocio" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm" />
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-cafe-600 block mb-1">Dirección</label>
+                      <input value={direccionInput} onChange={e => setDireccionInput(e.target.value)} placeholder="Calle 48 2085, ..." className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm" />
+                    </div>
+                    <div className="border-t border-cafe-100 pt-3">
+                      <p className="text-xs font-bold text-cafe-700 mb-2">Medios de pago</p>
+                      <label className="text-xs font-bold text-cafe-600 block mb-1">Alias para transferencia</label>
+                      <input value={aliasInput} onChange={e => setAliasInput(e.target.value)} placeholder="papas.brothers.mp" className="w-full border border-cafe-200 rounded-xl p-2.5 text-sm mb-3" />
+                      <label className="text-xs font-bold text-cafe-600 block mb-1">QR de pago (Mercado Pago, billetera, etc.)</label>
+                      <div className="flex items-center gap-3">
+                        {config.qrPago && <img src={config.qrPago} className="w-16 h-16 rounded-lg object-cover border border-cafe-200" />}
+                        <label className="bg-cafe-100 text-cafe-700 text-xs font-bold px-3 py-2 rounded-xl cursor-pointer">
+                          Subir QR<input type="file" accept="image/*" onChange={handleQrPago} className="hidden" />
+                        </label>
+                        {config.qrPago && <button onClick={quitarQrPago} className="text-vino-600 text-xs font-bold">Quitar</button>}
+                      </div>
+                    </div>
+                    <button onClick={guardarConfig} className="w-full bg-cafe-900 text-bronce-300 py-2.5 rounded-xl text-sm font-bold">Guardar configuración</button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
