@@ -219,7 +219,6 @@ const PASOS = [
 const FAQ = [
   ['¿Hay que instalar algo?', 'No. Se usa desde el navegador del celular, la tablet o la PC.'],
   ['¿Se adapta a mi planta?', 'Sí. Cargamos tus máquinas, piezas y operarios, y lo que falte se desarrolla a medida.'],
-  ['¿Mis datos quedan separados de otras empresas?', 'Sí. Cada empresa tiene su propio espacio de datos, separado del resto.'],
   ['¿Qué pasa después de la puesta en marcha?', 'Seguís con el abono mensual, que incluye soporte y mejoras.'],
 ]
 
@@ -325,7 +324,7 @@ function Premium() {
           <div>
             <span className="badge">Línea premium para fábricas</span>
             <h2>Sistema de Gestión Interna</h2>
-            <p className="sub">Controlá producción, calidad, pañol y mantenimiento de tu planta desde el celular, sin papeles ni planillas sueltas. Nació en una planta metalmecánica real y se usa en el piso de planta todos los días.</p>
+            <p className="sub">Controlá producción, calidad, pañol y mantenimiento de tu planta desde el celular, sin papeles ni planillas sueltas.</p>
             <div className="emp-prueba">
               <div><strong>20</strong>máquinas</div>
               <div><strong>3</strong>turnos por día</div>
