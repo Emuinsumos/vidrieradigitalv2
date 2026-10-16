@@ -1,0 +1,1855 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Copita · Demo</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background:#EAF4FC; }
+  .cuadrito { width:16px; height:16px; border-radius:3px; display:inline-block; margin-right:2px; }
+  .foto-jugador { width:56px; height:56px; border-radius:50%; object-fit:cover; background:#1b2840; }
+
+  /* ===== Landing / Dashboard premium (solo Home) ===== */
+  .landing-dark {
+    background:
+      radial-gradient(circle at 15% 0%, rgba(34,211,238,0.12), transparent 40%),
+      radial-gradient(circle at 85% 10%, rgba(245,179,1,0.10), transparent 40%),
+      linear-gradient(180deg, #060B18 0%, #0B1220 40%, #0E1730 100%);
+    color: #E8EEFC;
+  }
+  .glass {
+    background: rgba(20, 30, 55, 0.55);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .glass-hover { transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+  .glass-hover:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.2); }
+
+  .foto-podio { width:76px; height:76px; border-radius:50%; object-fit:cover; background:#1b2840; }
+  .foto-podio-frame { padding:3px; border-radius:50%; }
+  .frame-oro { background: conic-gradient(from 0deg, #FFD700, #FFF6C4, #FFD700, #B8860B, #FFD700); box-shadow: 0 0 22px 2px rgba(255,215,0,0.55); }
+  .frame-plata { background: conic-gradient(from 0deg, #E8E8E8, #FFFFFF, #C0C0C0, #9A9A9A, #E8E8E8); box-shadow: 0 0 18px 2px rgba(210,210,210,0.5); }
+  .frame-bronce { background: conic-gradient(from 0deg, #CD7F32, #F0C89A, #CD7F32, #8A5222, #CD7F32); box-shadow: 0 0 18px 2px rgba(205,127,50,0.5); }
+
+  .card-oro { border: 1px solid rgba(255,215,0,0.5); box-shadow: 0 0 30px -6px rgba(255,215,0,0.35); }
+  .card-plata { border: 1px solid rgba(220,220,220,0.5); box-shadow: 0 0 24px -6px rgba(220,220,220,0.3); }
+  .card-bronce { border: 1px solid rgba(205,127,50,0.5); box-shadow: 0 0 24px -6px rgba(205,127,50,0.3); }
+
+  .badge-neon { text-shadow: 0 0 8px currentColor; }
+  .trofeo-glow { filter: drop-shadow(0 0 18px rgba(255,215,0,0.55)); }
+  .estrellas-hero { color:#FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.7); }
+
+  .barra-fondo { background: rgba(255,255,255,0.08); border-radius:999px; overflow:hidden; }
+  .barra-fill { height:100%; border-radius:999px; background: linear-gradient(90deg,#22D3EE,#FFD700); transition: width .6s ease; }
+
+  @keyframes fadeInUp { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform: translateY(0); } }
+  .fade-in-up { animation: fadeInUp .5s ease both; }
+
+  @keyframes expandDown { from { opacity:0; transform: scaleY(0.95); } to { opacity:1; transform: scaleY(1); } }
+  .expand-down { animation: expandDown .25s ease-out both; transform-origin: top; }
+
+  @keyframes pulseGlow { 0%,100% { box-shadow: 0 0 12px 0 rgba(255,215,0,0.25); } 50% { box-shadow: 0 0 22px 4px rgba(255,215,0,0.5); } }
+  .pulse-glow { animation: pulseGlow 2.4s ease-in-out infinite; }
+
+  .tab-btn { transition: all .2s ease; }
+  .tab-btn.activo { background: linear-gradient(90deg,#22D3EE,#0EA5E9); color:#06131F; box-shadow: 0 0 16px rgba(34,211,238,0.45); }
+  .fila-jugador { transition: background-color .2s ease, transform .15s ease; }
+  .fila-jugador:hover { background-color: rgba(255,255,255,0.06); }
+
+  /* ===== Coronas / perfil / salón de la fama ===== */
+  .corona { filter: drop-shadow(0 0 6px rgba(255,215,0,0.75)); }
+  .modal-overlay { position:fixed; top:0; right:0; bottom:0; left:0; z-index:50; background:rgba(3,7,18,0.78); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); display:flex; align-items:flex-end; justify-content:center; }
+  .modal-card { width:100%; max-width:560px; max-height:92vh; overflow-y:auto; border-radius:24px 24px 0 0; background: linear-gradient(180deg,#0E1730,#0B1220); color:#E8EEFC; border:1px solid rgba(255,255,255,0.1); animation: fadeInUp .3s ease both; }
+  @media (min-width:640px) {
+    .modal-overlay { align-items:center; }
+    .modal-card { border-radius:24px; }
+  }
+  .foto-perfil { width:104px; height:104px; border-radius:50%; object-fit:cover; background:#1b2840; }
+  .ficha { position:absolute; transform: translate(-50%, -50%); display:flex; flex-direction:column; align-items:center; touch-action:none; user-select:none; -webkit-user-select:none; z-index:2; }
+  .ficha-foto { width:46px; height:46px; border-radius:50%; object-fit:cover; background:#1b2840; border:3px solid #fff; box-shadow:0 2px 6px rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; }
+  .ficha-nombre { margin-top:2px; font-size:11px; font-weight:700; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,0.9); max-width:70px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .ficha.sel .ficha-foto { box-shadow:0 0 0 4px rgba(255,215,0,0.9), 0 2px 8px rgba(0,0,0,0.6); }
+  .ficha.editable { cursor:grab; }
+  .trofeo-chip { background: rgba(255,215,0,0.08); border:1px solid rgba(255,215,0,0.3); }
+</style>
+<script>
+  // Framer Motion / tailwindcss-animate necesitan bundler; en un archivo único sin
+  // build step se logra el mismo efecto (fade-in, slide-up, glow, hover) con las
+  // animaciones CSS de arriba, sin depender de una librería externa frágil por CDN.
+</script>
+
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useMemo, useRef } = React;
+
+// ============ BASE DE DATOS DE LA DEMO (en memoria, sin Firebase) ============
+// Imita lo que la app usa de Firebase: ref().on / push / update / remove.
+// Los datos de ejemplo se cargan al abrir y los cambios se pierden al recargar.
+const SIN_FOTO = "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96"><rect width="96" height="96" fill="#1b2840"/><circle cx="48" cy="36" r="16" fill="#3a4a6b"/><path d="M14 96c3-24 17-34 34-34s31 10 34 34z" fill="#3a4a6b"/></svg>');
+
+function sembrarDemo() {
+  const dia = (off) => new Date(Date.now() + off * 864e5).toISOString().slice(0, 10);
+  // [id, nombre, calidad, arquero, PJ, PG, PE, PP, goles, últimos 5 (el más nuevo primero)]
+  const base = [
+    ["j1", "Facu", 5, false, 8, 6, 1, 1, 9, ["V", "V", "E", "V", "V"]],
+    ["j2", "Santi", 4, false, 8, 5, 2, 1, 6, ["V", "E", "V", "D", "V"]],
+    ["j3", "Lauti", 4, false, 7, 4, 2, 1, 5, ["E", "V", "V", "V", "D"]],
+    ["j4", "Gonza", 3, false, 8, 4, 1, 3, 4, ["D", "V", "V", "E", "V"]],
+    ["j5", "Tobi", 3, false, 6, 3, 1, 2, 3, ["V", "D", "E", "V", "D"]],
+    ["j6", "Joaco", 4, false, 8, 3, 3, 2, 2, ["E", "E", "V", "D", "V"]],
+    ["j7", "Maxi", 2, false, 7, 2, 2, 3, 1, ["D", "V", "E", "D", "E"]],
+    ["j8", "Ale", 3, false, 6, 2, 1, 3, 2, ["D", "D", "V", "E", "D"]],
+    ["j9", "Bruno", 4, true, 8, 4, 2, 2, 0, ["V", "E", "D", "V", "E"]],
+    ["j10", "Dami", 3, true, 7, 2, 2, 3, 0, ["D", "E", "V", "D", "D"]]
+  ];
+  const jugadores = {};
+  base.forEach(([id, nombre, calidad, arquero, pj, pg, pe, pp, goles, ultimos]) => {
+    const n = ultimos.length;
+    const golesRecientes = Math.round(goles * n / pj);
+    const reparto = ultimos.map(() => 0);
+    for (let k = 0; k < golesRecientes; k++) reparto[(k * 2) % n]++;
+    const historial = ultimos
+      .map((resultado, i) => ({ fecha: dia(-7 * (i + 1)), resultado, goles: reparto[i] }))
+      .reverse();
+    jugadores[id] = {
+      nombre, foto: "", calidad, arquero, pj, pg, pe, pp,
+      puntos: pg * 3 + pe, goles, ultimos, historial
+    };
+  });
+
+  const equipoA = ["j9", "j5", "j8", "j6", "j1"];
+  const equipoB = ["j10", "j7", "j4", "j3", "j2"];
+  const partidos = {
+    p1: {
+      fecha: dia(-7), disponibles: [...equipoA, ...equipoB],
+      equipoA: ["j1", "j4", "j5", "j7", "j9"], equipoB: ["j2", "j3", "j6", "j8", "j10"],
+      resultado: "A", finalizado: true
+    },
+    p2: {
+      fecha: dia(3), disponibles: [...equipoA, ...equipoB], equipoA, equipoB,
+      posiciones: {
+        j9: { x: 50, y: 10 }, j5: { x: 30, y: 27 }, j8: { x: 70, y: 27 }, j6: { x: 35, y: 42 }, j1: { x: 65, y: 42 },
+        j10: { x: 50, y: 90 }, j7: { x: 30, y: 73 }, j4: { x: 70, y: 73 }, j3: { x: 35, y: 58 }, j2: { x: 65, y: 58 }
+      },
+      manual: true, resultado: null, finalizado: false
+    }
+  };
+
+  const ficha = (id, nombre, arquero, pj, pg, pe, pp, puntos, goles, promedio) =>
+    ({ id, nombre, foto: "", arquero, pj, pg, pe, pp, puntos, goles, promedio });
+  const temporadas = {
+    t1: {
+      nombre: "Temporada 1",
+      cerradaEn: new Date(Date.now() - 60 * 864e5).toISOString(),
+      tabla: [
+        ficha("j2", "Santi", false, 10, 7, 2, 1, 23, 8, 2.3),
+        ficha("j1", "Facu", false, 10, 6, 2, 2, 20, 12, 2.0),
+        ficha("j9", "Bruno", true, 10, 5, 3, 2, 18, 0, 1.8),
+        ficha("j3", "Lauti", false, 9, 4, 3, 2, 15, 4, 1.67),
+        ficha("j4", "Gonza", false, 10, 4, 2, 4, 14, 5, 1.4)
+      ],
+      premios: [
+        { tipo: "campeon", jugadorId: "j2", nombre: "Santi", foto: "" },
+        { tipo: "goleador", jugadorId: "j1", nombre: "Facu", foto: "" },
+        { tipo: "mejor_arquero", jugadorId: "j9", nombre: "Bruno", foto: "" },
+        { tipo: "equipo_ideal", jugadorId: "j9", nombre: "Bruno", foto: "" },
+        { tipo: "equipo_ideal", jugadorId: "j2", nombre: "Santi", foto: "" },
+        { tipo: "equipo_ideal", jugadorId: "j1", nombre: "Facu", foto: "" },
+        { tipo: "equipo_ideal", jugadorId: "j3", nombre: "Lauti", foto: "" },
+        { tipo: "equipo_ideal", jugadorId: "j4", nombre: "Gonza", foto: "" }
+      ]
+    }
+  };
+
+  return { jugadores, partidos, temporadas };
+}
+
+const db = (() => {
+  let datos = sembrarDemo();
+  const oyentes = [];
+  const partes = (p) => String(p || "").split("/").filter(Boolean);
+  const clonar = (v) => (v === undefined || v === null ? null : JSON.parse(JSON.stringify(v)));
+  const leer = (ruta) => {
+    let n = datos;
+    for (const k of partes(ruta)) {
+      if (n === null || typeof n !== "object") return null;
+      n = n[k];
+    }
+    return n === undefined ? null : n;
+  };
+  const escribir = (ruta, valor) => {
+    const ks = partes(ruta);
+    let n = datos;
+    for (let i = 0; i < ks.length - 1; i++) {
+      if (n[ks[i]] === null || n[ks[i]] === undefined || typeof n[ks[i]] !== "object") n[ks[i]] = {};
+      n = n[ks[i]];
+    }
+    const ultima = ks[ks.length - 1];
+    if (valor === null || valor === undefined) delete n[ultima];
+    else n[ultima] = valor;
+  };
+  const avisar = () => oyentes.forEach((o) => o.cb({ val: () => clonar(leer(o.ruta)) }));
+  return {
+    ref(ruta = "") {
+      return {
+        on(evento, cb) {
+          oyentes.push({ ruta, cb });
+          cb({ val: () => clonar(leer(ruta)) });
+        },
+        push(valor) {
+          const key = "k" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+          const p = Promise.resolve();
+          p.key = key;
+          if (valor !== undefined) {
+            escribir(partes(ruta).concat(key).join("/"), clonar(valor));
+            avisar();
+          }
+          return p;
+        },
+        update(cambios) {
+          Object.keys(cambios).forEach((k) =>
+            escribir(partes(ruta).concat(partes(k)).join("/"), clonar(cambios[k])));
+          avisar();
+          return Promise.resolve();
+        },
+        remove() {
+          escribir(ruta, null);
+          avisar();
+          return Promise.resolve();
+        }
+      };
+    }
+  };
+})();
+
+
+// Usuario y contraseña de admin (cambialos si querés)
+const ADMIN_USER = "admin";
+const ADMIN_PASS = "1234";
+
+// Convierte un link de Google Drive (de "compartir") a un link de imagen directa.
+// Los links de Drive normales devuelven una página HTML, no la imagen en sí,
+// por eso no cargan en un <img>. Si detecta un link de Drive, lo convierte;
+// si no, devuelve la URL tal cual (para links de Imgur, etc. que ya son directos).
+function convertirLinkFoto(url) {
+  if (!url) return url;
+  if (url.startsWith("data:")) return url;
+  const m = url.match(/drive\.google\.com\/file\/d\/([^/]+)/) || url.match(/[?&]id=([^&]+)/);
+  if (m && m[1]) return `https://lh3.googleusercontent.com/d/${m[1]}`;
+  return url;
+}
+
+// ============ HELPERS ============
+function calcularEstadisticas(j) {
+  const pj = j.pj || 0;
+  const puntos = j.puntos || 0;
+  const promedio = pj > 0 ? (puntos / pj) : 0;
+  return { ...j, pj, promedio };
+}
+
+function ordenarTabla(jugadores) {
+  return [...jugadores]
+    .map(calcularEstadisticas)
+    .sort((a, b) => {
+      if (b.promedio !== a.promedio) return b.promedio - a.promedio;
+      if ((b.puntos||0) !== (a.puntos||0)) return (b.puntos||0) - (a.puntos||0);
+      return (b.pj||0) - (a.pj||0);
+    });
+}
+
+// ============ TEMPORADAS / PREMIOS ============
+const PREMIOS_META = {
+  campeon: { icono: "👑", nombre: "Campeón" },
+  goleador: { icono: "⚽", nombre: "Goleador" },
+  mejor_arquero: { icono: "🧤", nombre: "Mejor arquero" },
+  equipo_ideal: { icono: "⭐", nombre: "Equipo ideal" }
+};
+const ORDEN_PREMIOS = ["campeon", "goleador", "mejor_arquero", "equipo_ideal"];
+
+// Calcula los premios con la tabla actual.
+// - Campeón: el puntero de la tabla.
+// - Goleador: el que más goles hizo (si hay empate, lo comparten).
+// - Mejor arquero y Equipo ideal (1 arquero + 4 de campo): salen por promedio,
+//   pero solo entre quienes jugaron al menos la mitad de los partidos del que más jugó.
+function calcularPremios(jugadores) {
+  const tabla = ordenarTabla(jugadores).filter(j => j.pj > 0);
+  if (tabla.length === 0) return [];
+  const minPJ = Math.max(1, Math.ceil(Math.max(...tabla.map(j => j.pj)) * 0.5));
+  const elegibles = tabla.filter(j => j.pj >= minPJ);
+  const premios = [];
+  const dar = (tipo, j) => premios.push({ tipo, jugadorId: j.id, nombre: j.nombre, foto: j.foto || "" });
+
+  dar("campeon", tabla[0]);
+
+  const maxGoles = Math.max(...tabla.map(j => j.goles || 0));
+  if (maxGoles > 0) tabla.filter(j => (j.goles || 0) === maxGoles).forEach(j => dar("goleador", j));
+
+  const arquero = elegibles.find(j => j.arquero);
+  if (arquero) dar("mejor_arquero", arquero);
+
+  const campo = elegibles.filter(j => !j.arquero).slice(0, arquero ? 4 : 5);
+  (arquero ? [arquero, ...campo] : campo).forEach(j => dar("equipo_ideal", j));
+
+  return premios;
+}
+
+// { jugadorId: cantidad de coronas (temporadas ganadas) }
+function contarCoronas(temporadas) {
+  const mapa = {};
+  temporadas.forEach(t => (t.premios || []).forEach(p => {
+    if (p.tipo === "campeon") mapa[p.jugadorId] = (mapa[p.jugadorId] || 0) + 1;
+  }));
+  return mapa;
+}
+
+// Todos los premios de un jugador, en el orden en que vienen las temporadas.
+function premiosDeJugador(id, temporadas) {
+  const lista = [];
+  temporadas.forEach(t => (t.premios || []).forEach(p => {
+    if (p.jugadorId === id) lista.push({ temporada: t.nombre, tipo: p.tipo });
+  }));
+  return lista;
+}
+
+function Coronas({ n }) {
+  if (!n || n <= 0) return null;
+  return (
+    <span className="corona ml-1" title={n + (n === 1 ? " corona" : " coronas")}>
+      👑{n > 1 && <span className="text-xs font-bold text-[#FFD700]">×{n}</span>}
+    </span>
+  );
+}
+
+// Sortea dos equipos balanceados según calidad. Si hay 2+ arqueros, reparte
+// uno de cada lado. Si hay 0 o 1 arquero, ese arquero cuenta como 4 estrellas
+// para el sorteo (su calidad real no se usa para balancear).
+function armarEquipos(disponibles) {
+  const arqueros = disponibles.filter(j => j.arquero);
+  const campo = disponibles.filter(j => !j.arquero);
+  let equipoA = [], equipoB = [], sumaA = 0, sumaB = 0;
+
+  if (arqueros.length >= 2) {
+    const arqOrdenados = [...arqueros].sort((a, b) => b.calidad - a.calidad);
+    arqOrdenados.forEach((j, i) => {
+      if (i % 2 === 0) { equipoA.push(j); sumaA += j.calidad; }
+      else { equipoB.push(j); sumaB += j.calidad; }
+    });
+    const resto = [...campo].sort((a, b) => b.calidad - a.calidad);
+    resto.forEach(j => {
+      if (sumaA <= sumaB) { equipoA.push(j); sumaA += j.calidad; }
+      else { equipoB.push(j); sumaB += j.calidad; }
+    });
+  } else {
+    const todos = disponibles
+      .map(j => ({ ...j, valorDraft: j.arquero ? 4 : j.calidad }))
+      .sort((a, b) => b.valorDraft - a.valorDraft);
+    todos.forEach(j => {
+      if (sumaA <= sumaB) { equipoA.push(j); sumaA += j.valorDraft; }
+      else { equipoB.push(j); sumaB += j.valorDraft; }
+    });
+  }
+  return { equipoA, equipoB };
+}
+
+function Estrellas({ n, onClick }) {
+  return (
+    <span className="text-yellow-500 text-xl select-none">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <span
+          key={i}
+          onClick={() => onClick && onClick(i + 1)}
+          style={{ cursor: onClick ? "pointer" : "default" }}
+        >
+          {i < n ? "★" : "☆"}
+        </span>
+      ))}
+    </span>
+  );
+}
+
+function Cuadritos({ ultimos = [] }) {
+  const colores = { V: "#22c55e", E: "#eab308", D: "#ef4444" };
+  const slots = [...ultimos].slice(0, 5);
+  while (slots.length < 5) slots.push(null);
+  return (
+    <div className="flex">
+      {slots.map((r, i) => (
+        <span
+          key={i}
+          className="cuadrito"
+          style={{ background: r ? colores[r] : "#d1d5db" }}
+          title={r === "V" ? "Ganado" : r === "E" ? "Empatado" : r === "D" ? "Perdido" : "—"}
+        ></span>
+      ))}
+    </div>
+  );
+}
+
+// ============ PODIO (estilo tarjetas FIFA) ============
+function TarjetaPodio({ j, puesto, coronas = 0, onSelect }) {
+  const meta = {
+    1: { medalla: "🥇", frame: "frame-oro", card: "card-oro pulse-glow", label: "1°", color: "text-[#FFD700]" },
+    2: { medalla: "🥈", frame: "frame-plata", card: "card-plata", label: "2°", color: "text-[#E8E8E8]" },
+    3: { medalla: "🥉", frame: "frame-bronce", card: "card-bronce", label: "3°", color: "text-[#CD7F32]" }
+  }[puesto];
+
+  return (
+    <div onClick={() => onSelect && onSelect(j.id)} className={`glass glass-hover rounded-2xl p-4 flex flex-col items-center w-40 sm:w-48 cursor-pointer ${meta.card}`}>
+      <div className={`text-2xl mb-1 ${meta.color} badge-neon`}>{meta.medalla} {meta.label}</div>
+      <div className={`foto-podio-frame ${meta.frame} mb-2`}>
+        <img src={j.foto || SIN_FOTO} className="foto-podio" alt={j.nombre} />
+      </div>
+      <p className="font-bold text-center leading-tight">{j.nombre} {j.arquero && "🧤"}<Coronas n={coronas} /></p>
+      <p className={`text-2xl font-extrabold ${meta.color}`}>{j.promedio.toFixed(2)}</p>
+      <p className="text-[10px] uppercase tracking-wide text-slate-400 mb-2">pts / partido</p>
+      <div className="grid grid-cols-3 gap-2 w-full text-center text-xs text-slate-300 border-t border-white/10 pt-2">
+        <div><p className="font-bold text-white">{j.pj || 0}</p><p>PJ</p></div>
+        <div><p className="font-bold text-white">{j.pg || 0}</p><p>PG</p></div>
+        <div><p className="font-bold text-white">{j.goles || 0}</p><p>Goles</p></div>
+      </div>
+    </div>
+  );
+}
+
+function Podio({ tabla, coronas = {}, onSelect }) {
+  const top3 = tabla.slice(0, 3);
+  if (top3.length === 0) return null;
+  const orden = [1, 0, 2]; // 2do - 1ro - 3ro
+  return (
+    <div className="mb-8 fade-in-up">
+      <h2 className="text-center text-lg font-bold tracking-wide text-slate-300 mb-4">🏆 PODIO DEL TORNEO 🏆</h2>
+      <div className="flex justify-center items-end gap-3 sm:gap-5 flex-wrap">
+        {orden.map((idx, i) => {
+          const j = top3[idx];
+          if (!j) return null;
+          return (
+            <div key={j.id} className="fade-in-up" style={{ animationDelay: `${i * 0.12}s` }}>
+              <TarjetaPodio j={j} puesto={idx + 1} coronas={coronas[j.id] || 0} onSelect={onSelect} />
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ============ TABLA DE POSICIONES ============
+function HistorialJugador({ j }) {
+  const historial = [...(j.historial || [])].reverse();
+  if (historial.length === 0) {
+    return <p className="text-xs text-slate-400 p-3">Sin partidos individuales cargados todavía (solo estadísticas globales).</p>;
+  }
+  return (
+    <div className="p-3 expand-down">
+      <table className="w-full text-xs">
+        <thead>
+          <tr className="text-slate-400">
+            <th className="text-left p-1">Fecha</th>
+            <th className="p-1">Resultado</th>
+            <th className="p-1">Goles</th>
+          </tr>
+        </thead>
+        <tbody>
+          {historial.map((h, i) => (
+            <tr key={i} className="border-t border-white/10">
+              <td className="p-1">{h.fecha}</td>
+              <td className="p-1 text-center">
+                {h.resultado === "V" ? "✅ Ganó" : h.resultado === "E" ? "🟨 Empató" : "🟥 Perdió"}
+              </td>
+              <td className="p-1 text-center">{h.goles || 0}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function TablaPosiciones({ tabla, coronas = {}, onSelect }) {
+  return (
+    <div className="glass rounded-2xl overflow-hidden fade-in-up">
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="bg-white/5 text-slate-300 text-xs uppercase tracking-wide">
+              <th className="p-3 text-left">#</th>
+              <th className="p-3 text-left">Jugador</th>
+              <th className="p-3">PJ</th>
+              <th className="p-3">PG</th>
+              <th className="p-3">PE</th>
+              <th className="p-3">PP</th>
+              <th className="p-3">Prom.</th>
+              <th className="p-3">Goles</th>
+              <th className="p-3 text-left">Últimos 5</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tabla.map((j, i) => (
+              <React.Fragment key={j.id}>
+                <tr
+                  className="fila-jugador cursor-pointer border-t border-white/5 fade-in-up"
+                  style={{ animationDelay: `${Math.min(i, 12) * 0.04}s` }}
+                  onClick={() => onSelect && onSelect(j.id)}
+                >
+                  <td className="p-3 font-bold text-slate-400">{i + 1}</td>
+                  <td className="p-3 flex items-center gap-2">
+                    <img src={j.foto || SIN_FOTO} className="foto-jugador" alt={j.nombre} />
+                    <span className="font-medium">{j.nombre} {j.arquero && <span title="Arquero">🧤</span>}<Coronas n={coronas[j.id] || 0} /></span>
+                  </td>
+                  <td className="p-3 text-center">{j.pj || 0}</td>
+                  <td className="p-3 text-center">{j.pg || 0}</td>
+                  <td className="p-3 text-center">{j.pe || 0}</td>
+                  <td className="p-3 text-center">{j.pp || 0}</td>
+                  <td className="p-3 text-center font-bold text-[#FFD700]">{j.promedio.toFixed(2)}</td>
+                  <td className="p-3 text-center">{j.goles || 0}</td>
+                  <td className="p-3"><Cuadritos ultimos={j.ultimos} /></td>
+                </tr>
+              </React.Fragment>
+            ))}
+            {tabla.length === 0 && (
+              <tr><td colSpan="9" className="p-4 text-center text-slate-400">Todavía no hay jugadores cargados</td></tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+      <p className="text-xs text-slate-500 p-3">Tocá un jugador para ver su perfil.</p>
+    </div>
+  );
+}
+
+// ============ ESTADÍSTICAS DESTACADAS (tabs) ============
+function rachaActual(j) {
+  const u = j.ultimos || [];
+  let r = 0;
+  for (let i = 0; i < u.length; i++) {
+    if (u[i] === "V") r++; else break;
+  }
+  return r;
+}
+
+function BarraEfectividad({ pct }) {
+  return (
+    <div className="barra-fondo h-2 w-full">
+      <div className="barra-fill" style={{ width: `${pct}%` }}></div>
+    </div>
+  );
+}
+
+function StatsTabs({ tabla, onSelect }) {
+  const [tab, setTab] = useState("goleadores");
+
+  const goleadores = [...tabla].filter(j => (j.goles || 0) > 0).sort((a, b) => (b.goles || 0) - (a.goles || 0)).slice(0, 10);
+  const arqueros = [...tabla].filter(j => j.arquero && (j.pj || 0) > 0).sort((a, b) => b.promedio - a.promedio).slice(0, 10);
+  const enRacha = tabla.map(j => ({ ...j, racha: rachaActual(j) })).filter(j => j.racha >= 2).sort((a, b) => b.racha - a.racha).slice(0, 10);
+  const efectividad = [...tabla].filter(j => (j.pj || 0) > 0)
+    .map(j => ({ ...j, pct: Math.round((j.promedio / 3) * 100) }))
+    .sort((a, b) => b.pct - a.pct).slice(0, 10);
+
+  const tabs = [
+    { key: "goleadores", label: "⚽ Goleadores" },
+    { key: "valla", label: "🧤 Valla menos vencida" },
+    { key: "racha", label: "🔥 En racha" },
+    { key: "efectividad", label: "📊 Efectividad" }
+  ];
+
+  return (
+    <div className="glass rounded-2xl p-4 mt-6 fade-in-up">
+      <div className="flex flex-wrap gap-2 mb-4">
+        {tabs.map(t => (
+          <button
+            key={t.key}
+            className={`tab-btn px-3 py-2 rounded-xl text-xs sm:text-sm font-bold bg-white/5 text-slate-200 ${tab === t.key ? "activo" : ""}`}
+            onClick={() => setTab(t.key)}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {tab === "goleadores" && (
+        <div className="space-y-2">
+          {goleadores.map((j, i) => (
+            <div key={j.id} onClick={() => onSelect && onSelect(j.id)} className="flex items-center gap-3 fade-in-up cursor-pointer" style={{ animationDelay: `${i * 0.05}s` }}>
+              <span className="w-5 text-slate-400 text-sm">{i + 1}</span>
+              <img src={j.foto || SIN_FOTO} className="foto-jugador" style={{ width: 36, height: 36 }} alt={j.nombre} />
+              <span className="flex-1">{j.nombre}</span>
+              <span className="font-bold text-[#FFD700]">{j.goles} ⚽</span>
+            </div>
+          ))}
+          {goleadores.length === 0 && <p className="text-slate-400 text-sm">Todavía nadie hizo goles cargados.</p>}
+        </div>
+      )}
+
+      {tab === "valla" && (
+        <div className="space-y-2">
+          <p className="text-xs text-slate-400 mb-2">Arqueros ordenados por su promedio de puntos por partido (no llevamos goles en contra por ahora).</p>
+          {arqueros.map((j, i) => (
+            <div key={j.id} onClick={() => onSelect && onSelect(j.id)} className="flex items-center gap-3 fade-in-up cursor-pointer" style={{ animationDelay: `${i * 0.05}s` }}>
+              <span className="w-5 text-slate-400 text-sm">{i + 1}</span>
+              <img src={j.foto || SIN_FOTO} className="foto-jugador" style={{ width: 36, height: 36 }} alt={j.nombre} />
+              <span className="flex-1">{j.nombre} 🧤</span>
+              <span className="font-bold text-[#22D3EE]">{j.promedio.toFixed(2)} pts/PJ</span>
+            </div>
+          ))}
+          {arqueros.length === 0 && <p className="text-slate-400 text-sm">Todavía no hay arqueros con partidos jugados.</p>}
+        </div>
+      )}
+
+      {tab === "racha" && (
+        <div className="space-y-2">
+          {enRacha.map((j, i) => (
+            <div key={j.id} onClick={() => onSelect && onSelect(j.id)} className="flex items-center gap-3 fade-in-up cursor-pointer" style={{ animationDelay: `${i * 0.05}s` }}>
+              <span className="w-5 text-slate-400 text-sm">{i + 1}</span>
+              <img src={j.foto || SIN_FOTO} className="foto-jugador" style={{ width: 36, height: 36 }} alt={j.nombre} />
+              <span className="flex-1">{j.nombre}</span>
+              <span className="font-bold text-orange-400">🔥 {j.racha} seguidas</span>
+            </div>
+          ))}
+          {enRacha.length === 0 && <p className="text-slate-400 text-sm">Nadie viene con racha de 2 o más victorias.</p>}
+        </div>
+      )}
+
+      {tab === "efectividad" && (
+        <div className="space-y-3">
+          {efectividad.map((j, i) => (
+            <div key={j.id} onClick={() => onSelect && onSelect(j.id)} className="fade-in-up cursor-pointer" style={{ animationDelay: `${i * 0.05}s` }}>
+              <div className="flex items-center justify-between text-sm mb-1">
+                <span>{j.nombre}</span>
+                <span className="font-bold text-[#FFD700]">{j.pct}%</span>
+              </div>
+              <BarraEfectividad pct={j.pct} />
+            </div>
+          ))}
+          {efectividad.length === 0 && <p className="text-slate-400 text-sm">Todavía no hay partidos jugados.</p>}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============ HERO ============
+function Hero({ partidos, jugadores, onVerCancha }) {
+  const nombreDe = (id) => (jugadores.find(j => j.id === id) || {}).nombre || "?";
+  const pendientes = [...partidos].filter(p => !p.finalizado).sort((a, b) => a.fecha.localeCompare(b.fecha));
+  const finalizados = [...partidos].filter(p => p.finalizado).sort((a, b) => b.fecha.localeCompare(a.fecha));
+  const proxima = pendientes[0];
+  const ultima = finalizados[0];
+
+  return (
+    <div className="relative rounded-2xl overflow-hidden mb-8 fade-in-up glass">
+      <div className="p-6 sm:p-10 flex flex-col items-center text-center relative">
+        <div className="text-6xl mb-2 trofeo-glow">🏆</div>
+        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+          <span className="bg-gradient-to-r from-[#22D3EE] via-white to-[#FFD700] bg-clip-text text-transparent">
+            TORNEO DE FÚTBOL
+          </span>
+        </h1>
+        <div className="estrellas-hero text-xl mt-1 mb-6">★ ★ ★</div>
+
+        <div className="grid sm:grid-cols-2 gap-4 w-full max-w-2xl">
+          <div className="glass glass-hover rounded-xl p-4 text-left">
+            <p className="text-xs uppercase tracking-wide text-slate-400 mb-2">Próxima fecha</p>
+            {proxima ? (
+              <>
+                <p className="font-bold text-lg">{proxima.fecha}</p>
+                <p className="text-xs text-slate-300 mt-1">
+                  <span className="text-[#22D3EE] font-semibold">Equipo A:</span> {(proxima.equipoA || []).map(nombreDe).join(", ")}
+                </p>
+                <p className="text-xs text-slate-300">
+                  <span className="text-[#FFD700] font-semibold">Equipo B:</span> {(proxima.equipoB || []).map(nombreDe).join(", ")}
+                </p>
+                {proxima.posiciones && onVerCancha && (
+                  <button className="mt-3 text-xs bg-[#22D3EE]/20 text-[#22D3EE] rounded-full px-3 py-1 font-bold"
+                    onClick={() => onVerCancha(proxima)}>⚽ Ver cancha</button>
+                )}
+              </>
+            ) : <p className="text-slate-400 text-sm">No hay fecha programada todavía</p>}
+          </div>
+
+          <div className="glass glass-hover rounded-xl p-4 text-left">
+            <p className="text-xs uppercase tracking-wide text-slate-400 mb-2">Último resultado</p>
+            {ultima ? (
+              <>
+                <p className="font-bold text-lg">{ultima.fecha}</p>
+                <p className="text-sm mt-1">
+                  {ultima.resultado === "E" ? "🟨 Empate" : ultima.resultado === "A" ? "✅ Ganó Equipo A" : "✅ Ganó Equipo B"}
+                </p>
+              </>
+            ) : <p className="text-slate-400 text-sm">Todavía no hay partidos jugados</p>}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============ IMAGEN DE PREMIOS DE LA TEMPORADA ============
+function cargarImagen(src) {
+  return new Promise(resolve => {
+    if (!src) return resolve(null);
+    const img = new Image();
+    if (!src.startsWith("data:")) img.crossOrigin = "anonymous";
+    const timer = setTimeout(() => resolve(null), 8000);
+    img.onload = () => { clearTimeout(timer); resolve(img); };
+    img.onerror = () => { clearTimeout(timer); resolve(null); };
+    img.src = src;
+  });
+}
+
+function dibujarTexto(ctx, txt, x, y, size, color, bold = true, maxW = 940) {
+  ctx.font = (bold ? "bold " : "") + size + "px system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif";
+  ctx.fillStyle = color;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(txt, x, y, maxW);
+}
+
+// Foto redonda con aro de color. Si la foto no cargó, dibuja la inicial.
+function dibujarAvatar(ctx, img, nombre, cx, cy, r, aro) {
+  ctx.save();
+  ctx.shadowColor = aro;
+  ctx.shadowBlur = 30;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r + 8, 0, Math.PI * 2);
+  ctx.fillStyle = aro;
+  ctx.fill();
+  ctx.restore();
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.clip();
+  if (img) {
+    const lado = Math.min(img.width, img.height);
+    const sx = (img.width - lado) / 2;
+    const sy = (img.height - lado) * 0.25;
+    ctx.drawImage(img, sx, sy, lado, lado, cx - r, cy - r, r * 2, r * 2);
+  } else {
+    ctx.fillStyle = "#1b2840";
+    ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
+    dibujarTexto(ctx, (nombre || "?").charAt(0).toUpperCase(), cx, cy, r, "#E8EEFC");
+  }
+  ctx.restore();
+}
+
+// Arma la imagen (1080x1700) con campeón, goleador, mejor arquero y equipo ideal.
+async function generarImagenTemporada(t) {
+  const W = 1080, H = 1700;
+  const canvas = document.createElement("canvas");
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext("2d");
+  const premios = t.premios || [];
+  const de = (tipo) => premios.filter(p => p.tipo === tipo);
+  const stat = (id) => (t.tabla || []).find(x => x.id === id) || {};
+
+  const ids = [...new Set(premios.map(p => p.jugadorId))];
+  const imgs = {};
+  await Promise.all(ids.map(async id => {
+    const p = premios.find(x => x.jugadorId === id);
+    imgs[id] = await cargarImagen(p.foto);
+  }));
+
+  // fondo
+  const fondo = ctx.createLinearGradient(0, 0, 0, H);
+  fondo.addColorStop(0, "#060B18");
+  fondo.addColorStop(0.5, "#0B1220");
+  fondo.addColorStop(1, "#0E1730");
+  ctx.fillStyle = fondo;
+  ctx.fillRect(0, 0, W, H);
+  const brilloOro = ctx.createRadialGradient(W * 0.85, 0, 0, W * 0.85, 0, 650);
+  brilloOro.addColorStop(0, "rgba(245,179,1,0.22)");
+  brilloOro.addColorStop(1, "rgba(245,179,1,0)");
+  ctx.fillStyle = brilloOro;
+  ctx.fillRect(0, 0, W, H);
+  const brilloCeleste = ctx.createRadialGradient(W * 0.15, 0, 0, W * 0.15, 0, 650);
+  brilloCeleste.addColorStop(0, "rgba(34,211,238,0.18)");
+  brilloCeleste.addColorStop(1, "rgba(34,211,238,0)");
+  ctx.fillStyle = brilloCeleste;
+  ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = "rgba(255,215,0,0.35)";
+  ctx.lineWidth = 4;
+  ctx.strokeRect(30, 30, W - 60, H - 60);
+
+  // encabezado
+  dibujarTexto(ctx, "🏆", W / 2, 110, 90, "#FFD700");
+  const gradTitulo = ctx.createLinearGradient(W / 2 - 330, 0, W / 2 + 330, 0);
+  gradTitulo.addColorStop(0, "#22D3EE");
+  gradTitulo.addColorStop(0.5, "#FFFFFF");
+  gradTitulo.addColorStop(1, "#FFD700");
+  dibujarTexto(ctx, "TORNEO DE FÚTBOL", W / 2, 205, 62, gradTitulo);
+  dibujarTexto(ctx, t.nombre || "Temporada", W / 2, 272, 42, "#E8EEFC");
+  if (t.cerradaEn) {
+    const f = new Date(t.cerradaEn).toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric" });
+    dibujarTexto(ctx, f, W / 2, 322, 26, "#94A3B8", false);
+  }
+
+  // campeón
+  const camp = de("campeon")[0];
+  if (camp) {
+    dibujarTexto(ctx, "👑", W / 2, 415, 80, "#FFD700");
+    dibujarAvatar(ctx, imgs[camp.jugadorId], camp.nombre, W / 2, 620, 150, "#FFD700");
+    dibujarTexto(ctx, "CAMPEÓN", W / 2, 832, 38, "#FFD700");
+    dibujarTexto(ctx, camp.nombre, W / 2, 895, 68, "#FFFFFF", true, 900);
+    const sc = stat(camp.jugadorId);
+    if (sc.promedio != null) {
+      dibujarTexto(ctx, Number(sc.promedio).toFixed(2) + " pts/partido · " + (sc.pj || 0) + " PJ", W / 2, 952, 30, "#94A3B8", false);
+    }
+  }
+
+  // goleador y mejor arquero
+  const bloques = [];
+  const gol = de("goleador");
+  if (gol.length) {
+    const g = stat(gol[0].jugadorId).goles || 0;
+    bloques.push({ label: "⚽ GOLEADOR", ps: gol, texto: g + (g === 1 ? " gol" : " goles") });
+  }
+  const arq = de("mejor_arquero");
+  if (arq.length) {
+    const pr = stat(arq[0].jugadorId).promedio || 0;
+    bloques.push({ label: "🧤 MEJOR ARQUERO", ps: arq, texto: Number(pr).toFixed(2) + " pts/partido" });
+  }
+  const xs = bloques.length === 1 ? [W / 2] : [W * 0.27, W * 0.73];
+  bloques.forEach((b, i) => {
+    const x = xs[i];
+    dibujarTexto(ctx, b.label, x, 1020, 34, "#22D3EE", true, 440);
+    dibujarAvatar(ctx, imgs[b.ps[0].jugadorId], b.ps[0].nombre, x, 1150, 85, "#22D3EE");
+    dibujarTexto(ctx, b.ps.map(p => p.nombre).join(" / "), x, 1290, 44, "#FFFFFF", true, 440);
+    dibujarTexto(ctx, b.texto, x, 1335, 28, "#94A3B8", false, 440);
+  });
+
+  // equipo ideal
+  const eq = de("equipo_ideal");
+  if (eq.length) {
+    dibujarTexto(ctx, "⭐ EQUIPO IDEAL", W / 2, 1405, 36, "#FFD700");
+    const sep = 190;
+    const x0 = W / 2 - ((eq.length - 1) * sep) / 2;
+    eq.forEach((p, i) => {
+      const x = x0 + i * sep;
+      dibujarAvatar(ctx, imgs[p.jugadorId], p.nombre, x, 1520, 65, "#FFD700");
+      dibujarTexto(ctx, p.nombre + (stat(p.jugadorId).arquero ? " 🧤" : ""), x, 1625, 26, "#E8EEFC", true, 175);
+    });
+  }
+
+  return canvas;
+}
+
+// Ventana con la imagen lista para compartir o descargar
+function ImagenTemporada({ temporada, cerrada, onClose }) {
+  const [url, setUrl] = useState(null);
+  const [blob, setBlob] = useState(null);
+  const [error, setError] = useState("");
+  const nombreArchivo = "premios-" + (temporada.nombre || "temporada").replace(/[^a-zA-Z0-9]+/g, "-") + ".png";
+
+  useEffect(() => {
+    let creada = null;
+    let cancelado = false;
+    generarImagenTemporada(temporada)
+      .then(canvas => new Promise((ok, fail) =>
+        canvas.toBlob(b => b ? ok(b) : fail(new Error("no se pudo generar la imagen")), "image/png")))
+      .then(b => {
+        if (cancelado) return;
+        creada = URL.createObjectURL(b);
+        setBlob(b);
+        setUrl(creada);
+      })
+      .catch(e => { if (!cancelado) setError(e.message); });
+    return () => { cancelado = true; if (creada) URL.revokeObjectURL(creada); };
+  }, []);
+
+  const compartir = async () => {
+    const file = new File([blob], nombreArchivo, { type: "image/png" });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try { await navigator.share({ files: [file], title: temporada.nombre }); } catch (e) {}
+    } else {
+      alert("Este navegador no deja compartir directo. Usá Descargar.");
+    }
+  };
+
+  const descargar = () => {
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = nombreArchivo;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  };
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-card p-5" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-extrabold text-lg">{cerrada ? "🏁 ¡Terminó " + temporada.nombre + "!" : "🏆 " + temporada.nombre}</h2>
+          <button className="text-slate-400 text-2xl leading-none px-2" onClick={onClose} aria-label="Cerrar">✕</button>
+        </div>
+        {!url && !error && <p className="text-slate-400 text-sm py-10 text-center">Armando la imagen…</p>}
+        {error && <p className="text-red-400 text-sm py-6 text-center">No se pudo armar la imagen: {error}</p>}
+        {url && <img src={url} alt="Premios de la temporada" className="w-full rounded-xl mb-3" />}
+        {url && (
+          <div className="grid grid-cols-2 gap-2">
+            <button className="bg-[#FFD700] text-[#06131F] rounded-xl py-3 font-bold" onClick={compartir}>📤 Compartir</button>
+            <button className="bg-[#22D3EE] text-[#06131F] rounded-xl py-3 font-bold" onClick={descargar}>⬇️ Descargar</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============ PERFIL DE JUGADOR (modal) ============
+function PerfilJugador({ j, posicion, coronas, premios, onClose }) {
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  const pj = j.pj || 0;
+  const pct = pj > 0 ? Math.round((j.promedio / 3) * 100) : 0;
+  const golesPJ = pj > 0 ? ((j.goles || 0) / pj).toFixed(2) : "0.00";
+  const racha = rachaActual(j);
+  const stats = [
+    ["PJ", pj], ["PG", j.pg || 0], ["PE", j.pe || 0],
+    ["PP", j.pp || 0], ["Puntos", j.puntos || 0], ["Prom.", j.promedio.toFixed(2)],
+    ["Goles", j.goles || 0], ["Goles/PJ", golesPJ], ["Efect.", pct + "%"]
+  ];
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-card p-5" onClick={e => e.stopPropagation()}>
+        <div className="flex justify-end">
+          <button className="text-slate-400 text-2xl leading-none px-2" onClick={onClose} aria-label="Cerrar">✕</button>
+        </div>
+
+        <div className="flex flex-col items-center text-center -mt-2 mb-4">
+          <div className={`foto-podio-frame ${coronas > 0 ? "frame-oro" : "frame-plata"} mb-3`}>
+            <img src={j.foto || SIN_FOTO} className="foto-perfil" alt={j.nombre} />
+          </div>
+          <h2 className="text-2xl font-extrabold">{j.nombre} {j.arquero && "🧤"}</h2>
+          {coronas > 0 && (
+            <p className="text-[#FFD700] font-bold mt-1">
+              <span className="corona">👑</span> {coronas === 1 ? "Campeón" : "Campeón ×" + coronas}
+            </p>
+          )}
+          {pj > 0 && <p className="text-sm text-slate-400 mt-1">#{posicion} en la tabla actual</p>}
+        </div>
+
+        <div className="grid grid-cols-3 gap-2 mb-4">
+          {stats.map(([label, valor]) => (
+            <div key={label} className="glass rounded-xl p-3 text-center">
+              <p className="text-xl font-extrabold text-white">{valor}</p>
+              <p className="text-[10px] uppercase tracking-wide text-slate-400">{label}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="flex items-center justify-between glass rounded-xl p-3 mb-4">
+          <div>
+            <p className="text-[10px] uppercase tracking-wide text-slate-400 mb-1">Últimos 5</p>
+            <Cuadritos ultimos={j.ultimos} />
+          </div>
+          <div className="text-right">
+            <p className="text-[10px] uppercase tracking-wide text-slate-400 mb-1">Racha de victorias</p>
+            <p className="font-bold text-orange-400">{racha > 0 ? "🔥 " + racha : "—"}</p>
+          </div>
+        </div>
+
+        <h3 className="text-sm font-bold text-slate-300 mb-2">🏆 Sala de trofeos</h3>
+        {premios.length > 0 ? (
+          <div className="flex flex-wrap gap-2 mb-4">
+            {premios.map((p, i) => {
+              const m = PREMIOS_META[p.tipo] || { icono: "🏅", nombre: p.tipo };
+              return (
+                <div key={i} className="trofeo-chip rounded-xl px-3 py-2 text-sm">
+                  {m.icono} {m.nombre} <span className="text-slate-400">· {p.temporada}</span>
+                </div>
+              );
+            })}
+          </div>
+        ) : <p className="text-sm text-slate-400 mb-4">Todavía no ganó premios.</p>}
+
+        <h3 className="text-sm font-bold text-slate-300 mb-1">Partidos de la temporada</h3>
+        <div className="max-h-56 overflow-y-auto">
+          <HistorialJugador j={j} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============ SALÓN DE LA FAMA (temporadas cerradas) ============
+function SalonDeLaFama({ temporadas, onSelect, onVerImagen }) {
+  if (temporadas.length === 0) return null;
+  const fecha = (iso) => iso ? new Date(iso).toLocaleDateString("es-AR") : "";
+  return (
+    <div className="glass rounded-2xl p-4 mt-6 fade-in-up">
+      <h2 className="text-center text-lg font-bold tracking-wide text-slate-300 mb-4">🏛️ SALÓN DE LA FAMA</h2>
+      <div className="space-y-3">
+        {temporadas.map(t => {
+          const premios = t.premios || [];
+          return (
+            <div key={t.id} className="rounded-xl bg-white/5 p-3">
+              <div className="flex items-center justify-between mb-2">
+                <p className="font-bold">{t.nombre}</p>
+                <div className="flex items-center gap-3">
+                  <p className="text-xs text-slate-400">{fecha(t.cerradaEn)}</p>
+                  <button className="text-xs bg-[#FFD700]/20 text-[#FFD700] rounded-full px-3 py-1 font-bold"
+                    onClick={() => onVerImagen(t)}>🖼️ Ver imagen</button>
+                </div>
+              </div>
+              {ORDEN_PREMIOS.map(tipo => {
+                const lista = premios.filter(p => p.tipo === tipo);
+                if (lista.length === 0) return null;
+                const m = PREMIOS_META[tipo];
+                return (
+                  <div key={tipo} className="flex flex-wrap items-center gap-2 mb-1">
+                    <span className="text-xs text-slate-400 w-32">{m.icono} {m.nombre}</span>
+                    {lista.map(p => (
+                      <button key={p.jugadorId + tipo}
+                        className="text-sm bg-white/10 hover:bg-white/20 rounded-full px-3 py-0.5"
+                        onClick={() => onSelect(p.jugadorId)}>
+                        {p.nombre}
+                      </button>
+                    ))}
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ============ HOME (pública) ============
+function Home({ jugadores, partidos, temporadas = [] }) {
+  const tabla = useMemo(() => ordenarTabla(jugadores), [jugadores]);
+  const temporadasOrd = useMemo(
+    () => [...temporadas].sort((a, b) => (b.cerradaEn || "").localeCompare(a.cerradaEn || "")),
+    [temporadas]
+  );
+  const coronas = useMemo(() => contarCoronas(temporadas), [temporadas]);
+  const [seleccionado, setSeleccionado] = useState(null);
+  const [imagenTemporada, setImagenTemporada] = useState(null);
+  const [canchaPartido, setCanchaPartido] = useState(null);
+  const jSel = seleccionado ? tabla.find(x => x.id === seleccionado) : null;
+
+  return (
+    <div className="landing-dark">
+      <div className="max-w-4xl mx-auto p-4 pb-16">
+        <Hero partidos={partidos} jugadores={jugadores} onVerCancha={setCanchaPartido} />
+        <Podio tabla={tabla} coronas={coronas} onSelect={setSeleccionado} />
+        <TablaPosiciones tabla={tabla} coronas={coronas} onSelect={setSeleccionado} />
+        <StatsTabs tabla={tabla} onSelect={setSeleccionado} />
+        <SalonDeLaFama temporadas={temporadasOrd} onSelect={setSeleccionado} onVerImagen={setImagenTemporada} />
+      </div>
+      {jSel && (
+        <PerfilJugador
+          j={jSel}
+          posicion={tabla.findIndex(x => x.id === jSel.id) + 1}
+          coronas={coronas[jSel.id] || 0}
+          premios={premiosDeJugador(jSel.id, temporadasOrd)}
+          onClose={() => setSeleccionado(null)}
+        />
+      )}
+      {imagenTemporada && <ImagenTemporada temporada={imagenTemporada} onClose={() => setImagenTemporada(null)} />}
+      {canchaPartido && <CanchaModal partido={canchaPartido} jugadores={jugadores} onClose={() => setCanchaPartido(null)} />}
+    </div>
+  );
+}
+
+// ============ LOGIN ADMIN ============
+function LoginAdmin({ onLogin }) {
+  const [usuario, setUsuario] = useState(ADMIN_USER);
+  const [pass, setPass] = useState(ADMIN_PASS);
+  const [error, setError] = useState("");
+
+  const entrar = () => {
+    if (usuario === ADMIN_USER && pass === ADMIN_PASS) {
+      onLogin();
+    } else {
+      setError("Usuario o contraseña incorrectos");
+    }
+  };
+
+  return (
+    <div className="max-w-sm mx-auto mt-16 bg-white p-6 rounded-2xl shadow">
+      <h2 className="text-xl font-bold mb-1 text-center">Ingreso Admin</h2>
+      <p className="text-xs text-gray-500 text-center mb-4">Demo: el usuario y la contraseña ya están cargados. Tocá Entrar.</p>
+      <input className="border rounded-lg w-full p-2 mb-2" placeholder="Usuario"
+        value={usuario} onChange={e => setUsuario(e.target.value)} />
+      <input className="border rounded-lg w-full p-2 mb-2" placeholder="Contraseña" type="password"
+        value={pass} onChange={e => setPass(e.target.value)} onKeyDown={e => e.key === "Enter" && entrar()} />
+      {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
+      <button className="bg-[#3E7CB1] text-white rounded-lg w-full p-2 font-bold" onClick={entrar}>Entrar</button>
+    </div>
+  );
+}
+
+// Toma la foto elegida del celular, la recorta cuadrada y la achica a 256x256 JPEG
+// (~10-15 KB) para guardarla como texto en la base de datos, sin Firebase Storage.
+function comprimirFoto(file, lado = 256) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("no se pudo leer el archivo"));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error("el archivo no es una imagen válida"));
+      img.onload = () => {
+        const lado0 = Math.min(img.width, img.height);
+        const sx = (img.width - lado0) / 2;
+        const sy = (img.height - lado0) * 0.25;
+        const canvas = document.createElement("canvas");
+        canvas.width = lado;
+        canvas.height = lado;
+        canvas.getContext("2d").drawImage(img, sx, sy, lado0, lado0, 0, 0, lado, lado);
+        resolve(canvas.toDataURL("image/jpeg", 0.8));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// ============ ADMIN: JUGADORES ============
+function AdminJugadores({ jugadores }) {
+  const vacio = { nombre: "", foto: "", calidad: 3, arquero: false };
+  const [form, setForm] = useState(vacio);
+  const [editId, setEditId] = useState(null);
+
+  const subirFoto = async (e) => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = "";
+    if (!file) return;
+    try {
+      const dataUrl = await comprimirFoto(file);
+      setForm(f => ({ ...f, foto: dataUrl }));
+    } catch (err) {
+      alert("No se pudo cargar la foto: " + err.message);
+    }
+  };
+
+  const guardar = () => {
+    try {
+      if (!form.nombre.trim()) return alert("Poné un nombre");
+      const fotoFinal = convertirLinkFoto(form.foto.trim());
+      const onError = (err) => alert("No se pudo guardar: " + err.message);
+      if (editId) {
+        db.ref("jugadores/" + editId).update({
+          nombre: form.nombre, foto: fotoFinal, calidad: form.calidad, arquero: form.arquero
+        }).then(() => alert("Jugador actualizado")).catch(onError);
+      } else {
+        db.ref("jugadores").push({
+          nombre: form.nombre, foto: fotoFinal, calidad: form.calidad, arquero: form.arquero,
+          pj: 0, pg: 0, pe: 0, pp: 0, puntos: 0, goles: 0, ultimos: [], historial: []
+        }).then(() => alert("Jugador agregado")).catch(onError);
+      }
+      setForm(vacio);
+      setEditId(null);
+    } catch (err) {
+      alert("Error al guardar: " + err.message);
+    }
+  };
+
+  const editar = (j) => {
+    setForm({ nombre: j.nombre, foto: j.foto || "", calidad: j.calidad || 3, arquero: !!j.arquero });
+    setEditId(j.id);
+  };
+
+  const borrar = (id) => {
+    if (confirm("¿Borrar este jugador? Se pierde su historial.")) db.ref("jugadores/" + id).remove();
+  };
+
+  return (
+    <div>
+      <div className="bg-white p-4 rounded-2xl shadow mb-4">
+        <h3 className="font-bold mb-2">{editId ? "Editar jugador" : "Nuevo jugador"}</h3>
+        <input className="border rounded-lg w-full p-2 mb-2" placeholder="Nombre"
+          value={form.nombre} onChange={e => setForm({ ...form, nombre: e.target.value })} />
+        <div className="flex items-center gap-3 mb-2">
+          <img src={form.foto || SIN_FOTO} className="foto-jugador" alt="Vista previa" />
+          <label className="bg-[#EAF4FC] border border-[#3E7CB1] text-[#1B4B7A] rounded-lg px-3 py-2 text-sm font-bold cursor-pointer">
+            📷 Subir foto
+            <input type="file" accept="image/*" className="hidden" onChange={subirFoto} />
+          </label>
+          {form.foto && (
+            <button type="button" className="text-red-600 text-sm" onClick={() => setForm({ ...form, foto: "" })}>Quitar</button>
+          )}
+        </div>
+        <input className="border rounded-lg w-full p-2 mb-1" placeholder="…o pegá un link de imagen (opcional)"
+          value={form.foto.startsWith("data:") ? "" : form.foto}
+          onChange={e => setForm({ ...form, foto: e.target.value })} />
+        <p className="text-xs text-gray-400 mb-2">Si pegás un link de Drive, el archivo tiene que estar compartido como "Cualquier persona con el enlace".</p>
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-sm">Calidad:</span>
+          <Estrellas n={form.calidad} onClick={(n) => setForm({ ...form, calidad: n })} />
+        </div>
+        <label className="flex items-center gap-2 mb-3 text-sm">
+          <input type="checkbox" checked={form.arquero}
+            onChange={e => setForm({ ...form, arquero: e.target.checked })} />
+          Es arquero 🧤
+        </label>
+        <div className="flex gap-2">
+          <button className="bg-[#3E7CB1] text-white rounded-lg px-4 py-2 font-bold" onClick={guardar}>
+            {editId ? "Guardar cambios" : "Agregar jugador"}
+          </button>
+          {editId && (
+            <button className="bg-gray-300 rounded-lg px-4 py-2" onClick={() => { setForm(vacio); setEditId(null); }}>
+              Cancelar
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className="bg-white rounded-2xl shadow divide-y">
+        {jugadores.map(j => (
+          <div key={j.id} className="flex items-center gap-3 p-3">
+            <img src={j.foto || SIN_FOTO} className="foto-jugador" alt={j.nombre} />
+            <div className="flex-1">
+              <p className="font-semibold">{j.nombre} {j.arquero && "🧤"}</p>
+              <Estrellas n={j.calidad} />
+            </div>
+            <button className="text-blue-600 text-sm mr-2" onClick={() => editar(j)}>Editar</button>
+            <button className="text-red-600 text-sm" onClick={() => borrar(j.id)}>Borrar</button>
+          </div>
+        ))}
+        {jugadores.length === 0 && <p className="p-4 text-center text-gray-400">No hay jugadores todavía</p>}
+      </div>
+    </div>
+  );
+}
+
+// ============ CANCHA (armado manual) ============
+// fichas: [{ id, nombre, foto, x, y, equipo }]  (x, y en % de la cancha)
+// Mitad de arriba = Equipo A, mitad de abajo = Equipo B.
+function Cancha({ fichas, editable, selId, onSelect, onMove, onTapCancha }) {
+  const ref = useRef(null);
+  const drag = useRef(null);
+
+  const posDe = (e) => {
+    const r = ref.current.getBoundingClientRect();
+    return {
+      x: Math.min(94, Math.max(6, ((e.clientX - r.left) / r.width) * 100)),
+      y: Math.min(95, Math.max(5, ((e.clientY - r.top) / r.height) * 100))
+    };
+  };
+
+  return (
+    <div className="w-full mx-auto" style={{ maxWidth: 420 }}>
+    <div
+      ref={ref}
+      className="relative w-full rounded-xl overflow-hidden select-none"
+      style={{ paddingTop: "150%", background: "#2f8f4e", touchAction: editable ? "pan-y" : "auto" }}
+      onClick={(e) => { if (editable && onTapCancha) onTapCancha(posDe(e)); }}
+    >
+      <svg viewBox="0 0 100 150" className="absolute w-full h-full" style={{ top: 0, left: 0, pointerEvents: "none" }}>
+        {Array.from({ length: 10 }).map((_, i) => (
+          <rect key={i} x="0" y={i * 15} width="100" height="15" fill={i % 2 ? "#2f8f4e" : "#35a057"} />
+        ))}
+        <g fill="none" stroke="rgba(255,255,255,0.85)" strokeWidth="0.6">
+          <rect x="3" y="3" width="94" height="144" />
+          <line x1="3" y1="75" x2="97" y2="75" />
+          <circle cx="50" cy="75" r="12" />
+          <rect x="25" y="3" width="50" height="22" />
+          <rect x="38" y="3" width="24" height="8" />
+          <path d="M 41.06 25 A 12 12 0 0 0 58.94 25" />
+          <rect x="25" y="125" width="50" height="22" />
+          <rect x="38" y="139" width="24" height="8" />
+          <path d="M 41.06 125 A 12 12 0 0 1 58.94 125" />
+        </g>
+        <g fill="rgba(255,255,255,0.9)">
+          <circle cx="50" cy="75" r="0.9" />
+          <circle cx="50" cy="17" r="0.9" />
+          <circle cx="50" cy="133" r="0.9" />
+        </g>
+      </svg>
+
+      <span className="absolute text-[11px] font-extrabold tracking-widest" style={{ top: 8, left: 10, color: "rgba(255,255,255,0.75)" }}>EQUIPO A</span>
+      <span className="absolute text-[11px] font-extrabold tracking-widest" style={{ bottom: 8, left: 10, color: "rgba(255,255,255,0.75)" }}>EQUIPO B</span>
+
+      {fichas.map(f => (
+        <div
+          key={f.id}
+          className={"ficha" + (editable ? " editable" : "") + (selId === f.id ? " sel" : "")}
+          style={{ left: f.x + "%", top: f.y + "%" }}
+          onClick={(e) => e.stopPropagation()}
+          onPointerDown={(e) => {
+            if (!editable) return;
+            e.stopPropagation();
+            e.currentTarget.setPointerCapture(e.pointerId);
+            drag.current = { id: f.id, sx: e.clientX, sy: e.clientY, moved: false };
+          }}
+          onPointerMove={(e) => {
+            const d = drag.current;
+            if (!d || d.id !== f.id) return;
+            if (!d.moved && Math.hypot(e.clientX - d.sx, e.clientY - d.sy) < 6) return;
+            d.moved = true;
+            onMove(f.id, posDe(e));
+          }}
+          onPointerUp={() => {
+            const d = drag.current;
+            drag.current = null;
+            if (d && !d.moved && onSelect) onSelect(f.id);
+          }}
+          onPointerCancel={() => { drag.current = null; }}
+        >
+          {f.foto
+            ? <img src={f.foto} alt={f.nombre} className="ficha-foto" draggable="false"
+                style={{ borderColor: f.equipo === "A" ? "#3b82f6" : "#ef4444" }} />
+            : <div className="ficha-foto" style={{ borderColor: f.equipo === "A" ? "#3b82f6" : "#ef4444" }}>
+                {(f.nombre || "?").charAt(0).toUpperCase()}
+              </div>}
+          <span className="ficha-nombre">{f.nombre}{f.arquero ? " 🧤" : ""}</span>
+        </div>
+      ))}
+    </div>
+    </div>
+  );
+}
+
+// Vista de solo lectura de un partido armado a mano
+function fichasDePartido(partido, jugadores) {
+  const pos = partido.posiciones || {};
+  return Object.keys(pos).map(id => {
+    const j = jugadores.find(x => x.id === id);
+    if (!j) return null;
+    return {
+      id, nombre: j.nombre, foto: j.foto, arquero: j.arquero,
+      x: pos[id].x, y: pos[id].y,
+      equipo: (partido.equipoA || []).includes(id) ? "A" : "B"
+    };
+  }).filter(Boolean);
+}
+
+function CanchaToggle({ partido, jugadores }) {
+  const [abierta, setAbierta] = useState(false);
+  if (!partido.posiciones) return null;
+  return (
+    <div className="mt-2">
+      <button className="text-blue-600 text-sm font-bold" onClick={() => setAbierta(!abierta)}>
+        {abierta ? "Ocultar cancha" : "⚽ Ver cancha"}
+      </button>
+      {abierta && <div className="mt-2"><Cancha fichas={fichasDePartido(partido, jugadores)} /></div>}
+    </div>
+  );
+}
+
+function CanchaModal({ partido, jugadores, onClose }) {
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-card p-5" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-extrabold text-lg">⚽ Cancha · {partido.fecha}</h2>
+          <button className="text-slate-400 text-2xl leading-none px-2" onClick={onClose} aria-label="Cerrar">✕</button>
+        </div>
+        <Cancha fichas={fichasDePartido(partido, jugadores)} />
+        <div className="grid grid-cols-2 gap-2 mt-3 text-sm">
+          <div className="glass rounded-xl p-3"><span className="text-[#22D3EE] font-bold">Equipo A</span><br />{(partido.equipoA || []).map(id => (jugadores.find(j => j.id === id) || {}).nombre || "?").join(", ")}</div>
+          <div className="glass rounded-xl p-3"><span className="text-[#FFD700] font-bold">Equipo B</span><br />{(partido.equipoB || []).map(id => (jugadores.find(j => j.id === id) || {}).nombre || "?").join(", ")}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============ ADMIN: FECHAS Y SORTEO ============
+function AdminFechas({ jugadores, partidos }) {
+  const [fecha, setFecha] = useState("");
+  const [seleccionados, setSeleccionados] = useState({});
+  const [preview, setPreview] = useState(null);
+  const [modo, setModo] = useState("sorteo"); // sorteo | manual
+  const [posiciones, setPosiciones] = useState({}); // { jugadorId: { x, y } } en % de la cancha
+  const [selPool, setSelPool] = useState(null);     // jugador elegido de la lista para ubicar
+  const [selFicha, setSelFicha] = useState(null);   // ficha elegida en la cancha
+
+  const toggle = (id) => setSeleccionados(s => ({ ...s, [id]: !s[id] }));
+
+  const disponibles = jugadores.filter(j => seleccionados[j.id]);
+  const sinUbicar = disponibles.filter(j => !posiciones[j.id]);
+  const fichas = disponibles.filter(j => posiciones[j.id]).map(j => ({
+    id: j.id, nombre: j.nombre, foto: j.foto, arquero: j.arquero,
+    x: posiciones[j.id].x, y: posiciones[j.id].y,
+    equipo: posiciones[j.id].y < 50 ? "A" : "B"
+  }));
+  const fichasA = fichas.filter(f => f.equipo === "A");
+  const fichasB = fichas.filter(f => f.equipo === "B");
+  const calidadDe = (lista) => lista.reduce((s, f) => s + ((jugadores.find(j => j.id === f.id) || {}).calidad || 0), 0);
+
+  const moverFicha = (id, pos) => setPosiciones(p => ({ ...p, [id]: pos }));
+  const tocarCancha = (pos) => {
+    if (!selPool) return;
+    setPosiciones(p => ({ ...p, [selPool]: pos }));
+    setSelPool(null);
+  };
+  const sacarFicha = () => {
+    if (!selFicha) return;
+    setPosiciones(p => { const c = { ...p }; delete c[selFicha]; return c; });
+    setSelFicha(null);
+  };
+
+  const sortear = () => {
+    if (disponibles.length < 2) return alert("Seleccioná al menos 2 jugadores disponibles");
+    setPreview(armarEquipos(disponibles));
+  };
+
+  const guardarManual = () => {
+    if (fichasA.length === 0 || fichasB.length === 0) {
+      return alert("Poné al menos un jugador en cada mitad de la cancha (arriba Equipo A, abajo Equipo B)");
+    }
+    if (sinUbicar.length > 0 && !confirm("Quedan " + sinUbicar.length + " jugador(es) sin ubicar. Se van a dejar afuera de esta fecha. ¿Seguir?")) return;
+    const pos = {};
+    fichas.forEach(f => { pos[f.id] = { x: Math.round(f.x * 10) / 10, y: Math.round(f.y * 10) / 10 }; });
+    db.ref("partidos").push({
+      fecha,
+      disponibles: fichas.map(f => f.id),
+      equipoA: fichasA.map(f => f.id),
+      equipoB: fichasB.map(f => f.id),
+      posiciones: pos,
+      manual: true,
+      resultado: null,
+      finalizado: false
+    });
+    setFecha(""); setSeleccionados({}); setPosiciones({}); setSelPool(null); setSelFicha(null);
+    alert("Fecha creada con el armado manual");
+  };
+
+  const guardarFecha = () => {
+    if (!fecha) return alert("Elegí una fecha");
+    if (modo === "manual") return guardarManual();
+    if (!preview) return alert("Primero sorteá los equipos");
+    db.ref("partidos").push({
+      fecha,
+      disponibles: disponibles.map(j => j.id),
+      equipoA: preview.equipoA.map(j => j.id),
+      equipoB: preview.equipoB.map(j => j.id),
+      resultado: null,
+      finalizado: false
+    });
+    setFecha(""); setSeleccionados({}); setPreview(null);
+    alert("Fecha creada con los equipos sorteados");
+  };
+
+  const nombreDe = (id) => (jugadores.find(j => j.id === id) || {}).nombre || "?";
+
+  return (
+    <div>
+      <div className="bg-white p-4 rounded-2xl shadow mb-4">
+        <h3 className="font-bold mb-2">Nueva fecha</h3>
+        <input type="date" className="border rounded-lg p-2 mb-3"
+          value={fecha} onChange={e => setFecha(e.target.value)} />
+        <p className="text-sm font-semibold mb-1">Jugadores disponibles:</p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-3">
+          {jugadores.map(j => (
+            <label key={j.id} className="flex items-center gap-2 text-sm bg-[#EAF4FC] rounded-lg p-2">
+              <input type="checkbox" checked={!!seleccionados[j.id]} onChange={() => toggle(j.id)} />
+              {j.nombre} {j.arquero && "🧤"}
+            </label>
+          ))}
+        </div>
+        <div className="flex gap-2 mb-3">
+          {[["sorteo", "🎲 Sortear"], ["manual", "✋ Armar a mano"]].map(([k, label]) => (
+            <button key={k}
+              className={`px-3 py-2 rounded-lg text-sm font-bold ${modo === k ? "bg-[#3E7CB1] text-white" : "bg-[#EAF4FC] text-[#1B4B7A]"}`}
+              onClick={() => setModo(k)}>
+              {label}
+            </button>
+          ))}
+        </div>
+        {modo === "sorteo" && (
+          <button className="bg-[#3E7CB1] text-white rounded-lg px-4 py-2 font-bold mr-2" onClick={sortear}>
+            Sortear equipos
+          </button>
+        )}
+        {modo === "sorteo" && preview && (
+          <button className="bg-blue-600 text-white rounded-lg px-4 py-2 font-bold" onClick={guardarFecha}>
+            Guardar fecha
+          </button>
+        )}
+
+        {modo === "sorteo" && preview && (
+          <div className="grid grid-cols-2 gap-3 mt-4">
+            <div className="bg-blue-50 rounded-lg p-3">
+              <p className="font-bold text-blue-700 mb-1">Equipo A</p>
+              {preview.equipoA.map(j => <p key={j.id} className="text-sm">{j.nombre} {j.arquero && "🧤"} <Estrellas n={j.calidad} /></p>)}
+            </div>
+            <div className="bg-red-50 rounded-lg p-3">
+              <p className="font-bold text-red-700 mb-1">Equipo B</p>
+              {preview.equipoB.map(j => <p key={j.id} className="text-sm">{j.nombre} {j.arquero && "🧤"} <Estrellas n={j.calidad} /></p>)}
+            </div>
+          </div>
+        )}
+
+        {modo === "manual" && (
+          <div className="mt-2">
+            {disponibles.length === 0 ? (
+              <p className="text-sm text-gray-500">Marcá arriba los jugadores disponibles y después ubicalos en la cancha.</p>
+            ) : (
+              <>
+                <p className="text-xs text-gray-500 mb-2">
+                  1) Tocá un jugador de la lista. 2) Tocá la cancha donde lo querés. Después podés arrastrarlo. La mitad de arriba es el Equipo A y la de abajo el Equipo B.
+                </p>
+
+                <p className="text-sm font-semibold mb-1">Sin ubicar ({sinUbicar.length}):</p>
+                <div className="flex flex-wrap gap-2 mb-3 min-h-[2rem]">
+                  {sinUbicar.map(j => (
+                    <button key={j.id}
+                      className={`rounded-full px-3 py-1 text-sm font-bold border ${selPool === j.id ? "bg-[#FFD700] border-yellow-500 text-[#06131F]" : "bg-[#EAF4FC] border-[#3E7CB1] text-[#1B4B7A]"}`}
+                      onClick={() => { setSelFicha(null); setSelPool(selPool === j.id ? null : j.id); }}>
+                      {j.nombre}{j.arquero ? " 🧤" : ""}
+                    </button>
+                  ))}
+                  {sinUbicar.length === 0 && <span className="text-sm text-green-700">Todos ubicados ✅</span>}
+                </div>
+
+                {selPool && <p className="text-sm font-bold text-yellow-700 mb-2">👆 Tocá la cancha para ubicar a {(jugadores.find(j => j.id === selPool) || {}).nombre}</p>}
+
+                <Cancha
+                  fichas={fichas}
+                  editable
+                  selId={selFicha}
+                  onSelect={(id) => { setSelPool(null); setSelFicha(selFicha === id ? null : id); }}
+                  onMove={moverFicha}
+                  onTapCancha={tocarCancha}
+                />
+
+                <div className="grid grid-cols-2 gap-2 mt-3 text-sm">
+                  <div className="bg-blue-50 rounded-lg p-2 text-blue-800"><b>Equipo A:</b> {fichasA.length} jugadores · ★ {calidadDe(fichasA)}</div>
+                  <div className="bg-red-50 rounded-lg p-2 text-red-800"><b>Equipo B:</b> {fichasB.length} jugadores · ★ {calidadDe(fichasB)}</div>
+                </div>
+
+                <div className="flex flex-wrap gap-2 mt-3">
+                  <button className="bg-blue-600 text-white rounded-lg px-4 py-2 font-bold" onClick={guardarFecha}>Guardar fecha</button>
+                  {selFicha && (
+                    <button className="bg-orange-500 text-white rounded-lg px-4 py-2 font-bold" onClick={sacarFicha}>Sacar de la cancha</button>
+                  )}
+                  {fichas.length > 0 && (
+                    <button className="bg-gray-300 rounded-lg px-4 py-2"
+                      onClick={() => { if (confirm("¿Sacar a todos de la cancha?")) { setPosiciones({}); setSelFicha(null); } }}>
+                      Limpiar cancha
+                    </button>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+        )}
+      </div>
+
+      <h3 className="font-bold mb-2">Fechas cargadas</h3>
+      <div className="space-y-3">
+        {partidos.slice().reverse().map(p => (
+          <div key={p.id} className="bg-white rounded-2xl shadow p-3">
+            <p className="font-semibold">{p.fecha} {p.finalizado ? "✅ Finalizado" : "⏳ Pendiente"}</p>
+            <div className="grid grid-cols-2 gap-2 text-sm mt-2">
+              <div><span className="font-bold text-blue-700">Equipo A:</span> {(p.equipoA || []).map(nombreDe).join(", ")}</div>
+              <div><span className="font-bold text-red-700">Equipo B:</span> {(p.equipoB || []).map(nombreDe).join(", ")}</div>
+            </div>
+            <CanchaToggle partido={p} jugadores={jugadores} />
+            {p.finalizado && (
+              <p className="text-sm mt-1 text-gray-600">
+                Resultado: {p.resultado === "A" ? "Ganó Equipo A" : p.resultado === "B" ? "Ganó Equipo B" : "Empate"}
+              </p>
+            )}
+          </div>
+        ))}
+        {partidos.length === 0 && <p className="text-gray-400 text-center">No hay fechas cargadas</p>}
+      </div>
+    </div>
+  );
+}
+
+// ============ ADMIN: RESULTADOS ============
+function FilaGoles({ nombre, valor, onChange }) {
+  return (
+    <div className="flex items-center justify-between text-sm py-1">
+      <span>{nombre}</span>
+      <input
+        type="number" min="0" className="border rounded-lg w-16 p-1 text-center"
+        value={valor} onChange={e => onChange(parseInt(e.target.value || "0", 10))}
+      />
+    </div>
+  );
+}
+
+function AdminResultados({ jugadores, partidos }) {
+  const pendientes = partidos.filter(p => !p.finalizado);
+  const [golesPorPartido, setGolesPorPartido] = useState({});
+
+  const setGol = (partidoId, jugadorId, valor) => {
+    setGolesPorPartido(g => ({
+      ...g,
+      [partidoId]: { ...(g[partidoId] || {}), [jugadorId]: valor }
+    }));
+  };
+
+  const cargarResultado = (partido, resultado) => {
+    // resultado: "A" (ganó A), "B" (ganó B), "E" (empate)
+    if (!confirm("¿Confirmar este resultado? No se puede deshacer.")) return;
+
+    const golesDeEsteMatch = golesPorPartido[partido.id] || {};
+
+    const actualizar = (id, tipo) => {
+      const j = jugadores.find(x => x.id === id);
+      if (!j) return;
+      const puntosGanados = tipo === "V" ? 3 : tipo === "E" ? 1 : 0;
+      const golesEnEstePartido = golesDeEsteMatch[id] || 0;
+      const nuevos = {
+        pj: (j.pj || 0) + 1,
+        pg: (j.pg || 0) + (tipo === "V" ? 1 : 0),
+        pe: (j.pe || 0) + (tipo === "E" ? 1 : 0),
+        pp: (j.pp || 0) + (tipo === "D" ? 1 : 0),
+        puntos: (j.puntos || 0) + puntosGanados,
+        goles: (j.goles || 0) + golesEnEstePartido,
+        ultimos: [tipo, ...(j.ultimos || [])].slice(0, 5),
+        historial: [...(j.historial || []), { fecha: partido.fecha, resultado: tipo, goles: golesEnEstePartido }]
+      };
+      db.ref("jugadores/" + id).update(nuevos);
+    };
+
+    const equipoA = partido.equipoA || [];
+    const equipoB = partido.equipoB || [];
+
+    if (resultado === "E") {
+      equipoA.forEach(id => actualizar(id, "E"));
+      equipoB.forEach(id => actualizar(id, "E"));
+    } else if (resultado === "A") {
+      equipoA.forEach(id => actualizar(id, "V"));
+      equipoB.forEach(id => actualizar(id, "D"));
+    } else {
+      equipoA.forEach(id => actualizar(id, "D"));
+      equipoB.forEach(id => actualizar(id, "V"));
+    }
+
+    db.ref("partidos/" + partido.id).update({ resultado, finalizado: true });
+    setGolesPorPartido(g => { const copia = { ...g }; delete copia[partido.id]; return copia; });
+  };
+
+  const jugadorDe = (id) => jugadores.find(j => j.id === id) || { id, nombre: "?" };
+
+  return (
+    <div className="space-y-3">
+      <h3 className="font-bold mb-2">Cargar resultado</h3>
+      {pendientes.map(p => {
+        const goles = golesPorPartido[p.id] || {};
+        return (
+          <div key={p.id} className="bg-white rounded-2xl shadow p-3">
+            <p className="font-semibold mb-2">{p.fecha}</p>
+            <p className="text-xs text-gray-500 mb-1">Goles de cada jugador en este partido (opcional):</p>
+            <div className="grid grid-cols-2 gap-3 text-sm mb-3">
+              <div>
+                <p className="font-bold text-blue-700 mb-1">Equipo A</p>
+                {(p.equipoA || []).map(id => (
+                  <FilaGoles key={id} nombre={jugadorDe(id).nombre}
+                    valor={goles[id] || 0}
+                    onChange={v => setGol(p.id, id, v)} />
+                ))}
+              </div>
+              <div>
+                <p className="font-bold text-red-700 mb-1">Equipo B</p>
+                {(p.equipoB || []).map(id => (
+                  <FilaGoles key={id} nombre={jugadorDe(id).nombre}
+                    valor={goles[id] || 0}
+                    onChange={v => setGol(p.id, id, v)} />
+                ))}
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <button className="bg-blue-600 text-white rounded-lg px-3 py-2 text-sm font-bold" onClick={() => cargarResultado(p, "A")}>Ganó Equipo A</button>
+              <button className="bg-gray-500 text-white rounded-lg px-3 py-2 text-sm font-bold" onClick={() => cargarResultado(p, "E")}>Empate</button>
+              <button className="bg-red-600 text-white rounded-lg px-3 py-2 text-sm font-bold" onClick={() => cargarResultado(p, "B")}>Ganó Equipo B</button>
+            </div>
+          </div>
+        );
+      })}
+      {pendientes.length === 0 && <p className="text-gray-400 text-center">No hay fechas pendientes de resultado</p>}
+    </div>
+  );
+}
+
+// ============ ADMIN: TEMPORADA ============
+function AdminTemporada({ jugadores, partidos, temporadas }) {
+  const [nombre, setNombre] = useState("");
+  const [imagen, setImagen] = useState(null);
+  const tabla = useMemo(() => ordenarTabla(jugadores).filter(j => (j.pj || 0) > 0), [jugadores]);
+  const premios = useMemo(() => calcularPremios(jugadores), [jugadores]);
+  const pendientes = partidos.filter(p => !p.finalizado).length;
+  const nombreFinal = nombre.trim() || ("Temporada " + (temporadas.length + 1));
+
+  const terminar = () => {
+    if (premios.length === 0) return alert("Todavía no hay partidos jugados en esta temporada.");
+    if (!confirm('¿Terminar "' + nombreFinal + '"?\n\nSe reparten los premios, el puntero se lleva la corona 👑 y se reinician las tablas. No se puede deshacer.')) return;
+
+    const key = db.ref("temporadas").push().key;
+    const updates = {};
+
+    // 1) Foto final de la temporada + premios
+    const datosTemporada = {
+      nombre: nombreFinal,
+      cerradaEn: new Date().toISOString(),
+      tabla: tabla.map(j => ({
+        id: j.id, nombre: j.nombre, foto: j.foto || "", arquero: !!j.arquero,
+        pj: j.pj || 0, pg: j.pg || 0, pe: j.pe || 0, pp: j.pp || 0,
+        puntos: j.puntos || 0, goles: j.goles || 0,
+        promedio: Number(j.promedio.toFixed(2))
+      })),
+      premios
+    };
+    updates["temporadas/" + key] = datosTemporada;
+
+    // 2) Reinicio de estadísticas (la calidad, la foto y el arquero se mantienen)
+    jugadores.forEach(j => {
+      const base = "jugadores/" + j.id + "/";
+      updates[base + "pj"] = 0;
+      updates[base + "pg"] = 0;
+      updates[base + "pe"] = 0;
+      updates[base + "pp"] = 0;
+      updates[base + "puntos"] = 0;
+      updates[base + "goles"] = 0;
+      updates[base + "ultimos"] = null;
+      updates[base + "historial"] = null;
+    });
+
+    // 3) Los partidos ya jugados se archivan; las fechas pendientes pasan a la temporada nueva
+    partidos.filter(p => p.finalizado).forEach(p => {
+      updates["partidos/" + p.id + "/archivada"] = key;
+    });
+
+    db.ref().update(updates)
+      .then(() => { setNombre(""); setImagen({ id: key, recien: true, ...datosTemporada }); })
+      .catch(err => alert("No se pudo cerrar la temporada: " + err.message));
+  };
+
+  const ordenadas = [...temporadas].sort((a, b) => (b.cerradaEn || "").localeCompare(a.cerradaEn || ""));
+
+  return (
+    <div>
+      <div className="bg-white p-4 rounded-2xl shadow mb-4">
+        <h3 className="font-bold mb-2">Terminar temporada</h3>
+        <input className="border rounded-lg w-full p-2 mb-3"
+          placeholder={"Nombre (por defecto: Temporada " + (temporadas.length + 1) + ")"}
+          value={nombre} onChange={e => setNombre(e.target.value)} />
+
+        <p className="text-sm font-semibold mb-1">Premios que se van a repartir:</p>
+        {premios.length > 0 ? (
+          <div className="bg-[#EAF4FC] rounded-lg p-3 mb-3 space-y-1">
+            {premios.map((p, i) => (
+              <p key={i} className="text-sm">
+                {PREMIOS_META[p.tipo].icono} <b>{PREMIOS_META[p.tipo].nombre}:</b> {p.nombre}
+              </p>
+            ))}
+          </div>
+        ) : <p className="text-sm text-gray-400 mb-3">Todavía no hay partidos jugados.</p>}
+
+        <p className="text-xs text-gray-500 mb-3">
+          Mejor arquero y equipo ideal (1 arquero + 4 de campo) salen por promedio, entre quienes jugaron al menos la mitad de los partidos del que más jugó.
+          {pendientes > 0 && " Las " + pendientes + " fecha(s) pendientes se mantienen para la temporada nueva."}
+        </p>
+
+        <button className="bg-yellow-500 text-white rounded-lg px-4 py-2 font-bold" onClick={terminar}>
+          🏁 Terminar temporada y premiar
+        </button>
+      </div>
+
+      <h3 className="font-bold mb-2">Temporadas anteriores</h3>
+      <div className="bg-white rounded-2xl shadow divide-y">
+        {ordenadas.map(t => {
+          const campeon = (t.premios || []).find(p => p.tipo === "campeon");
+          return (
+            <div key={t.id} className="p-3 flex items-center justify-between gap-2 text-sm">
+              <span className="font-semibold">{t.nombre}</span>
+              <span className="flex-1 text-right">👑 {campeon ? campeon.nombre : "—"}</span>
+              <button className="text-blue-600 font-bold whitespace-nowrap" onClick={() => setImagen(t)}>🖼️ Imagen</button>
+            </div>
+          );
+        })}
+        {ordenadas.length === 0 && <p className="p-4 text-center text-gray-400">Todavía no se cerró ninguna temporada</p>}
+      </div>
+      {imagen && <ImagenTemporada temporada={imagen} cerrada={!!imagen.recien} onClose={() => setImagen(null)} />}
+    </div>
+  );
+}
+
+// ============ PANEL ADMIN (con tabs) ============
+function PanelAdmin({ jugadores, partidos, temporadas = [], onSalir }) {
+  const [tab, setTab] = useState("jugadores");
+  return (
+    <div className="max-w-3xl mx-auto p-4">
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold text-[#1B4B7A]">Panel Admin</h1>
+        <button className="text-sm text-gray-500 underline" onClick={onSalir}>Salir</button>
+      </div>
+      <div className="flex flex-wrap gap-2 mb-4">
+        {[["jugadores", "Jugadores"], ["fechas", "Fechas / Sorteo"], ["resultados", "Resultados"], ["temporada", "Temporada"]].map(([k, label]) => (
+          <button key={k}
+            className={`px-3 py-2 rounded-lg text-sm font-bold ${tab === k ? "bg-[#3E7CB1] text-white" : "bg-white text-[#1B4B7A]"}`}
+            onClick={() => setTab(k)}>
+            {label}
+          </button>
+        ))}
+      </div>
+      {tab === "jugadores" && <AdminJugadores jugadores={jugadores} />}
+      {tab === "fechas" && <AdminFechas jugadores={jugadores} partidos={partidos} />}
+      {tab === "resultados" && <AdminResultados jugadores={jugadores} partidos={partidos} />}
+      {tab === "temporada" && <AdminTemporada jugadores={jugadores} partidos={partidos} temporadas={temporadas} />}
+    </div>
+  );
+}
+
+// ============ APP ============
+function App() {
+  const [jugadores, setJugadores] = useState([]);
+  const [partidos, setPartidos] = useState([]);
+  const [temporadas, setTemporadas] = useState([]);
+  const [vista, setVista] = useState("home"); // home | login | admin
+  const [logueado, setLogueado] = useState(false);
+
+  useEffect(() => {
+    db.ref("jugadores").on("value", snap => {
+      const val = snap.val() || {};
+      setJugadores(Object.entries(val).map(([id, v]) => ({ id, ...v })));
+    });
+    db.ref("partidos").on("value", snap => {
+      const val = snap.val() || {};
+      setPartidos(Object.entries(val).map(([id, v]) => ({ id, ...v })).filter(p => !p.archivada));
+    });
+    // Si las reglas de Firebase todavía no dejaban leer "temporadas", la conexión se
+    // cancela sola; acá se reintenta cada 5 segundos hasta que funcione.
+    const escucharTemporadas = () => {
+      db.ref("temporadas").on("value", snap => {
+        const val = snap.val() || {};
+        setTemporadas(Object.entries(val).map(([id, v]) => ({ id, ...v })));
+      }, () => { setTimeout(escucharTemporadas, 5000); });
+    };
+    escucharTemporadas();
+  }, []);
+
+  return (
+    <div className="min-h-screen pb-10">
+      <nav className="bg-[#12345C] text-white p-3 flex justify-center gap-4">
+        <button className="font-bold" onClick={() => setVista("home")}>Inicio</button>
+        <button className="font-bold" onClick={() => setVista(logueado ? "admin" : "login")}>Admin</button>
+      </nav>
+      <div className="bg-[#FFD700] text-[#06131F] text-center text-xs font-bold py-1">DEMO · datos de ejemplo, los cambios no se guardan al recargar</div>
+
+      {vista === "home" && <Home jugadores={jugadores} partidos={partidos} temporadas={temporadas} />}
+      {vista === "login" && <LoginAdmin onLogin={() => { setLogueado(true); setVista("admin"); }} />}
+      {vista === "admin" && logueado && (
+        <PanelAdmin jugadores={jugadores} partidos={partidos} temporadas={temporadas} onSalir={() => { setLogueado(false); setVista("home"); }} />
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
