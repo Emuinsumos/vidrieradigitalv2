@@ -13,23 +13,25 @@ export const PROYECTOS = [
   { n: 'Muebles El Libertador', c: 'Mueblería', e: '🪑', bg: '#b08968', d: 'Catálogo de muebles con consulta directa por WhatsApp.', t: ['Catálogo', 'Consultas'], demo: '/demos/muebles-el-libertador/' },
   { n: 'Golo-Mas', c: 'Almacén y mayorista', e: '🛒', bg: '#7bd389', d: 'Precio mayorista y minorista, cuentas de cliente y stock con código de barras.', t: ['Mayor/menor', 'Clientes', 'Stock'], demo: '/demos/golo-mas/' },
   { n: 'DELMANA', c: 'Marcas y empresas', e: '🥖', bg: '#e9c46a', d: 'Web institucional con formulario de contacto y panel privado de mensajes.', t: ['Institucional', 'Formulario'], demo: '/demos/delmana/' },
+  { n: 'La Copita', c: 'Deportes y torneos', e: '🏆', bg: '#3ddc97', d: 'Torneo de fútbol entre amigos: sorteo de equipos balanceados, tabla en vivo, temporadas con coronas y perfil de cada jugador.', t: ['Sorteo', 'Tabla', 'Temporadas'], demo: '/demos/copita/' },
+  { n: 'Turnero', c: 'Turnos y reservas', e: '💈', bg: '#d4a85a', d: 'Reserva de turnos online para barberías y estética: el cliente elige servicio, profesional, día y hora, y confirma por WhatsApp.', t: ['Reservas', 'Agenda en vivo', 'WhatsApp'], demo: '/demos/turnero/' },
 ]
 
 export const PLANES = [
   {
-    id: 'basica', nombre: 'Plan base', para: 'Para empezar a mostrar tu negocio',
+    id: 'basica', nombre: 'Web básica', para: 'Para empezar a mostrar tu negocio',
     lanzamiento: 0, mensual: 25000,
     items: ['Catálogo de productos', 'Botón a WhatsApp y redes', 'Con tu logo y tus colores', 'Se ve bien en el celular'],
   },
   {
-    id: 'premium', nombre: 'Plan Premium', para: 'Para vender y gestionar online', destacado: true,
+    id: 'premium', nombre: 'Web premium', para: 'Para vender y gestionar online', destacado: true,
     lanzamiento: 50000, mensual: 35000,
-    items: ['Todo lo de base', 'Carrito y pedidos', 'Panel de administración', 'Cuentas de cliente y stock', 'Facturas y reportes en PDF'],
+    items: ['Todo lo de la básica', 'Carrito y pedidos', 'Panel de administración', 'Cuentas de cliente y stock', 'Facturas y reportes en PDF'],
   },
   {
     id: 'empresas', nombre: 'Pack empresas', para: 'Full premium para fábricas y empresas',
     lanzamiento: 125000, mensual: 60000,
-    items: ['Todo lo de la premium', 'Sistema de Gestión Interna', 'Producción, calidad y pañol', 'Accesos por operario', 'Datos y estadisticas en Realtime'],
+    items: ['Todo lo de la premium', 'Sistema de Gestión Interna (SIG)', 'Producción, calidad y pañol', 'Accesos por operario', 'Prioridad en soporte'],
   },
 ]
 
