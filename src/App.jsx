@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { CONFIG, PROYECTOS, PLANES, MAQUINAS, INSUMOS } from './data.js'
+
+const Clientes = lazy(() => import('./admin/Clientes.jsx'))
 
 const wa = (t) => `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(t)}`
 const $ = (n) => '$' + n.toLocaleString('es-AR')
@@ -445,7 +447,7 @@ function Pasos() {
   )
 }
 
-export default function App() {
+function Vitrina() {
   useReveal()
   return (
     <>
@@ -469,4 +471,21 @@ export default function App() {
       <FlotanteWA />
     </>
   )
+}
+
+export default function App() {
+  const [hash, setHash] = useState(window.location.hash)
+  useEffect(() => {
+    const f = () => setHash(window.location.hash)
+    window.addEventListener('hashchange', f)
+    return () => window.removeEventListener('hashchange', f)
+  }, [])
+  if (hash.startsWith('#/admin')) {
+    return (
+      <Suspense fallback={null}>
+        <Clientes />
+      </Suspense>
+    )
+  }
+  return <Vitrina />
 }
