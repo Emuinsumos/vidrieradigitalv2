@@ -25,5 +25,8 @@
         "service": "app"
       }
     }
+  ],
+  "crons": [
+    { "path": "/api/cron-cobros", "schedule": "0 11 * * *" }
   ]
 }
