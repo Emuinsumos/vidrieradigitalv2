@@ -1,6 +1,9 @@
 name: Alertas de cobro
 
 on:
+  push:
+    paths:
+      - '.github/workflows/cobros.yml'
   schedule:
     - cron: '0 11 * * *' # 11:00 UTC = 8:00 hora Argentina
   workflow_dispatch:
@@ -20,7 +23,7 @@ jobs:
           node-version: 20
       - run: node scripts/cobros.mjs
         env:
-          TEST: ${{ inputs.test }}
+          TEST: ${{ github.event_name == 'push' || inputs.test }}
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
